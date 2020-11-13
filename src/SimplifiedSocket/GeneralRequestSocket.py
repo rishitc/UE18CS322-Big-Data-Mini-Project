@@ -3,7 +3,8 @@ from typing import Tuple
 
 
 class GeneralRequestSocket:
-    def __init__(self, ip: str = socket.gethostname(), port: int = 5000) -> None:
+    def __init__(self, ip: str = socket.gethostname(),
+                 port: int = 5000) -> None:
         """__init__ Store the IP address, port no. of the socket
         and create the socket object
 
