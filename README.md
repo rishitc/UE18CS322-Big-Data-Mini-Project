@@ -102,3 +102,11 @@ Format for how the worker responds to the completion of the task (i.e. a single 
 - "end time":<end_time_of_task_in_Worker>, has to be to be a timestamp
 - "job completion time" has to a float type
 -  task_id has to be a string
+
+---
+
+## Reference Websites
+1. [JSON Library, Python Docs](https://docs.python.org/3/library/json.html)
+1. [Working with JSON module in Python](https://www.w3schools.com/python/python_json.asp)
+1. [Examples with explanation for using the JSON module in Python](https://realpython.com/python-json/)
+1. [Socket library, Python Docs](https://docs.python.org/3/library/socket.html)
