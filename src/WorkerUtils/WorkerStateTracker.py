@@ -1,5 +1,6 @@
 import socket
 
+
 class StateTracker:
     def __init__(self, confObj: dict) -> None:
         """Store the list of the worker dictionaries in a new dictionary
