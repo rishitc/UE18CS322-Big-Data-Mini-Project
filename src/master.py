@@ -68,7 +68,8 @@ def jobDispatcher_Random(requestHandler, rh_lock,
                                        job_ID=jobID_family_task[0],
                                        task_family=jobID_family_task[1],
                                        task_ID=jobID_family_task[2]["task_id"],
-                                       duration=jobID_family_task[2]["duration"],
+                                       duration=(jobID_family_task[2]
+                                                 ["duration"]),
                                        worker_ID=_temp
                                    ))
                     # Once a worker with a free slot is found then
@@ -79,7 +80,7 @@ def jobDispatcher_Random(requestHandler, rh_lock,
                     workerStateTracker.allocateSlot(_temp)
                 workerStateTracker.LOCK.release()
                 # Sleep for half a second to allow for the workerStateTracker
-                # to be updated by the thread: 
+                # to be updated by the thread: workerUpdates
                 time.sleep(0.5)
 
         # Updating the object which is tracking the worker states
@@ -116,7 +117,8 @@ if __name__ == "__main__":
             # Load the data from the worker config file
             workerConf = json.load(fHandler)
     except FileNotFoundError:
-        print(f"Unable to find the file given by path: {PATH_TO_CONFIG_FILE}")
+        print(f"{TC.fg(1)}{TC.attr(1)}ERROR:{TC.attr(0)} \
+Unable to find the file given by path: {PATH_TO_CONFIG_FILE}")
         sys.exit(1)
 
     while input("Have the worker(s) been started, yet? [y/n]").strip().lower()\
@@ -140,8 +142,15 @@ if __name__ == "__main__":
     elif TYPE_OF_SCHEDULING == "LL":
         pass
     else:
-        print(f"{TC.fg(1)}{TC.attr(1)}ERROR:{TC.attr(0)} Invalid value entered for type of scheduling!")
+        print(f"{TC.fg(1)}{TC.attr(1)}ERROR:{TC.attr(0)} Invalid value \
+entered for type of scheduling!")
         sys.exit(1)
+
+    """ Create the required threads on the master machine, passing in the
+    required parameters. Eventhough the variables created here are global
+    it is better for the sake of clarity to pass in the variables
+    which you want the function to work with as arguments to it
+    """
     obj_jd = threading.Thread(name="Job Dispatcher - Random Scheduling",
                               target=jobDispatcher_Random,
                               args=(requestHandler, obj_wst))
