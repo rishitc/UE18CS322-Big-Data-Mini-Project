@@ -1,3 +1,5 @@
+import socket
+
 class StateTracker:
     def __init__(self, confObj: dict) -> None:
         """Store the list of the worker dictionaries in a new dictionary
@@ -11,10 +13,14 @@ class StateTracker:
 
         for worker in confObj["workers"]:
             # print(f"{worker['worker_id']=}")
+            workerConnSocket = socket.socket(socket.AF_INET,
+                                             socket.SOCK_STREAM)
+            workerConnSocket.connect((socket.gethostname(), worker["port"]))
             self.workerState[worker["worker_id"]] = {
                 "slots": worker["slots"],
                 "port": worker["port"],
                 "free slots": worker["slots"],
+                "socket": workerConnSocket
             }
 
     def isWorkerFree(self, workerID: int, demand: int = 1) -> bool:
