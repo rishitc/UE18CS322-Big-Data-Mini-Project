@@ -37,11 +37,11 @@ class JobRequestHandler:
 
         # Check for a pending map task
         if self.jobRequests[_JOB_ID]["map"]:
-            _SELECTED_TASK = self.jobRequests[_JOB_ID]["map"].pop()
+            _SELECTED_TASK = self.jobRequests[_JOB_ID]["map"].pop(0)
 
         # Check for a pending reduce task
         else:
-            _SELECTED_TASK = self.jobRequests[_JOB_ID]["reduce"].pop()
+            _SELECTED_TASK = self.jobRequests[_JOB_ID]["reduce"].pop(0)
 
         # Check if this task is the last task
         if (not self.jobRequests[_JOB_ID]["map"]) and \
@@ -50,3 +50,6 @@ class JobRequestHandler:
             self.priorityOrder.remove(_JOB_ID)
 
         return (_JOB_ID, _SELECTED_TASK)
+
+    def isEmpty(self):
+        return True if not self.priorityOrder else False
