@@ -1,3 +1,6 @@
+from threading import Lock
+
+
 class JobRequestHandler:
     """This class stores the incoming job requests from the job request
      port. The incoming jobs are stored with a certain priority; at the
@@ -11,6 +14,7 @@ class JobRequestHandler:
     def __init__(self):
         self.jobRequests = {}
         self.priorityOrder = []
+        self.LOCK = Lock()
 
     def addJobRequest(self, requestSpecs):
         """Adds the request specification to the objects
@@ -30,18 +34,21 @@ class JobRequestHandler:
         self.priorityOrder.append(requestSpecs["job_id"])
 
     def getWaitingTask(self):
-        assert len(self.priorityOrder) > 0, f"No job requests exist!"
+        assert len(self.priorityOrder) > 0, "No job requests exist!"
 
         _JOB_ID = self.priorityOrder[0]
         _SELECTED_TASK = None
+        _TASK_TYPE = None
 
         # Check for a pending map task
         if self.jobRequests[_JOB_ID]["map"]:
             _SELECTED_TASK = self.jobRequests[_JOB_ID]["map"].pop(0)
+            _TASK_TYPE = "map"
 
         # Check for a pending reduce task
         else:
             _SELECTED_TASK = self.jobRequests[_JOB_ID]["reduce"].pop(0)
+            _TASK_TYPE = "reduce"
 
         # Check if this task is the last task
         if (not self.jobRequests[_JOB_ID]["map"]) and \
@@ -49,7 +56,7 @@ class JobRequestHandler:
             del self.jobRequests[_JOB_ID]
             self.priorityOrder.remove(_JOB_ID)
 
-        return (_JOB_ID, _SELECTED_TASK)
+        return (_JOB_ID, _TASK_TYPE, _SELECTED_TASK)
 
     def isEmpty(self):
         return True if not self.priorityOrder else False
