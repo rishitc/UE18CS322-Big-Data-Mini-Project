@@ -1,4 +1,5 @@
 import socket
+from threading import Lock
 
 
 class StateTracker:
@@ -11,6 +12,8 @@ class StateTracker:
         :type configObj: dict
         """
         self.workerState = {}
+        self.workerIDs = []
+        self.LOCK = Lock()
 
         for worker in confObj["workers"]:
             # print(f"{worker['worker_id']=}")
@@ -23,6 +26,7 @@ class StateTracker:
                 "free slots": worker["slots"],
                 "socket": workerConnSocket
             }
+            self.workerIDs.append(worker["worker_id"])
 
     def isWorkerFree(self, workerID: int, demand: int = 1) -> bool:
         """Check if the worker whose ```worker_id``` key is equal to
@@ -44,6 +48,9 @@ class StateTracker:
 
     def showWorkerStates(self) -> None:
         print(f"{self.workerState=}")
+
+    def getWorkerSocket(self, workerID):
+        return self.workerState[workerID]["socket"]
 
     def allocateSlot(self, workerID: int, task_count: int = 1) -> None:
         """Allocates the task to the worker and decrements the number of
