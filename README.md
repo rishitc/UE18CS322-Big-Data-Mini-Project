@@ -110,14 +110,14 @@ Format for how the worker responds to the completion of the task (i.e. a single 
 ---
 
 ### Akhil: (Logging and Communication protocol)
-1. Work on the job tracker for tracking job completions time stamps
+1. Work on the job tracker (i.e. ```JobTracker``` object) for tracking job completions time stamps
    1. ```isMapComplete(jobID)``` to check if all the map tasks of a job have been completed
    2. ```isReduceComplete(jobID)``` to check if all the reduce tasks of a job have been completed
    3. ```addJob(job_request)``` to add the setup the tracking for the tasks of the job
       1. ```job_request``` is essentially the input JSON string from the client after using json.loads() on it
    4. ```updateJob(task_completion_response_from_worker)``` to update the state of the job completion, as per message from the worker sent as parameter: ```task_completion_response_from_worker```
       1. ```task_completion_response_from_worker``` is essentially the input JSON string from the client after using json.loads() on it
-2. Log the JSON information which is sent in by the workers to the master node after the task has been completed as well as log the Job completion data (this can be got from the JobTracker object)
+2. Log the JSON information which is sent in by the workers to the master node after the task has been completed as well as log the Job completion data (this can be got from the ```JobTracker``` object)
     - More information about this can be found in the protocol format below
     - For logging use 3 separate folder (1 for each scheduling protocol)
     - In each folder keep 2 files: 1 for the Task completion time and the other for the job completion time
