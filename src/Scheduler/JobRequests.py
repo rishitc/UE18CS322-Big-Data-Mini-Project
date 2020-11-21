@@ -72,7 +72,7 @@ class JobRequestHandler:
             else:
                 self.workerUpdatesTracker.LOCK.acquire()
                 _temp = self.workerUpdatesTracker.isMapComplete(jobID)
-                self.workerUpdatesTracker.LOCK.get()
+                self.workerUpdatesTracker.LOCK.release()
                 if _temp:
                     # Check for a pending reduce task
                     _SELECTED_TASK = self.jobRequests[jobID]["reduce"].pop(0)
