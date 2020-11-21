@@ -102,12 +102,13 @@ yet? [y/n]").strip().lower()
     obj_wst = StateTracker(workerConf)  # Worker State Tracker Object
     obj_requestHandler = JobRequestHandler()  # Job Request Handler Object
 
-    obj_jrl = threading.Thread(name="Listen for Incoming Job Requests",
+    jobRequestThread = threading.Thread(name="Listen for Incoming Job Requests",
                                target=listenForJobRequests,
                                args=(obj_requestHandler))
 
+    taskDispatchThread = None
     if TYPE_OF_SCHEDULING == "RANDOM":
-        obj_jd = threading.Thread(name="Job Dispatcher - Random Scheduling",
+        taskDispatchThread = threading.Thread(name="Job Dispatcher - Random Scheduling",
                                   target=RandomScheduler.jobDispatcher,
                                   args=(obj_requestHandler, obj_wst))
     elif TYPE_OF_SCHEDULING == "RR":
@@ -133,8 +134,8 @@ yet? [y/n]").strip().lower()
         # Put the socket into listening mode
         worker_updates_socket.listen(WORKER_COUNT)
         PRINT_LOCK.acquire()
-        print(info_text(f"Listening to updates from the workers on port: \
-{WORKER_UPDATES_PORT}"))
+        print(info_text(("Listening to updates from the workers on port: "
+                         f"{WORKER_UPDATES_PORT}")))
         PRINT_LOCK.release()
 
         # Worker updates handler object
@@ -156,9 +157,26 @@ yet? [y/n]").strip().lower()
             print(f"Socket: {workerAddress[1]}")
             PRINT_LOCK.release()
 
-            # Start a new thread and return its identifier
-            workerUpdateThreads.append(threading.Thread(target=workerUpdates,
-                                       name=(f"Worker-{WORKER_NUMBER} Update "
-                                             "Listener"),
-                                       args=(workerSocket, obj_wst,
-                                             obj_workerUpdatesTracker)))
+            # Start a new thread and return its thread object
+            _temp = threading.Thread(target=workerUpdates,
+                                     name=(f"Worker-{WORKER_NUMBER} Update "
+                                           "Listener"),
+                                     args=(workerSocket, obj_wst,
+                                           obj_workerUpdatesTracker))
+
+            # Store the thread object in a list
+            workerUpdateThreads.append(_temp)
+
+        print(f"{workerUpdateThreads=}")
+
+    """ Wait for all the threads to finish
+    """
+    # Wait for the thread listening for incoming job requests to finish
+    jobRequestThread.join()
+
+    # Wait for the thread dispatching tasks to the worker to finish
+    taskDispatchThread.join()
+
+    # Wait for the threads listening for worker updates to finish
+    for updateThread in workerUpdateThreads:
+        updateThread.join()
