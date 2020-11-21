@@ -24,3 +24,5 @@ sphinxcontrib-qthelp==1.0.3
 sphinxcontrib-serializinghtml==1.1.4
 urllib3==1.26.1
 colored==1.4.2
+inflect==5.0.2
+
