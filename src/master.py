@@ -78,23 +78,24 @@ def workerUpdates(workerSocket, workerStateTracker,
 if __name__ == "__main__":
     PATH_TO_CONFIG_FILE = sys.argv[1]
     TYPE_OF_SCHEDULING = sys.argv[2]
+
     try:
         with open(PATH_TO_CONFIG_FILE) as fHandler:
             # Load the data from the worker config file
             workerConf = json.load(fHandler)
 
     except FileNotFoundError:
-        print(error_text(f"Unable to find the file given by path: \
-{PATH_TO_CONFIG_FILE}"))
+        print(error_text(f"Unable to find the file given by path:\
+ {PATH_TO_CONFIG_FILE}"))
         sys.exit(1)
 
     WORKER_COUNT = len(workerConf['workers'])
 
     _ans = 'n'
     while _ans in ['n', 'no']:
-        _ans = input(f"{'Have' if WORKER_COUNT > 1 else 'Has'} the \
-{WORKER_COUNT} {GE.plural_noun('worker', WORKER_COUNT)} been started, \
-yet? [y/n]").strip().lower()
+        _ans = input(f"{'Have' if WORKER_COUNT > 1 else 'Has'} the\
+ {WORKER_COUNT} {GE.plural_noun('worker', WORKER_COUNT)} been started,\
+ yet? [y/n]").strip().lower()
 
     """ Creating the thread-shared objects
     """
@@ -151,7 +152,7 @@ yet? [y/n]").strip().lower()
 
     taskDispatchThread.daemon = True
 
-    WORKER_UPDATES_PORT = 5000
+    WORKER_UPDATES_PORT = 5001
     WORKER_UPDATES_ADDR = (socket.gethostname(), WORKER_UPDATES_PORT)
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as \
          worker_updates_socket:
