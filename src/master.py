@@ -12,6 +12,7 @@ from WorkerUtils.WorkerUpdatesTracker import UpdatesTracker
 from Scheduler.JobRequests import JobRequestHandler
 from Scheduler.RandomScheduling import RandomScheduler
 from Scheduler.RoundRobinScheduling import RoundRobinScheduler
+from Scheduler.LeastLoadedScheduling import LeastLoadedScheduler
 
 BUFFER_SIZE = 4096
 GE = inflect.engine()  # GE means Grammar Engine
@@ -129,14 +130,20 @@ yet? [y/n]").strip().lower()
                                                     obj_workerStateTracker))
     elif TYPE_OF_SCHEDULING == "RR":
         taskDispatchThread = threading.Thread(name=("Job Dispatcher -"
-                                                    "Round robin Scheduling"),
+                                                    "Round-Robin Scheduling"),
                                               target=RoundRobinScheduler.
                                               jobDispatcher,
                                               args=(obj_requestHandler,
                                                     obj_workerStateTracker,
                                                     WORKER_COUNT))
     elif TYPE_OF_SCHEDULING == "LL":
-        pass
+        taskDispatchThread = threading.Thread(name=("Job Dispatcher -"
+                                                    "Least-Loaded Scheduling"),
+                                              target=LeastLoadedScheduler.
+                                              jobDispatcher,
+                                              args=(obj_requestHandler,
+                                                    obj_workerStateTracker,
+                                                    WORKER_COUNT))
     else:
         print(error_text("Invalid value entered for type of scheduling!"))
         sys.exit(1)
