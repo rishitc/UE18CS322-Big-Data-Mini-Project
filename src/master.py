@@ -147,14 +147,14 @@ yet? [y/n]").strip().lower()
     obj_wst = StateTracker(workerConf)  # Worker State Tracker Object
     obj_requestHandler = JobRequestHandler()  # Job Request Handler Object
 
-    # Worker updates handler object
-    obj_workerUpdatesTracker = WorkerUpdatesTracker()
     obj_jrl = threading.Thread(name="Listen for Incoming Job Requests",
                                target=listenForJobRequests,
                                args=(obj_requestHandler))
 
     if TYPE_OF_SCHEDULING == "RANDOM":
-        pass
+        obj_jd = threading.Thread(name="Job Dispatcher - Random Scheduling",
+                                  target=jobDispatcher_Random,
+                                  args=(obj_requestHandler, obj_wst))
     elif TYPE_OF_SCHEDULING == "RR":
         pass
     elif TYPE_OF_SCHEDULING == "LL":
@@ -168,35 +168,37 @@ yet? [y/n]").strip().lower()
     it is better for the sake of clarity to pass in the variables
     which you want the function to work with as arguments to it
     """
-    obj_jd = threading.Thread(name="Job Dispatcher - Random Scheduling",
-                              target=jobDispatcher_Random,
-                              args=(obj_requestHandler, obj_wst))
-
     WORKER_UPDATES_PORT = 5000
-    worker_updates_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    worker_updates_socket.bind((socket.gethostname(), WORKER_UPDATES_PORT))
+    WORKER_UPDATES_ADDR = (socket.gethostname(), WORKER_UPDATES_PORT)
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as \
+         worker_updates_socket:
+        worker_updates_socket.bind(WORKER_UPDATES_ADDR)
 
-    # Put the socket into listening mode
-    worker_updates_socket.listen(WORKER_COUNT)
-    print(info_text(f"Listening to updates from the workers on port: \
-{WORKER_UPDATES_PORT}"))
-
-    # A forever loop until client wants to exit
-    while True:
-        # Establish connection with client
-        workerSocket, workerAddress = worker_updates_socket.accept()
-
-        # Printing connection updates
+        # Put the socket into listening mode
+        worker_updates_socket.listen(WORKER_COUNT)
         PRINT_LOCK.acquire()
-        print(info_text("Connected to worker at address:"))
-        print(f"IP Address: {workerAddress[0]}")
-        print(f"Socket: {workerAddress[1]}")
+        print(info_text(f"Listening to updates from the workers on port: \
+{WORKER_UPDATES_PORT}"))
         PRINT_LOCK.release()
 
-        # Start a new thread and return its identifier
-        _thread.start_new_thread(workerUpdates, (workerSocket, obj_wst,
-                                                 obj_workerUpdatesTracker))
-    s.close()
+        # Worker updates handler object
+        obj_workerUpdatesTracker = WorkerUpdatesTracker()
+
+        # A forever loop until client wants to exit
+        while True:
+            # Establish connection with client
+            workerSocket, workerAddress = worker_updates_socket.accept()
+
+            # Printing connection updates
+            PRINT_LOCK.acquire()
+            print(info_text("Connected to worker at address:"))
+            print(f"IP Address: {workerAddress[0]}")
+            print(f"Socket: {workerAddress[1]}")
+            PRINT_LOCK.release()
+
+            # Start a new thread and return its identifier
+            _thread.start_new_thread(workerUpdates, (workerSocket, obj_wst,
+                                                     obj_workerUpdatesTracker))
 
     obj_wu = threading.Thread(name="Worker Updates",
                               target=workerUpdates,
