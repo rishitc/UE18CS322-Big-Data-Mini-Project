@@ -10,6 +10,8 @@ import inflect
 
 from WorkerUtils.WorkerStateTracker import StateTracker
 from Scheduler.JobRequests import JobRequestHandler
+from Scheduler.RandomScheduling import RandomScheduler
+from Scheduler.RoundRobinScheduler import RoundRobinScheduler
 
 BUFFER_SIZE = 4096
 GE = inflect.engine()  # GE means Grammar Engine
@@ -32,11 +34,13 @@ def listenForJobRequests(requestHandler):
         jobReqSocket.bind(_JOB_REQUEST_ADDR)
         jobReqSocket.listen()
         clientConn, clientAddr = jobReqSocket.accept()
+
         PRINT_LOCK.acquire()
         print(info_text("Connected to client at address:"))
         print(f"IP Address: {clientAddr[0]}")
         print(f"Socket: {clientAddr[1]}")
         PRINT_LOCK.release()
+
         while True:
             jobRequest = clientConn.recv(BUFFER_SIZE)
             if not jobRequest:
@@ -50,55 +54,6 @@ def listenForJobRequests(requestHandler):
             requestHandler.LOCK.acquire()
             requestHandler.addJobRequest(_temp)
             requestHandler.LOCK.release()
-
-
-def jobDispatcher_Random(requestHandler, workerStateTracker):
-    while True:
-        jobID_family_task = None
-        requestHandler.LOCK.acquire()
-        if not requestHandler.isEmpty():
-            jobID_family_task = requestHandler.getWaitingTask()
-        requestHandler.LOCK.release()
-
-        # If there is a Task that needs to be executed
-        if jobID_family_task is not None:
-            # Initially we have not found a worker with a free slot
-            workerFound = False
-
-            while workerFound is False:  # Until a free worker is not found
-                workerStateTracker.LOCK.acquire()
-                # Pick a worker at random
-                _temp = random.choice(workerStateTracker.workerIDs)
-
-                # If the worker has a free slot
-                if workerStateTracker.isWorkerFree(_temp):
-                    # Create the JSON protocol message
-                    protocolMsg = (YACS_Protocol
-                                   .createMessageToWorker
-                                   (
-                                       job_ID=jobID_family_task[0],
-                                       task_family=jobID_family_task[1],
-                                       task_ID=jobID_family_task[2]["task_id"],
-                                       duration=(jobID_family_task[2]
-                                                 ["duration"]),
-                                       worker_ID=_temp
-                                   ))
-                    # Once a worker with a free slot is found then
-                    # 1. We dispatch the job to the worker
-                    # 2. Update its state
-                    workerStateTracker.getWorkerSocket(_temp)\
-                        .sendall(protocolMsg)
-                    workerStateTracker.allocateSlot(_temp)
-                workerStateTracker.LOCK.release()
-
-                # Sleep for a second to allow for the workerStateTracker
-                # to be updated by the thread: workerUpdates
-                time.sleep(1)
-
-        # Updating the object which is tracking the worker states
-        workerStateTracker.LOCK.acquire()
-        workerStateTracker.allocateSlot()
-        workerStateTracker.LOCK.release()
 
 
 def workerUpdates(workerSocket, workerStateTracker,
@@ -153,9 +108,10 @@ yet? [y/n]").strip().lower()
 
     if TYPE_OF_SCHEDULING == "RANDOM":
         obj_jd = threading.Thread(name="Job Dispatcher - Random Scheduling",
-                                  target=jobDispatcher_Random,
+                                  target=RandomScheduler.jobDispatcher,
                                   args=(obj_requestHandler, obj_wst))
     elif TYPE_OF_SCHEDULING == "RR":
+        # WORKER_COUNT
         pass
     elif TYPE_OF_SCHEDULING == "LL":
         pass
@@ -199,18 +155,3 @@ yet? [y/n]").strip().lower()
             # Start a new thread and return its identifier
             _thread.start_new_thread(workerUpdates, (workerSocket, obj_wst,
                                                      obj_workerUpdatesTracker))
-
-    obj_wu = threading.Thread(name="Worker Updates",
-                              target=workerUpdates,
-                              args=(workerSocket, workerStateTracker,
-                                    wst_lock, jobTracker, jt_lock))
-
-
-    # Show the JSON data loaded in from the configuration file
-    # print(workerConf)
-    jobRequestListener = ListenForJobRequests()
-    jobRequestListener.start()
-
-    
-    
-
