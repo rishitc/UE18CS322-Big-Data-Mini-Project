@@ -11,15 +11,16 @@ from WorkerUtils.WorkerStateTracker import StateTracker
 from Scheduler.JobRequests import JobRequestHandler
 
 BUFFER_SIZE = 4096
-GRAMMAR_ENGINE = inflect.engine()
+GE = inflect.engine()  # GE means Grammar Engine
+PRINT_LOCK = threading.Lock()
 
 
 def info_text(text):
-    return f"{TC.fg(6)}{TC.attr(1)}INFO:{TC.attr(0)} {text}"
+    return f"{TC.fg(6) + TC.attr(1)}INFO:{TC.attr(0)} {text}"
 
 
 def error_text(text):
-    return f"{TC.fg(1)}{TC.attr(1)}ERROR:{TC.attr(0)} {text}"
+    return f"{TC.fg(1) + TC.attr(1)}ERROR:{TC.attr(0)} {text}"
 
 
 def listenForJobRequests(requestHandler):
@@ -30,9 +31,11 @@ def listenForJobRequests(requestHandler):
         jobReqSocket.bind(_JOB_REQUEST_ADDR)
         jobReqSocket.listen()
         clientConn, clientAddr = jobReqSocket.accept()
+        PRINT_LOCK.acquire()
         print(info_text("Connected to client at address:"))
         print(f"IP Address: {clientAddr[0]}")
         print(f"Socket: {clientAddr[1]}")
+        PRINT_LOCK.release()
         while True:
             jobRequest = clientConn.recv(BUFFER_SIZE)
             if not jobRequest:
@@ -130,9 +133,12 @@ if __name__ == "__main__":
         sys.exit(1)
 
     WORKER_COUNT = len(workerConf['workers'])
-    while input(f"{'Have' if  WORKER_COUNT > 1 else 'Has'} the {} worker{'s' if } been started, yet? [y/n]").strip().lower()\
-            in ['n', 'no']:
-        pass
+
+    _ans = 'n'
+    while _ans in ['n', 'no']:
+        _ans = input(f"{'Have' if WORKER_COUNT > 1 else 'Has'} the \
+{WORKER_COUNT} {GE.plural_noun('worker', WORKER_COUNT)} been started, \
+yet? [y/n]").strip().lower()
 
     #  Initialize the random number generator.
     random.seed()
@@ -166,10 +172,24 @@ if __name__ == "__main__":
     WORKER_UPDATES_PORT = 5000
     worker_updates_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     worker_updates_socket.bind((socket.gethostname(), WORKER_UPDATES_PORT))
-    print(info_text(f"Listening to updates from the workers on port: \
-{WORKER_UPDATES_PORT}")
 
-    worker_updates_socket.listen()
+    # Put the socket into listening mode
+    worker_updates_socket.listen(WORKER_COUNT)
+    print(info_text(f"Listening to updates from the workers on port: \
+{WORKER_UPDATES_PORT}"))
+
+    # A forever loop until client wants to exit
+    while True:
+        # Establish connection with client
+        workerSocket, workerAddress = worker_updates_socket.accept()
+
+        # Lock acquired by client
+        print_lock.acquire() 
+        print('Connected to :', addr[0], ':', addr[1]) 
+  
+        # Start a new thread and return its identifier 
+        start_new_thread(threaded, (c,)) 
+    s.close() 
 
     obj_wu = threading.Thread(name="Worker Updates",
                               target=workerUpdates,
