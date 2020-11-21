@@ -100,7 +100,12 @@ yet? [y/n]").strip().lower()
     """
     # Worker State Tracker Object
     obj_workerStateTracker = StateTracker(workerConf)
-    obj_requestHandler = JobRequestHandler()  # Job Request Handler Object
+
+    # Worker updates handler object
+    obj_workerUpdatesTracker = UpdatesTracker()
+
+    # Job Request Handler Object
+    obj_requestHandler = JobRequestHandler(obj_workerUpdatesTracker)
 
     # ---
 
@@ -159,8 +164,6 @@ yet? [y/n]").strip().lower()
                          f"{WORKER_UPDATES_PORT}")))
         PRINT_LOCK.release()
 
-        # Worker updates handler object
-        obj_workerUpdatesTracker = UpdatesTracker()
         # List to hold the threads listening to updates from the workers
         workerUpdateThreads = []
 
