@@ -7,6 +7,8 @@ from ..Communication.protocol import YACS_Protocol
 class RandomScheduler:
     @staticmethod
     def jobDispatcher(requestHandler, workerStateTracker):
+        #  Initialize the random number generator.
+        random.seed()
         while True:
             jobID_family_task = None
             requestHandler.LOCK.acquire()
