@@ -101,15 +101,23 @@ yet? [y/n]").strip().lower()
 
     """ Creating the thread-shared objects
     """
-
     # Worker State Tracker Object
     obj_workerStateTracker = StateTracker(workerConf)
     obj_requestHandler = JobRequestHandler()  # Job Request Handler Object
 
+    # ---
+
+    """ Creating the various threads needed at the master machine and
+     passing in the required parameters.
+     All the threads are declared as daemon threads.
+     Daemon threads are those threads which are killed when the main
+     program exits.
+    """
     jobRequestThread = threading.Thread(name=("Listen for Incoming Job"
                                               "Requests"),
                                         target=listenForJobRequests,
                                         args=(obj_requestHandler))
+    jobRequestThread.daemon = True
 
     taskDispatchThread = None
     if TYPE_OF_SCHEDULING == "RANDOM":
@@ -133,11 +141,8 @@ yet? [y/n]").strip().lower()
         print(error_text("Invalid value entered for type of scheduling!"))
         sys.exit(1)
 
-    """ Create the required threads on the master machine, passing in the
-    required parameters. Eventhough the variables created here are global
-    it is better for the sake of clarity to pass in the variables
-    which you want the function to work with as arguments to it
-    """
+    taskDispatchThread.daemon = True
+
     WORKER_UPDATES_PORT = 5000
     WORKER_UPDATES_ADDR = (socket.gethostname(), WORKER_UPDATES_PORT)
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as \
@@ -177,6 +182,7 @@ yet? [y/n]").strip().lower()
                                      args=(workerSocket,
                                            obj_workerStateTracker,
                                            obj_workerUpdatesTracker))
+            _temp.daemon = True
 
             # Store the thread object in a list
             workerUpdateThreads.append(_temp)
