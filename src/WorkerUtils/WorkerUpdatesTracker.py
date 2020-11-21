@@ -1,0 +1,2 @@
+class UpdatesTracker():
+    pass
