@@ -11,7 +11,7 @@ from WorkerUtils.WorkerUpdatesTracker import UpdatesTracker
 
 from Scheduler.JobRequests import JobRequestHandler
 from Scheduler.RandomScheduling import RandomScheduler
-from Scheduler.RoundRobinScheduler import RoundRobinScheduler
+from Scheduler.RoundRobinScheduling import RoundRobinScheduler
 
 BUFFER_SIZE = 4096
 GE = inflect.engine()  # GE means Grammar Engine
@@ -99,21 +99,34 @@ yet? [y/n]").strip().lower()
     #  Initialize the random number generator.
     random.seed()
 
-    obj_wst = StateTracker(workerConf)  # Worker State Tracker Object
+    """ Creating the thread-shared objects
+    """
+
+    # Worker State Tracker Object
+    obj_workerStateTracker = StateTracker(workerConf)
     obj_requestHandler = JobRequestHandler()  # Job Request Handler Object
 
-    jobRequestThread = threading.Thread(name="Listen for Incoming Job Requests",
-                               target=listenForJobRequests,
-                               args=(obj_requestHandler))
+    jobRequestThread = threading.Thread(name=("Listen for Incoming Job"
+                                              "Requests"),
+                                        target=listenForJobRequests,
+                                        args=(obj_requestHandler))
 
     taskDispatchThread = None
     if TYPE_OF_SCHEDULING == "RANDOM":
-        taskDispatchThread = threading.Thread(name="Job Dispatcher - Random Scheduling",
-                                  target=RandomScheduler.jobDispatcher,
-                                  args=(obj_requestHandler, obj_wst))
+        taskDispatchThread = threading.Thread(name=("Job Dispatcher -"
+                                                    "Random Scheduling"),
+                                              target=RandomScheduler.
+                                              jobDispatcher,
+                                              args=(obj_requestHandler,
+                                                    obj_workerStateTracker))
     elif TYPE_OF_SCHEDULING == "RR":
-        # WORKER_COUNT
-        pass
+        taskDispatchThread = threading.Thread(name=("Job Dispatcher -"
+                                                    "Round robin Scheduling"),
+                                              target=RoundRobinScheduler.
+                                              jobDispatcher,
+                                              args=(obj_requestHandler,
+                                                    obj_workerStateTracker,
+                                                    WORKER_COUNT))
     elif TYPE_OF_SCHEDULING == "LL":
         pass
     else:
@@ -161,7 +174,8 @@ yet? [y/n]").strip().lower()
             _temp = threading.Thread(target=workerUpdates,
                                      name=(f"Worker-{WORKER_NUMBER} Update "
                                            "Listener"),
-                                     args=(workerSocket, obj_wst,
+                                     args=(workerSocket,
+                                           obj_workerStateTracker,
                                            obj_workerUpdatesTracker))
 
             # Store the thread object in a list
