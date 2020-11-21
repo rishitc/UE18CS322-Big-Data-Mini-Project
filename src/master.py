@@ -2,9 +2,7 @@ import json
 import socket
 import sys
 import threading
-import _thread
 import random
-import time
 import colored as TC
 import inflect
 
@@ -141,9 +139,11 @@ yet? [y/n]").strip().lower()
 
         # Worker updates handler object
         obj_workerUpdatesTracker = UpdatesTracker()
+        # List to hold the threads listening to updates from the workers
+        workerUpdateThreads = []
 
         # A forever loop until client wants to exit
-        while True:
+        for _ in range(WORKER_COUNT):
             # Establish connection with client
             workerSocket, workerAddress = worker_updates_socket.accept()
 
@@ -157,7 +157,7 @@ yet? [y/n]").strip().lower()
             PRINT_LOCK.release()
 
             # Start a new thread and return its identifier
-            threading.Thread(target=workerUpdates,
+            workerUpdateThreads.append(threading.Thread(target=workerUpdates,
                              name=f"Worker-{WORKER_NUMBER} Update Listener",
                              args=(workerSocket, obj_wst,
-                                   obj_workerUpdatesTracker))
+                                   obj_workerUpdatesTracker)))
