@@ -26,7 +26,7 @@ def error_text(text):
     return f"{TC.fg(1) + TC.attr(1)}ERROR:{TC.attr(0)} {text}"
 
 
-def listenForJobRequests(requestHandler):
+def listenForJobRequests(requestHandler, workerUpdatesTracker):
     _JOB_REQUEST_ADDR = (socket.gethostname(), 5000)
 
     # Setup the master socket to listen for job requests
@@ -48,12 +48,20 @@ def listenForJobRequests(requestHandler):
                 break
 
             # Decode and parse the JSON string
-            _temp = json.loads(jobRequest.decode())
+            parsedJSON_Msg = json.loads(jobRequest.decode())
 
             # Add new job request to job request handler object
+            # for task dispatch
             requestHandler.LOCK.acquire()
-            requestHandler.addJobRequest(_temp)
+            requestHandler.addJobRequest(parsedJSON_Msg)
             requestHandler.LOCK.release()
+
+            # Add new job request to job request handler object
+            # for tracking dispatched tasks' completion by the
+            # workers
+            workerUpdatesTracker.LOCK.acquire()
+            workerUpdatesTracker.addJob(parsedJSON_Msg)
+            workerUpdatesTracker.LOCK.release()
 
 
 def workerUpdates(workerSocket, workerStateTracker,
