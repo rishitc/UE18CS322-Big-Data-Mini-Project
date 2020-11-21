@@ -158,6 +158,7 @@ yet? [y/n]").strip().lower()
 
             # Start a new thread and return its identifier
             workerUpdateThreads.append(threading.Thread(target=workerUpdates,
-                             name=f"Worker-{WORKER_NUMBER} Update Listener",
-                             args=(workerSocket, obj_wst,
-                                   obj_workerUpdatesTracker)))
+                                       name=(f"Worker-{WORKER_NUMBER} Update "
+                                             "Listener"),
+                                       args=(workerSocket, obj_wst,
+                                             obj_workerUpdatesTracker)))
