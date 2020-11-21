@@ -1,6 +1,8 @@
 import random
 import time
 
+from ..Communication.protocol import YACS_Protocol
+
 
 class RandomScheduler:
     @staticmethod

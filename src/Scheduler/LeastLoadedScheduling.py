@@ -1,4 +1,5 @@
 import time
+from ..Communication.protocol import YACS_Protocol
 
 
 class LeastLoadedScheduler:
