@@ -9,6 +9,8 @@ import colored as TC
 import inflect
 
 from WorkerUtils.WorkerStateTracker import StateTracker
+from WorkerUtils.WorkerUpdatesTracker import UpdatesTracker
+
 from Scheduler.JobRequests import JobRequestHandler
 from Scheduler.RandomScheduling import RandomScheduler
 from Scheduler.RoundRobinScheduler import RoundRobinScheduler
@@ -138,13 +140,15 @@ yet? [y/n]").strip().lower()
         PRINT_LOCK.release()
 
         # Worker updates handler object
-        obj_workerUpdatesTracker = WorkerUpdatesTracker()
+        obj_workerUpdatesTracker = UpdatesTracker()
 
         # A forever loop until client wants to exit
         while True:
             # Establish connection with client
             workerSocket, workerAddress = worker_updates_socket.accept()
 
+            # Get the worker number from the newly connected worker
+            WORKER_NUMBER = workerSocket.recv(BUFFER_SIZE).decode()
             # Printing connection updates
             PRINT_LOCK.acquire()
             print(info_text("Connected to worker at address:"))
@@ -153,5 +157,7 @@ yet? [y/n]").strip().lower()
             PRINT_LOCK.release()
 
             # Start a new thread and return its identifier
-            _thread.start_new_thread(workerUpdates, (workerSocket, obj_wst,
-                                                     obj_workerUpdatesTracker))
+            threading.Thread(target=workerUpdates,
+                             name=f"Worker-{WORKER_NUMBER} Update Listener",
+                             args=(workerSocket, obj_wst,
+                                   obj_workerUpdatesTracker))
