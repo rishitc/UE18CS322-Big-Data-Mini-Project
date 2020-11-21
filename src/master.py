@@ -2,6 +2,7 @@ import json
 import socket
 import sys
 import threading
+import _thread
 import random
 import time
 import colored as TC
@@ -101,7 +102,7 @@ def jobDispatcher_Random(requestHandler, workerStateTracker):
 
 
 def workerUpdates(workerSocket, workerStateTracker,
-                  jobTracker):
+                  workerUpdatesTracker):
     while True:
         workerUpdate = workerSocket.recv(BUFFER_SIZE)
         if not workerUpdate:
@@ -110,9 +111,9 @@ def workerUpdates(workerSocket, workerStateTracker,
 
         parsedJSON_Msg = json.loads(workerUpdate)
 
-        jobTracker.LOCK.acquire()
-        jobTracker.updateJob(parsedJSON_Msg)
-        jobTracker.LOCK.release()
+        workerUpdatesTracker.LOCK.acquire()
+        workerUpdatesTracker.updateJob(parsedJSON_Msg)
+        workerUpdatesTracker.LOCK.release()
 
         workerStateTracker.LOCK.acquire()
         workerStateTracker.freeSlot(parsedJSON_Msg["worker_id"])
@@ -144,11 +145,13 @@ yet? [y/n]").strip().lower()
     random.seed()
 
     obj_wst = StateTracker(workerConf)  # Worker State Tracker Object
-    requestHandler = JobRequestHandler()  # Job Request Handler Object
+    obj_requestHandler = JobRequestHandler()  # Job Request Handler Object
 
+    # Worker updates handler object
+    obj_workerUpdatesTracker = WorkerUpdatesTracker()
     obj_jrl = threading.Thread(name="Listen for Incoming Job Requests",
                                target=listenForJobRequests,
-                               args=(requestHandler))
+                               args=(obj_requestHandler))
 
     if TYPE_OF_SCHEDULING == "RANDOM":
         pass
@@ -167,7 +170,7 @@ yet? [y/n]").strip().lower()
     """
     obj_jd = threading.Thread(name="Job Dispatcher - Random Scheduling",
                               target=jobDispatcher_Random,
-                              args=(requestHandler, obj_wst))
+                              args=(obj_requestHandler, obj_wst))
 
     WORKER_UPDATES_PORT = 5000
     worker_updates_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -183,13 +186,17 @@ yet? [y/n]").strip().lower()
         # Establish connection with client
         workerSocket, workerAddress = worker_updates_socket.accept()
 
-        # Lock acquired by client
-        print_lock.acquire() 
-        print('Connected to :', addr[0], ':', addr[1]) 
-  
-        # Start a new thread and return its identifier 
-        start_new_thread(threaded, (c,)) 
-    s.close() 
+        # Printing connection updates
+        PRINT_LOCK.acquire()
+        print(info_text("Connected to worker at address:"))
+        print(f"IP Address: {workerAddress[0]}")
+        print(f"Socket: {workerAddress[1]}")
+        PRINT_LOCK.release()
+
+        # Start a new thread and return its identifier
+        _thread.start_new_thread(workerUpdates, (workerSocket, obj_wst,
+                                                 obj_workerUpdatesTracker))
+    s.close()
 
     obj_wu = threading.Thread(name="Worker Updates",
                               target=workerUpdates,
