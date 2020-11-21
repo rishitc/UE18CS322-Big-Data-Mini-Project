@@ -35,18 +35,18 @@ to compare the performance for each machine
 
 ### Rishit: (Scheduling and Task execution request)
 1. Create the 3 Scheduling algorithms to select the machine to run the tasks on
-1. Sending the job to the workers using the message creation as per the YACS_Communication_Protocol class
+1. Sending the job to the workers using the message creation as per the YACS_Protocol class
 1. Handling the SimplifiedSockets class for easy socket Communication
-1. Work on the job tracker for tracking job completions time stamps
 
 
 ### Varun: (Simulation and Task completion response)
 1. Simulation of workers and task execution. (Slide 13)
     - A for-loop with time.sleep() for one second will make sure the loop progresses for 1 iteration per second and every iteration decrease the remaining_duration value of each executing task in the execution pool by 1 until it reaches 0
     - This is essentially the workflow (d) in the slide 19
-1. Send message using the YACS_Communication_Protocol of the details of the task completion
+1. Send message using the YACS_Protocol of the details of the task completion
 
 ### Akhil: (Logging and Communication protocol)
+1. Work on the job tracker for tracking job completions time stamps
 1. Log the JSON information which is sent in by the workers to the master node after the task has been completed as well as log the Job completion data (this can be got from the JobTracker object)
     - More information about this can be found in the protocol format below
     - For logging use 3 separate folder (1 for each scheduling protocol)
@@ -55,7 +55,7 @@ to compare the performance for each machine
 and create the json message as per the protocol format below
     - The class-methods of the class to create the message can be called as createMessageToWorker() and createMessageToMaster()
         - This method returns the required JSON string
-    - Call the class as YACS_Communication_Protocol
+    - Call the class as YACS_Protocol
 
 **What format does the protocol implement?**
 
