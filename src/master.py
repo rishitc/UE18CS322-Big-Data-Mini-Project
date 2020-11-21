@@ -117,6 +117,8 @@ if __name__ == "__main__":
     obj_requestHandler = JobRequestHandler(obj_workerUpdatesTracker)
 
     # ---
+    # After this points we create the threads for the master
+    # ---
 
     """ Creating the various threads needed at the master machine and
      passing in the required parameters.
@@ -155,7 +157,9 @@ if __name__ == "__main__":
                                                     obj_workerStateTracker,
                                                     WORKER_COUNT))
     else:
+        PRINT_LOCK.acquire()
         print(error_text("Invalid value entered for type of scheduling!"))
+        PRINT_LOCK.release()
         sys.exit(1)
 
     taskDispatchThread.daemon = True
@@ -183,6 +187,7 @@ if __name__ == "__main__":
 
             # Get the worker number from the newly connected worker
             WORKER_NUMBER = workerSocket.recv(BUFFER_SIZE).decode()
+
             # Printing connection updates
             PRINT_LOCK.acquire()
             print(info_text("Connected to worker at address:"))
