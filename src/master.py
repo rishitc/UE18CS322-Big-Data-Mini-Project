@@ -2,7 +2,6 @@ import json
 import socket
 import sys
 import threading
-import random
 import colored as TC
 import inflect
 
@@ -96,9 +95,6 @@ if __name__ == "__main__":
         _ans = input(f"{'Have' if WORKER_COUNT > 1 else 'Has'} the \
 {WORKER_COUNT} {GE.plural_noun('worker', WORKER_COUNT)} been started, \
 yet? [y/n]").strip().lower()
-
-    #  Initialize the random number generator.
-    random.seed()
 
     """ Creating the thread-shared objects
     """
