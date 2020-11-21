@@ -98,3 +98,7 @@ class StateTracker:
                 _least_loaded_workerFreeSlots = _free_slot_count
 
         return _least_loaded_workerID
+
+    def closeDispatchTaskSockets(self):
+        for workerID in self.workerIDs:
+            self.workerState[workerID]["socket"].close()

@@ -203,3 +203,6 @@ yet? [y/n]").strip().lower()
     # Wait for the threads listening for worker updates to finish
     for updateThread in workerUpdateThreads:
         updateThread.join()
+
+    # Closing all task dispatch sockets to the workers
+    obj_workerStateTracker.closeDispatchTaskSockets()
