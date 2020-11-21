@@ -1,4 +1,3 @@
-import os
 import json
 import socket
 import sys
@@ -6,18 +5,21 @@ import threading
 import random
 import time
 import colored as TC
-
+import inflect
 
 from WorkerUtils.WorkerStateTracker import StateTracker
 from Scheduler.JobRequests import JobRequestHandler
 
 BUFFER_SIZE = 4096
+GRAMMAR_ENGINE = inflect.engine()
 
-MASTER_SETUP_PATH = os.path.abspath(
-                                     os.path.join("..",
-                                                  "setup")
-                                     )
-print(f"{MASTER_SETUP_PATH=}")
+
+def info_text(text):
+    return f"{TC.fg(6)}{TC.attr(1)}INFO:{TC.attr(0)} {text}"
+
+
+def error_text(text):
+    return f"{TC.fg(1)}{TC.attr(1)}ERROR:{TC.attr(0)} {text}"
 
 
 def listenForJobRequests(requestHandler):
@@ -28,12 +30,16 @@ def listenForJobRequests(requestHandler):
         jobReqSocket.bind(_JOB_REQUEST_ADDR)
         jobReqSocket.listen()
         clientConn, clientAddr = jobReqSocket.accept()
+        print(info_text("Connected to client at address:"))
+        print(f"IP Address: {clientAddr[0]}")
+        print(f"Socket: {clientAddr[1]}")
         while True:
             jobRequest = clientConn.recv(BUFFER_SIZE)
             if not jobRequest:
                 clientConn.close()
                 break
 
+            # Decode and parse the JSON string
             _temp = json.loads(jobRequest.decode())
 
             # Add new job request to job request handler object
@@ -42,14 +48,13 @@ def listenForJobRequests(requestHandler):
             requestHandler.LOCK.release()
 
 
-def jobDispatcher_Random(requestHandler, rh_lock,
-                         workerStateTracker):
+def jobDispatcher_Random(requestHandler, workerStateTracker):
     while True:
         jobID_family_task = None
-        rh_lock.acquire()
+        requestHandler.LOCK.acquire()
         if not requestHandler.isEmpty():
             jobID_family_task = requestHandler.getWaitingTask()
-        rh_lock.release()
+        requestHandler.LOCK.release()
 
         # If there is a Task that needs to be executed
         if jobID_family_task is not None:
@@ -60,6 +65,8 @@ def jobDispatcher_Random(requestHandler, rh_lock,
                 workerStateTracker.LOCK.acquire()
                 # Pick a worker at random
                 _temp = random.choice(workerStateTracker.workerIDs)
+
+                # If the worker has a free slot
                 if workerStateTracker.isWorkerFree(_temp):
                     # Create the JSON protocol message
                     protocolMsg = (YACS_Protocol
@@ -73,15 +80,16 @@ def jobDispatcher_Random(requestHandler, rh_lock,
                                        worker_ID=_temp
                                    ))
                     # Once a worker with a free slot is found then
-                    # we dispatch the job to the worker and update its
-                    # state
+                    # 1. We dispatch the job to the worker
+                    # 2. Update its state
                     workerStateTracker.getWorkerSocket(_temp)\
                         .sendall(protocolMsg)
                     workerStateTracker.allocateSlot(_temp)
                 workerStateTracker.LOCK.release()
-                # Sleep for half a second to allow for the workerStateTracker
+
+                # Sleep for a second to allow for the workerStateTracker
                 # to be updated by the thread: workerUpdates
-                time.sleep(0.5)
+                time.sleep(1)
 
         # Updating the object which is tracking the worker states
         workerStateTracker.LOCK.acquire()
@@ -111,17 +119,18 @@ def workerUpdates(workerSocket, workerStateTracker,
 if __name__ == "__main__":
     PATH_TO_CONFIG_FILE = sys.argv[1]
     TYPE_OF_SCHEDULING = sys.argv[2]
-
     try:
         with open(PATH_TO_CONFIG_FILE) as fHandler:
             # Load the data from the worker config file
             workerConf = json.load(fHandler)
+
     except FileNotFoundError:
-        print(f"{TC.fg(1)}{TC.attr(1)}ERROR:{TC.attr(0)} \
-Unable to find the file given by path: {PATH_TO_CONFIG_FILE}")
+        print(error_text(f"Unable to find the file given by path: \
+{PATH_TO_CONFIG_FILE}"))
         sys.exit(1)
 
-    while input("Have the worker(s) been started, yet? [y/n]").strip().lower()\
+    WORKER_COUNT = len(workerConf['workers'])
+    while input(f"{'Have' if  WORKER_COUNT > 1 else 'Has'} the {} worker{'s' if } been started, yet? [y/n]").strip().lower()\
             in ['n', 'no']:
         pass
 
@@ -142,8 +151,7 @@ Unable to find the file given by path: {PATH_TO_CONFIG_FILE}")
     elif TYPE_OF_SCHEDULING == "LL":
         pass
     else:
-        print(f"{TC.fg(1)}{TC.attr(1)}ERROR:{TC.attr(0)} Invalid value \
-entered for type of scheduling!")
+        print(error_text("Invalid value entered for type of scheduling!"))
         sys.exit(1)
 
     """ Create the required threads on the master machine, passing in the
@@ -154,7 +162,15 @@ entered for type of scheduling!")
     obj_jd = threading.Thread(name="Job Dispatcher - Random Scheduling",
                               target=jobDispatcher_Random,
                               args=(requestHandler, obj_wst))
-    
+
+    WORKER_UPDATES_PORT = 5000
+    worker_updates_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    worker_updates_socket.bind((socket.gethostname(), WORKER_UPDATES_PORT))
+    print(info_text(f"Listening to updates from the workers on port: \
+{WORKER_UPDATES_PORT}")
+
+    worker_updates_socket.listen()
+
     obj_wu = threading.Thread(name="Worker Updates",
                               target=workerUpdates,
                               args=(workerSocket, workerStateTracker,
