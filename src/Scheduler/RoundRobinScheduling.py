@@ -3,7 +3,7 @@ import time
 from ..Communication.protocol import YACS_Protocol
 
 
-class RandomScheduler:
+class RoundRobinScheduler:
     @staticmethod
     def jobDispatcher(requestHandler, workerStateTracker, WORKER_COUNT):
         while True:
