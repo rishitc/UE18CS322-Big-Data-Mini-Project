@@ -81,3 +81,20 @@ class StateTracker:
             self.workerState[workerID]["slots"],\
             "There are no slots to free up!"
         self.workerState[workerID]["free slots"] += task_count
+
+    def getLeastLoadedWorkerID(self):
+        # Variables used to track the least loaded worker
+        _least_loaded_workerID = None
+        _least_loaded_workerFreeSlots = 0
+
+        for workerID in self.workerIDs:
+            # Get the free slots of worker with ID: workerID
+            _free_slot_count = self.workerState[workerID]["free slots"]
+
+            if _free_slot_count > _least_loaded_workerFreeSlots:
+                # If the worker with ID: workerID has more free slots
+                # then update the tracking variables
+                _least_loaded_workerID = workerID
+                _least_loaded_workerFreeSlots = _free_slot_count
+
+        return _least_loaded_workerID
