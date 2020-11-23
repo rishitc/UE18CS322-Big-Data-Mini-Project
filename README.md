@@ -45,6 +45,14 @@ UE18CS322 Big Data Mini Project Repository
 
 ---
 
+# Note Point
+1. The starting time of the job is the time at which the worker received the first **map task** of the job.
+   1. This value will be equal to the smallest value for the ```start time``` field among all the acknowledgement messages sent by the workers to the master for a particular job
+2. The ending time of the job is the time at which the worker finishes the last *reduce task* of the job.
+   1. This value will be equal to the largest value for the ```end time``` field among all the acknowledgement messages sent by the workers to the master for a particular job
+
+---
+
 # Work Division:
 
 ### Saran:  (Plotting and Analysis of the information)
@@ -149,9 +157,10 @@ Format for how the worker responds to the completion of the task (i.e. a single 
    4. ```updateJob(task_completion_response_from_worker)``` to update the state of the job completion, as per message from the worker sent as parameter: ```task_completion_response_from_worker```
       1. ```task_completion_response_from_worker``` is essentially the input JSON string from the client after using json.loads() on it
 2. Log the JSON information which is sent in by the workers to the master node after the task has been completed as well as log the Job completion data (this can be got from the ```JobTracker``` object)
-    - More information about this can be found in the protocol format below
+    - More information about this can be found in the protocol format above
     - For logging use 3 separate folder (1 for each scheduling protocol)
     - In each folder keep 2 files: 1 for the Task completion time and the other for the job completion time
+    - Make sure to record the timestamps of the events accurately and are able to perform the required analysis.
 
 ---
 
