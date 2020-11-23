@@ -1,7 +1,7 @@
 import random
 import time
 
-from ..Communication.protocol import YACS_Protocol
+from Communication.protocol import YACS_Protocol
 
 
 class RandomScheduler:
