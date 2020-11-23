@@ -160,3 +160,4 @@ Format for how the worker responds to the completion of the task (i.e. a single 
 1. [Working with JSON module in Python](https://www.w3schools.com/python/python_json.asp)
 1. [Examples with explanation for using the JSON module in Python](https://realpython.com/python-json/)
 1. [Socket library, Python Docs](https://docs.python.org/3/library/socket.html)
+1. [Setting up your PYTHONPATH](https://bic-berkeley.github.io/psych-214-fall-2016/using_pythonpath.html)
