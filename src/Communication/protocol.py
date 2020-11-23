@@ -7,6 +7,8 @@ class YACS_Protocol:
                               worker_ID):
         """
         The final JSON string will be as follows:
+
+        ```json
         {
             "worker_id": <worker_id>,
             "job_id": <job_id>,
@@ -18,6 +20,8 @@ class YACS_Protocol:
                     },
                     ]
         }
+        ```
+
         """
         msg_dict = {}
         msg_dict["worker_id"] = worker_ID
@@ -36,6 +40,8 @@ class YACS_Protocol:
                               end_time, worker_ID, turnaround_time):
         """
         The final JSON string will be as follows:
+
+        ```json
         {
             "worker_id":<worker_id>,
             "job_id":<job_id>,
@@ -49,6 +55,8 @@ class YACS_Protocol:
                     },
                     ]
         }
+        ```
+ 
         """
         msg_dict = {}
         msg_dict["worker_id"] = worker_ID
@@ -69,6 +77,8 @@ class YACS_Protocol:
                                    worker_ID):
         """
         The final JSON string will be as follows:
+
+        ```json
         {
             "worker_id": <worker_id>,
             "job_id": <job_id>,
@@ -80,6 +90,8 @@ class YACS_Protocol:
                     },
                     ]
         }
+        ```
+
         """
         msg_dict = {}
         msg_dict["worker_id"] = worker_ID
@@ -98,6 +110,8 @@ class YACS_Protocol:
                                    end_time, worker_ID, turnaround_time):
         """
         The final JSON string will be as follows:
+
+        ```json
         {
             "worker_id":<worker_id>,
             "job_id":<job_id>,
@@ -111,6 +125,8 @@ class YACS_Protocol:
                     },
                     ]
         }
+        ```
+
         """
         msg_dict = {}
         msg_dict["worker_id"] = worker_ID
