@@ -3,11 +3,40 @@ UE18CS322 Big Data Mini Project Repository
 
 ## Running Instructions
 1. Installing all the packages mentioned in ```requirements.txt```
-```bash
-$ pip install -r requirements.txt
-```
-
-
+    ```bash
+    $ pip install -r requirements.txt
+    ```
+1. Add the src folder to your ```PYTHONPATH``` environment variable by following steps:
+   1. Open your terminal and in that, navigate into the ```src``` folder of the project
+   2. Once in the ```src``` folder run the command
+        ```bash
+        $ pwd
+        ```
+        - This will give you the complete path to the ```src``` folder your are currently in.
+        - Make sure to save this path returned, as it will be needed in the next steps
+    3. Open your system's ```.bash_profile``` file using the command,
+       ```bash
+       $ nano ~/.bash_profile
+       ```
+       - Navigate to the bottom of the file
+    4. Type in the following into the file,
+        ```bash
+        export PYTHONPATH="<The_path_returned_by_the_pwd_command_done_earlier>"
+        ```
+        - Save the file
+        - Close the file
+    5. Now run the below command on your terminal,
+        ```bash
+        $ source ~/.bash_profile
+        ```
+    6. Now run the below command on your terminal,
+        ```bash
+        $ echo $PYTHONPATH
+        ```
+        - You should see the path you had put as the value for the ```PYTHONPATH``` in the ```.bash_profile``` visible here
+    7. **NOTE:** The same steps can also be done using the ```~/.bashrc``` file instead of the file ```~/.bash_profile```
+       1. Using ```~/.bash_profile``` is recommended for systems running MacOS
+       2. Any of the 2 files can used for Linux systems
 ## Contributors
 * Rishit C
 * Akhil E
