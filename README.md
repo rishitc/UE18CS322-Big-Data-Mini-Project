@@ -105,7 +105,9 @@ Format for how the worker responds to the completion of the task (i.e. a single 
     - A for-loop with ```time.sleep()``` for one second will make sure the loop progresses for 1 iteration per second and every iteration decrease the remaining_duration value of each executing task in the execution pool by 1 until it reaches 0
     - This is essentially the workflow (d) in the slide 19
 1. Send message using the ```YACS_Protocol``` of the details of the task completion
-1. Other useful slides while creating the worker code: 8, 9, 18, 21, 24, 25
+1. Other useful slides while creating the worker code: 8, 9, 18, 21, 24, 25'
+1. Connect to the master to share updates of on going tasks
+1. Wait for the master to connect to worker, so that the master can start sending tasks to it
 
 ---
 
