@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.9.1" />
+<title>src.master API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>src.master</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">import json
+import socket
+import sys
+import threading
+import colored as TC
+import inflect
+
+from WorkerUtils.WorkerStateTracker import StateTracker
+from WorkerUtils.WorkerUpdatesTracker import UpdatesTracker
+
+from Scheduler.JobRequests import JobRequestHandler
+from Scheduler.RandomScheduling import RandomScheduler
+from Scheduler.RoundRobinScheduling import RoundRobinScheduler
+from Scheduler.LeastLoadedScheduling import LeastLoadedScheduler
+
+BUFFER_SIZE = 4096
+GE = inflect.engine()  # GE means Grammar Engine
+PRINT_LOCK = threading.Lock()
+
+
+def info_text(text):
+    return f&#34;{TC.fg(6) + TC.attr(1)}INFO:{TC.attr(0)} {text}&#34;
+
+
+def error_text(text):
+    return f&#34;{TC.fg(1) + TC.attr(1)}ERROR:{TC.attr(0)} {text}&#34;
+
+
+def listenForJobRequests(requestHandler, workerUpdatesTracker):
+    _JOB_REQUEST_ADDR = (socket.gethostname(), 5000)
+
+    # Setup the master socket to listen for job requests
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as jobReqSocket:
+        jobReqSocket.bind(_JOB_REQUEST_ADDR)
+        jobReqSocket.listen()
+        clientConn, clientAddr = jobReqSocket.accept()
+
+        PRINT_LOCK.acquire()
+        print(info_text(&#34;Connected to client at address:&#34;))
+        print(f&#34;IP Address: {clientAddr[0]}&#34;)
+        print(f&#34;Socket: {clientAddr[1]}&#34;)
+        PRINT_LOCK.release()
+
+        while True:
+            jobRequest = clientConn.recv(BUFFER_SIZE)
+            if not jobRequest:
+                clientConn.close()
+                break
+
+            # Decode and parse the JSON string
+            parsedJSON_Msg = json.loads(jobRequest.decode())
+
+            # Add new job request to job request handler object
+            # for task dispatch
+            requestHandler.LOCK.acquire()
+            requestHandler.addJobRequest(parsedJSON_Msg)
+            requestHandler.LOCK.release()
+
+            # Add new job request to job request handler object
+            # for tracking dispatched tasks&#39; completion by the
+            # workers
+            workerUpdatesTracker.LOCK.acquire()
+            workerUpdatesTracker.addJob(parsedJSON_Msg)
+            workerUpdatesTracker.LOCK.release()
+
+
+def workerUpdates(workerSocket, workerStateTracker,
+                  workerUpdatesTracker):
+    while True:
+        workerUpdate = workerSocket.recv(BUFFER_SIZE)
+        if not workerUpdate:
+            workerSocket.close()
+            break
+
+        parsedJSON_Msg = json.loads(workerUpdate)
+
+        workerUpdatesTracker.LOCK.acquire()
+        workerUpdatesTracker.updateJob(parsedJSON_Msg)
+        workerUpdatesTracker.LOCK.release()
+
+        workerStateTracker.LOCK.acquire()
+        workerStateTracker.freeSlot(parsedJSON_Msg[&#34;worker_id&#34;])
+        workerStateTracker.LOCK.release()
+
+
+if __name__ == &#34;__main__&#34;:
+    PATH_TO_CONFIG_FILE = sys.argv[1]
+    TYPE_OF_SCHEDULING = sys.argv[2]
+
+    try:
+        with open(PATH_TO_CONFIG_FILE) as fHandler:
+            # Load the data from the worker config file
+            workerConf = json.load(fHandler)
+
+    except FileNotFoundError:
+        print(error_text(f&#34;Unable to find the file given by path:\
+ {PATH_TO_CONFIG_FILE}&#34;))
+        sys.exit(1)
+
+    WORKER_COUNT = len(workerConf[&#39;workers&#39;])
+
+    _ans = &#39;n&#39;
+    while _ans in [&#39;n&#39;, &#39;no&#39;]:
+        _ans = input(f&#34;{&#39;Have&#39; if WORKER_COUNT &gt; 1 else &#39;Has&#39;} the\
+ {WORKER_COUNT} {GE.plural_noun(&#39;worker&#39;, WORKER_COUNT)} been started,\
+ yet? [y/n]&#34;).strip().lower()
+
+    &#34;&#34;&#34; Creating the thread-shared objects
+    &#34;&#34;&#34;
+    # Worker State Tracker Object
+    obj_workerStateTracker = StateTracker(workerConf)
+
+    # Worker updates handler object
+    obj_workerUpdatesTracker = UpdatesTracker()
+
+    # Job Request Handler Object
+    obj_requestHandler = JobRequestHandler(obj_workerUpdatesTracker)
+
+    # ---
+    # After this points we create the threads for the master
+    # ---
+
+    &#34;&#34;&#34; Creating the various threads needed at the master machine and
+     passing in the required parameters.
+     All the threads are declared as daemon threads.
+     Daemon threads are those threads which are killed when the main
+     program exits.
+    &#34;&#34;&#34;
+    jobRequestThread = threading.Thread(name=(&#34;Listen for Incoming Job&#34;
+                                              &#34;Requests&#34;),
+                                        target=listenForJobRequests,
+                                        args=(obj_requestHandler))
+    jobRequestThread.daemon = True
+
+    taskDispatchThread = None
+    if TYPE_OF_SCHEDULING == &#34;RANDOM&#34;:
+        taskDispatchThread = threading.Thread(name=(&#34;Job Dispatcher -&#34;
+                                                    &#34;Random Scheduling&#34;),
+                                              target=RandomScheduler.
+                                              jobDispatcher,
+                                              args=(obj_requestHandler,
+                                                    obj_workerStateTracker))
+    elif TYPE_OF_SCHEDULING == &#34;RR&#34;:
+        taskDispatchThread = threading.Thread(name=(&#34;Job Dispatcher -&#34;
+                                                    &#34;Round-Robin Scheduling&#34;),
+                                              target=RoundRobinScheduler.
+                                              jobDispatcher,
+                                              args=(obj_requestHandler,
+                                                    obj_workerStateTracker,
+                                                    WORKER_COUNT))
+    elif TYPE_OF_SCHEDULING == &#34;LL&#34;:
+        taskDispatchThread = threading.Thread(name=(&#34;Job Dispatcher -&#34;
+                                                    &#34;Least-Loaded Scheduling&#34;),
+                                              target=LeastLoadedScheduler.
+                                              jobDispatcher,
+                                              args=(obj_requestHandler,
+                                                    obj_workerStateTracker,
+                                                    WORKER_COUNT))
+    else:
+        PRINT_LOCK.acquire()
+        print(error_text(&#34;Invalid value entered for type of scheduling!&#34;))
+        PRINT_LOCK.release()
+        sys.exit(1)
+
+    taskDispatchThread.daemon = True
+
+    WORKER_UPDATES_PORT = 5001
+    WORKER_UPDATES_ADDR = (socket.gethostname(), WORKER_UPDATES_PORT)
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as \
+         worker_updates_socket:
+        worker_updates_socket.bind(WORKER_UPDATES_ADDR)
+
+        # Put the socket into listening mode
+        worker_updates_socket.listen(WORKER_COUNT)
+        PRINT_LOCK.acquire()
+        print(info_text((&#34;Listening to updates from the workers on port: &#34;
+                         f&#34;{WORKER_UPDATES_PORT}&#34;)))
+        PRINT_LOCK.release()
+
+        # List to hold the threads listening to updates from the workers
+        workerUpdateThreads = []
+
+        # A forever loop until client wants to exit
+        for _ in range(WORKER_COUNT):
+            # Establish connection with client
+            workerSocket, workerAddress = worker_updates_socket.accept()
+
+            # Get the worker number from the newly connected worker
+            WORKER_NUMBER = workerSocket.recv(BUFFER_SIZE).decode()
+
+            # Printing connection updates
+            PRINT_LOCK.acquire()
+            print(info_text(&#34;Connected to worker at address:&#34;))
+            print(f&#34;IP Address: {workerAddress[0]}&#34;)
+            print(f&#34;Socket: {workerAddress[1]}&#34;)
+            PRINT_LOCK.release()
+
+            # Start a new thread and return its thread object
+            _temp = threading.Thread(target=workerUpdates,
+                                     name=(f&#34;Worker-{WORKER_NUMBER} Update &#34;
+                                           &#34;Listener&#34;),
+                                     args=(workerSocket,
+                                           obj_workerStateTracker,
+                                           obj_workerUpdatesTracker))
+            _temp.daemon = True
+
+            # Store the thread object in a list
+            workerUpdateThreads.append(_temp)
+
+        print(f&#34;{workerUpdateThreads=}&#34;)
+
+    &#34;&#34;&#34; Wait for all the threads to finish
+    &#34;&#34;&#34;
+    # Wait for the thread listening for incoming job requests to finish
+    jobRequestThread.join()
+
+    # Wait for the thread dispatching tasks to the worker to finish
+    taskDispatchThread.join()
+
+    # Wait for the threads listening for worker updates to finish
+    for updateThread in workerUpdateThreads:
+        updateThread.join()
+
+    # Closing all task dispatch sockets to the workers
+    obj_workerStateTracker.closeDispatchTaskSockets()</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="src.master.error_text"><code class="name flex">
+<span>def <span class="ident">error_text</span></span>(<span>text)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def error_text(text):
+    return f&#34;{TC.fg(1) + TC.attr(1)}ERROR:{TC.attr(0)} {text}&#34;</code></pre>
+</details>
+</dd>
+<dt id="src.master.info_text"><code class="name flex">
+<span>def <span class="ident">info_text</span></span>(<span>text)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def info_text(text):
+    return f&#34;{TC.fg(6) + TC.attr(1)}INFO:{TC.attr(0)} {text}&#34;</code></pre>
+</details>
+</dd>
+<dt id="src.master.listenForJobRequests"><code class="name flex">
+<span>def <span class="ident">listenForJobRequests</span></span>(<span>requestHandler, workerUpdatesTracker)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def listenForJobRequests(requestHandler, workerUpdatesTracker):
+    _JOB_REQUEST_ADDR = (socket.gethostname(), 5000)
+
+    # Setup the master socket to listen for job requests
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as jobReqSocket:
+        jobReqSocket.bind(_JOB_REQUEST_ADDR)
+        jobReqSocket.listen()
+        clientConn, clientAddr = jobReqSocket.accept()
+
+        PRINT_LOCK.acquire()
+        print(info_text(&#34;Connected to client at address:&#34;))
+        print(f&#34;IP Address: {clientAddr[0]}&#34;)
+        print(f&#34;Socket: {clientAddr[1]}&#34;)
+        PRINT_LOCK.release()
+
+        while True:
+            jobRequest = clientConn.recv(BUFFER_SIZE)
+            if not jobRequest:
+                clientConn.close()
+                break
+
+            # Decode and parse the JSON string
+            parsedJSON_Msg = json.loads(jobRequest.decode())
+
+            # Add new job request to job request handler object
+            # for task dispatch
+            requestHandler.LOCK.acquire()
+            requestHandler.addJobRequest(parsedJSON_Msg)
+            requestHandler.LOCK.release()
+
+            # Add new job request to job request handler object
+            # for tracking dispatched tasks&#39; completion by the
+            # workers
+            workerUpdatesTracker.LOCK.acquire()
+            workerUpdatesTracker.addJob(parsedJSON_Msg)
+            workerUpdatesTracker.LOCK.release()</code></pre>
+</details>
+</dd>
+<dt id="src.master.workerUpdates"><code class="name flex">
+<span>def <span class="ident">workerUpdates</span></span>(<span>workerSocket, workerStateTracker, workerUpdatesTracker)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def workerUpdates(workerSocket, workerStateTracker,
+                  workerUpdatesTracker):
+    while True:
+        workerUpdate = workerSocket.recv(BUFFER_SIZE)
+        if not workerUpdate:
+            workerSocket.close()
+            break
+
+        parsedJSON_Msg = json.loads(workerUpdate)
+
+        workerUpdatesTracker.LOCK.acquire()
+        workerUpdatesTracker.updateJob(parsedJSON_Msg)
+        workerUpdatesTracker.LOCK.release()
+
+        workerStateTracker.LOCK.acquire()
+        workerStateTracker.freeSlot(parsedJSON_Msg[&#34;worker_id&#34;])
+        workerStateTracker.LOCK.release()</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="src" href="index.html">src</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="src.master.error_text" href="#src.master.error_text">error_text</a></code></li>
+<li><code><a title="src.master.info_text" href="#src.master.info_text">info_text</a></code></li>
+<li><code><a title="src.master.listenForJobRequests" href="#src.master.listenForJobRequests">listenForJobRequests</a></code></li>
+<li><code><a title="src.master.workerUpdates" href="#src.master.workerUpdates">workerUpdates</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.1</a>.</p>
+</footer>
+</body>
+</html>
