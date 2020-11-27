@@ -92,9 +92,9 @@ class JobTracker:
             entry.append(i)
             start=self.jobs_time[i][0]
             end=self.jobs_time[i][1]
-            entry.append(str(start))
-            entry.append(str(end))
-            entry.append(str(end-start))
+            entry.append((start))
+            entry.append((end))
+            entry.append((end-start))
             rows.append(entry)
         fields=['JobID','start_time','end_time','duration']
         with open('jobs.csv','w') as f:
@@ -111,9 +111,9 @@ class JobTracker:
                 entry.append(j)
                 start=self.tasks_time[i][j][0]
                 end=self.tasks_time[i][j][1]
-                entry.append(str(start))
-                entry.append(str(end))
-                entry.append(str(end-start))
+                entry.append((start))
+                entry.append((end))
+                entry.append((end-start))
                 rows.append(entry)
         fields=['JobID','TaskID','start_time','end_time','duration']
         with open('tasks.csv','w') as f:
