@@ -1,5 +1,6 @@
 import time
 import json
+import csv
 class JobTracker:
     def __init__(self):
         self.jobs=dict()
@@ -83,9 +84,44 @@ class JobTracker:
             return 0
         else:
             return 1
-
-
-
+    
+    def writeJobsCSV(self):
+        rows=[]
+        for i in self.jobs_time.keys():
+            entry=[]
+            entry.append(i)
+            start=self.jobs_time[i][0]
+            end=self.jobs_time[i][1]
+            entry.append(str(start))
+            entry.append(str(end))
+            entry.append(str(end-start))
+            rows.append(entry)
+        fields=['JobID','start_time','end_time','duration']
+        with open('jobs.csv','w') as f:
+            write=csv.writer(f)
+            write.writerow(fields)
+            write.writerows(rows)
+    
+    def writeTasksCSV(self):
+        rows=[]
+        for i in self.tasks_time.keys():
+            for j in self.tasks_time[i].keys:
+                entry=[]
+                entry.append(i)
+                entry.append(j)
+                start=self.tasks_time[i][j][0]
+                end=self.tasks_time[i][j][1]
+                entry.append(str(start))
+                entry.append(str(end))
+                entry.append(str(end-start))
+                rows.append(entry)
+        fields=['JobID','TaskID','start_time','end_time','duration']
+        with open('tasks.csv','w') as f:
+            write=csv.writer(f)
+            write.writerow(fields)
+            write.writerows(rows)
+'''
 x='{"job_id":111,"map_tasks":[{"task_id":3,"duration":5},{"task_id":77,"duration":6}],"reduce_tasks":[{"task_id":4,"duration":10},{"task_id":88,"duration":12}]}'
 JB=JobTracker()
 JB.add_jobs(x)
+'''
