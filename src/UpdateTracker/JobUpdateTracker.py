@@ -2,13 +2,15 @@ import time
 import json
 import csv
 import os
-class JobTracker:
+
+
+class Tracker:
     """
     This Class keeps track of the various Jobs that are created.
     The Jobs and the Tasks associated with the jobs are tracked.
     This Class also keeps track of the mapper reducer dependency.
     This Class creates csv log files for future analysis.
-    The log files include : 
+    The log files include:
         *  jobs.csv -> includes job_id, start time, end time and duration
         *  tasks.csv -> includes job_id, task_id, start time, end time and duration
         *  workers.csv -> includes job_id, worker_id, task_id, start time and end time
@@ -38,7 +40,7 @@ class JobTracker:
         self.job_writer=j_writer
         self.task_writer=t_writer
         self.worker_writer=w_writer
-        
+
     def addJob(self, request_message):
         """
         Gets the Request message and initialises the dictionaries
