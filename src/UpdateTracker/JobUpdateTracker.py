@@ -7,16 +7,17 @@ from threading import Lock
 
 class Tracker:
     """
-    This Class keeps track of the various Jobs that are created.
-    The Jobs and the Tasks associated with the jobs are tracked.
-    This Class also keeps track of the mapper reducer dependency.
-    This Class creates csv log files for future analysis.
-    The log files include:
-        * ```jobs.csv``` -> includes job_id, start time, end time and duration
-        * ```tasks.csv``` -> includes job_id, task_id, start time, end time and
-         duration
-        * ```workers.csv``` -> includes job_id, worker_id, task_id, start time
-         and end time
+    - This Class keeps track of the various Jobs that are created.
+    - The Jobs and the Tasks associated with the jobs are tracked.
+    - This Class also keeps track of the mapper reducer dependency.
+    - This Class creates csv log files for future analysis.
+    - The log files include:
+
+| File Name | Contents |
+|:-:|:-:|
+| ```jobs.csv``` | job_id, start time, end time and duration |
+| ```tasks.csv``` | job_id, task_id, start time, end time and duration |
+| ```workers.csv``` | job_id, worker_id, task_id, start time and end time |
     """
     def __init__(self, algorithm):
         self.jobs = dict()

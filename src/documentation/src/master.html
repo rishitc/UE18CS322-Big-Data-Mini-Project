@@ -34,7 +34,7 @@ import colored as TC
 import inflect
 
 from WorkerUtils.WorkerStateTracker import StateTracker
-from WorkerUtils.WorkerUpdatesTracker import UpdatesTracker
+from UpdateTracker.JobUpdateTracker import Tracker as JobUpdateTracker
 
 from Scheduler.JobRequests import JobRequestHandler
 from Scheduler.RandomScheduling import RandomScheduler
@@ -93,7 +93,7 @@ def listenForJobRequests(requestHandler, workerUpdatesTracker):
 
 
 def workerUpdates(workerSocket, workerStateTracker,
-                  workerUpdatesTracker):
+                  jobUpdatesTracker):
     while True:
         workerUpdate = workerSocket.recv(BUFFER_SIZE)
         if not workerUpdate:
@@ -102,9 +102,9 @@ def workerUpdates(workerSocket, workerStateTracker,
 
         parsedJSON_Msg = json.loads(workerUpdate)
 
-        workerUpdatesTracker.LOCK.acquire()
-        workerUpdatesTracker.updateJob(parsedJSON_Msg)
-        workerUpdatesTracker.LOCK.release()
+        jobUpdatesTracker.LOCK.acquire()
+        jobUpdatesTracker.updateJob(parsedJSON_Msg)
+        jobUpdatesTracker.LOCK.release()
 
         workerStateTracker.LOCK.acquire()
         workerStateTracker.freeSlot(parsedJSON_Msg[&#34;worker_id&#34;])
@@ -139,10 +139,10 @@ if __name__ == &#34;__main__&#34;:
     obj_workerStateTracker = StateTracker(workerConf)
 
     # Worker updates handler object
-    obj_workerUpdatesTracker = UpdatesTracker()
+    obj_jobUpdatesTracker = JobUpdateTracker(TYPE_OF_SCHEDULING)
 
     # Job Request Handler Object
-    obj_requestHandler = JobRequestHandler(obj_workerUpdatesTracker)
+    obj_requestHandler = JobRequestHandler(obj_jobUpdatesTracker)
 
     # ---
     # After this points we create the threads for the master
@@ -229,7 +229,7 @@ if __name__ == &#34;__main__&#34;:
                                            &#34;Listener&#34;),
                                      args=(workerSocket,
                                            obj_workerStateTracker,
-                                           obj_workerUpdatesTracker))
+                                           obj_jobUpdatesTracker))
             _temp.daemon = True
 
             # Store the thread object in a list
@@ -334,7 +334,7 @@ if __name__ == &#34;__main__&#34;:
 </details>
 </dd>
 <dt id="src.master.workerUpdates"><code class="name flex">
-<span>def <span class="ident">workerUpdates</span></span>(<span>workerSocket, workerStateTracker, workerUpdatesTracker)</span>
+<span>def <span class="ident">workerUpdates</span></span>(<span>workerSocket, workerStateTracker, jobUpdatesTracker)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -343,7 +343,7 @@ if __name__ == &#34;__main__&#34;:
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def workerUpdates(workerSocket, workerStateTracker,
-                  workerUpdatesTracker):
+                  jobUpdatesTracker):
     while True:
         workerUpdate = workerSocket.recv(BUFFER_SIZE)
         if not workerUpdate:
@@ -352,9 +352,9 @@ if __name__ == &#34;__main__&#34;:
 
         parsedJSON_Msg = json.loads(workerUpdate)
 
-        workerUpdatesTracker.LOCK.acquire()
-        workerUpdatesTracker.updateJob(parsedJSON_Msg)
-        workerUpdatesTracker.LOCK.release()
+        jobUpdatesTracker.LOCK.acquire()
+        jobUpdatesTracker.updateJob(parsedJSON_Msg)
+        jobUpdatesTracker.LOCK.release()
 
         workerStateTracker.LOCK.acquire()
         workerStateTracker.freeSlot(parsedJSON_Msg[&#34;worker_id&#34;])
