@@ -254,9 +254,9 @@ class Tracker:
         self.worker_writer.writerow(row)
         del self.workers_time[JobID][WorkerID]
 
-    def closeFiles(self):
+    def __del__(self):
         &#34;&#34;&#34;
-        This method closes all the open log files
+        The destructor of the class closes all the open log files
         &#34;&#34;&#34;
         self.f_jobs.close()
         self.f_workers.close()
@@ -264,9 +264,14 @@ class Tracker:
 
 
 if __name__ == &#34;__main__&#34;:
+    # x is initially the JSON string
     x = (&#39;{&#34;job_id&#34;:111,&#34;map_tasks&#34;:[{&#34;task_id&#34;:3,&#34;duration&#34;:5},&#39;
          &#39;{&#34;task_id&#34;:77,&#34;duration&#34;:6}],&#34;reduce_tasks&#34;:[{&#34;task_id&#34;:&#39;
          &#39;4,&#34;duration&#34;:10},{&#34;task_id&#34;:88,&#34;duration&#34;:12}]}&#39;)
+
+    # The JSON string is the parsed into a Python dictionary
+    x = json.loads(x)
+
     JB = Tracker(&#34;RR&#34;)
     JB.addJob(x)</code></pre>
 </details>
@@ -541,9 +546,9 @@ if __name__ == &#34;__main__&#34;:
         self.worker_writer.writerow(row)
         del self.workers_time[JobID][WorkerID]
 
-    def closeFiles(self):
+    def __del__(self):
         &#34;&#34;&#34;
-        This method closes all the open log files
+        The destructor of the class closes all the open log files
         &#34;&#34;&#34;
         self.f_jobs.close()
         self.f_workers.close()
@@ -613,24 +618,6 @@ response message</li>
         self.jobs[job_id][reduce_task[&#34;task_id&#34;]] = None
         self.tasks_time[job_id][reduce_task[&#34;task_id&#34;]] = None
         self.reduce_tracker[job_id][reduce_task[&#34;task_id&#34;]] = 0</code></pre>
-</details>
-</dd>
-<dt id="src.UpdateTracker.JobUpdateTracker.Tracker.closeFiles"><code class="name flex">
-<span>def <span class="ident">closeFiles</span></span>(<span>self)</span>
-</code></dt>
-<dd>
-<div class="desc"><p>This method closes all the open log files</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def closeFiles(self):
-    &#34;&#34;&#34;
-    This method closes all the open log files
-    &#34;&#34;&#34;
-    self.f_jobs.close()
-    self.f_workers.close()
-    self.f_tasks.close()</code></pre>
 </details>
 </dd>
 <dt id="src.UpdateTracker.JobUpdateTracker.Tracker.isMapComplete"><code class="name flex">
@@ -861,7 +848,6 @@ stats of that particular task to a log file.</p></div>
 <h4><code><a title="src.UpdateTracker.JobUpdateTracker.Tracker" href="#src.UpdateTracker.JobUpdateTracker.Tracker">Tracker</a></code></h4>
 <ul class="two-column">
 <li><code><a title="src.UpdateTracker.JobUpdateTracker.Tracker.addJob" href="#src.UpdateTracker.JobUpdateTracker.Tracker.addJob">addJob</a></code></li>
-<li><code><a title="src.UpdateTracker.JobUpdateTracker.Tracker.closeFiles" href="#src.UpdateTracker.JobUpdateTracker.Tracker.closeFiles">closeFiles</a></code></li>
 <li><code><a title="src.UpdateTracker.JobUpdateTracker.Tracker.isMapComplete" href="#src.UpdateTracker.JobUpdateTracker.Tracker.isMapComplete">isMapComplete</a></code></li>
 <li><code><a title="src.UpdateTracker.JobUpdateTracker.Tracker.isReduceComplete" href="#src.UpdateTracker.JobUpdateTracker.Tracker.isReduceComplete">isReduceComplete</a></code></li>
 <li><code><a title="src.UpdateTracker.JobUpdateTracker.Tracker.updateJob" href="#src.UpdateTracker.JobUpdateTracker.Tracker.updateJob">updateJob</a></code></li>
