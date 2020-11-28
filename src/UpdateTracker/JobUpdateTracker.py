@@ -2,6 +2,7 @@ import time
 import json
 import csv
 import os
+from threading import Lock
 
 
 class Tracker:
@@ -23,6 +24,7 @@ class Tracker:
         self.map_tracker=dict()
         self.reduce_tracker=dict()
         self.algo=algorithm
+        self.LOCK = Lock()
         fields_job=['JobID','start_time','end_time','duration']
         fields_task=['JobID','TaskID','start_time','end_time','duration']
         fields_worker=['JobID','WorkerID','TaskID','start_time','end_time']
