@@ -6,7 +6,7 @@ import colored as TC
 import inflect
 
 from WorkerUtils.WorkerStateTracker import StateTracker
-from WorkerUtils.WorkerUpdatesTracker import UpdatesTracker
+from UpdateTracker.JobUpdateTracker import Tracker as JobUpdateTracker
 
 from Scheduler.JobRequests import JobRequestHandler
 from Scheduler.RandomScheduling import RandomScheduler
@@ -65,7 +65,7 @@ def listenForJobRequests(requestHandler, workerUpdatesTracker):
 
 
 def workerUpdates(workerSocket, workerStateTracker,
-                  workerUpdatesTracker):
+                  jobUpdatesTracker):
     while True:
         workerUpdate = workerSocket.recv(BUFFER_SIZE)
         if not workerUpdate:
@@ -74,9 +74,9 @@ def workerUpdates(workerSocket, workerStateTracker,
 
         parsedJSON_Msg = json.loads(workerUpdate)
 
-        workerUpdatesTracker.LOCK.acquire()
-        workerUpdatesTracker.updateJob(parsedJSON_Msg)
-        workerUpdatesTracker.LOCK.release()
+        jobUpdatesTracker.LOCK.acquire()
+        jobUpdatesTracker.updateJob(parsedJSON_Msg)
+        jobUpdatesTracker.LOCK.release()
 
         workerStateTracker.LOCK.acquire()
         workerStateTracker.freeSlot(parsedJSON_Msg["worker_id"])
@@ -111,10 +111,10 @@ if __name__ == "__main__":
     obj_workerStateTracker = StateTracker(workerConf)
 
     # Worker updates handler object
-    obj_workerUpdatesTracker = UpdatesTracker()
+    obj_jobUpdatesTracker = JobUpdateTracker(TYPE_OF_SCHEDULING)
 
     # Job Request Handler Object
-    obj_requestHandler = JobRequestHandler(obj_workerUpdatesTracker)
+    obj_requestHandler = JobRequestHandler(obj_jobUpdatesTracker)
 
     # ---
     # After this points we create the threads for the master
@@ -201,7 +201,7 @@ if __name__ == "__main__":
                                            "Listener"),
                                      args=(workerSocket,
                                            obj_workerStateTracker,
-                                           obj_workerUpdatesTracker))
+                                           obj_jobUpdatesTracker))
             _temp.daemon = True
 
             # Store the thread object in a list
