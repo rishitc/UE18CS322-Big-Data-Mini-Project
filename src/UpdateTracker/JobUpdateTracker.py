@@ -12,11 +12,11 @@ class Tracker:
     This Class also keeps track of the mapper reducer dependency.
     This Class creates csv log files for future analysis.
     The log files include:
-        *  ```jobs.csv```    -> includes job_id, start time, end time and duration
-        *  ```tasks.csv```   -> includes job_id, task_id, start time, end time and
-                          duration
-        *  ```workers.csv``` -> includes job_id, worker_id, task_id, start time and
-                          end time
+        * ```jobs.csv``` -> includes job_id, start time, end time and duration
+        * ```tasks.csv``` -> includes job_id, task_id, start time, end time and
+         duration
+        * ```workers.csv``` -> includes job_id, worker_id, task_id, start time
+         and end time
     """
     def __init__(self, algorithm):
         self.jobs = dict()
@@ -151,80 +151,90 @@ class Tracker:
 
     def isMapComplete(self, jobID):
         """
-        performs a check whether all map tasks in a job are complete
-        This is to maintain map-reduce dependency
+        - Performs a check whether all map tasks in a job are complete
+        - This is to maintain *map-reduce dependency*
         """
-        status=self.map_tracker[jobID].values()
+        status = self.map_tracker[jobID].values()
         if 0 in status:
             return 0
         else:
             return 1
-        
-    def isReduceComplete(self,jobID):
+
+    def isReduceComplete(self, jobID):
         """
-        performs a check whether all reduce tasks in a job are complete
-        This is to maintain map-reduce dependency
+        - Performs a check whether **all reduce tasks in a job are complete**
+        - This is to maintain *map-reduce dependency*
         """
-        status=self.reduce_tracker[jobID].values()
+        status = self.reduce_tracker[jobID].values()
         if 0 in status:
             return 0
         else:
             return 1
-    
-    def writeJobsCSV(self,JobID):
+
+    def writeJobsCSV(self, JobID):
         """
-        If a job is completed, writes the stats of that particular
-        job to a log file.
+        If a job has completed, then this method is called to write
+        the stats of that particular job to a log file.
         """
-        row=[]
+        row = []
         row.append(JobID)
-        start=self.jobs_time[JobID][0]
-        end=self.jobs_time[JobID][1]
+        start = self.jobs_time[JobID][0]
+        end = self.jobs_time[JobID][1]
         row.append(start)
         row.append(end)
         row.append((end-start))
         self.job_writer.writerow(row)
+
+        # Once the job has been written into the CSV file then delete
+        # its entry from the dictionary
         del self.jobs_time[JobID]
 
-    def writeTasksCSV(self,JobID,TaskID):
+    def writeTasksCSV(self, JobID, TaskID):
         """
         If a task is completed, writes the stats of that particular
         task to a log file.
         """
-        row=[]
+        row = []
         row.append(JobID)
         row.append(TaskID)
-        start=self.tasks_time[JobID][TaskID][0]
-        end=self.tasks_time[JobID][TaskID][1]
+        start = self.tasks_time[JobID][TaskID][0]
+        end = self.tasks_time[JobID][TaskID][1]
         row.append(start)
         row.append(end)
         row.append((end-start))
         self.task_writer.writerow(row)
+
+        # Once the task has been written into the CSV file then delete
+        # its entry from the dictionary
         del self.tasks_time[JobID][TaskID]
-    
-    def writeWorkersCSV(self,JobID,WorkerID,TaskID):
+
+    def writeWorkersCSV(self, JobID, WorkerID, TaskID):
         """
-        Writes worker stats to a log file
+        Writes worker stats to a log (here CSV) file
         """
-        row=[]
+        row = []
         row.append(JobID)
         row.append(WorkerID)
         row.append(TaskID)
-        start=self.workers_time[JobID][WorkerID][0]
-        end=self.workers_time[JobID][WorkerID][1]
+        start = self.workers_time[JobID][WorkerID][0]
+        end = self.workers_time[JobID][WorkerID][1]
         row.append(start)
         row.append(end)
         self.worker_writer.writerow(row)
         del self.workers_time[JobID][WorkerID]
-        
+
     def closeFiles(self):
         """
-        This closes all the open log files
+        This method closes all the open log files
         """
         self.f_jobs.close()
         self.f_workers.close()
         self.f_tasks.close()
 
-x='{"job_id":111,"map_tasks":[{"task_id":3,"duration":5},{"task_id":77,"duration":6}],"reduce_tasks":[{"task_id":4,"duration":10},{"task_id":88,"duration":12}]}'
-JB=JobTracker("rr")
-JB.addJob(x)
+
+if __name__ == "__main__":
+    x = ('{"job_id":111,"map_tasks":[{"task_id":3,"duration":5},'
+         '{"task_id":77,"duration":6}],"reduce_tasks":[{"task_id":'
+         '4,"duration":10},{"task_id":88,"duration":12}]}')
+    JB = Tracker("RR")
+    JB.addJob(x)
