@@ -95,56 +95,61 @@ class Tracker:
             self.tasks_time[job_id][reduce_task["task_id"]] = None
             self.reduce_tracker[job_id][reduce_task["task_id"]] = 0
 
-    def updateJob(self, response_message):
+    def updateJob(self, parsed_json_request):
         """
-        Takes in the response message and 
-        *  Updates task end time
-        *  If all tasks composing a job are done, updates job end time
-        *  Updates task stats of a worker
-        *  Writes out the stats of job, task, worker to a csv file
+        Takes in the response message and
+        * Updates task end time
+        * If all tasks composing a job are done, updates job end time
+        * Updates task stats of a worker
+        * Writes out the stats of job, task, worker to a csv file
+        * Format of task_stats is [start_time, end_time]
         """
-        json_string=json.loads(response_message)
-        #json_string=response_message
-        #Get the job id from the response message
-        job_id=json_string["job_id"]
-        #get the task id from the response message
-        task_id=json_string["task"][0]["task_id"]
-        #Get the worker id
-        worker_id=json_string["worker_id"]
-        #Get the task family
-        task_fam=json_string["task family"]
-        #Get task start and end time on worker
-        '''
-        Format of task_stats is [start_time,end_time]
-        '''
-        task_stats=[json_string["task"][0]["start time"],json_string["task"][0]["end time"]]
-        self.jobs[job_id][task_id]=response_message
-        #Stores start time and end time for a task
-        self.tasks_time[job_id][task_id]=task_stats
-        self.writeTasksCSV(job_id,task_id)
-        #Store the job_id, worker_id, task_id for a particular task
-        self.workers_time[job_id][worker_id]=task_stats
+        # json_string = json.loads(response_message)
+
+        # Converting the Python dictionary into a JSON string
+        response_message = json.dumps(parsed_json_request)
+        # Get the job id from the response message
+        job_id = parsed_json_request["job_id"]
+        # Get the task id from the response message
+        task_id = parsed_json_request["task"][0]["task_id"]
+        # Get the worker id from the response message
+        worker_id = parsed_json_request["worker_id"]
+        # Get the task family from the response message
+        task_fam = parsed_json_request["task family"]
+
+        # Get task start and end time on worker
+        task_stats = [parsed_json_request["task"][0]["start time"],
+                      parsed_json_request["task"][0]["end time"]]
+        self.jobs[job_id][task_id] = response_message
+        # Stores start time and end time for a task
+        self.tasks_time[job_id][task_id] = task_stats
+        self.writeTasksCSV(job_id, task_id)
+
+        # Store the job_id, worker_id, task_id for a particular task
+        self.workers_time[job_id][worker_id] = task_stats
         self.writeWorkersCSV(job_id, worker_id, task_id)
-        #If the task is a mapper task update map_tracker else update reduce tracker
-        if task_fam=="map tasks":
-            self.map_tracker[job_id][task_id]=1
+
+        # If the task is a mapper task then update map_tracker else
+        # update reduce tracker
+        if task_fam == "map tasks":
+            self.map_tracker[job_id][task_id] = 1
         else:
-            self.reduce_tracker[job_id][task_id]=1
+            self.reduce_tracker[job_id][task_id] = 1
         '''
         Check if all tasks that compose a job are finished
         This is checked using a flag. If flag remains 1, then all tasks
         in a job are completed and the job end time is written to the jobs_time dictionary
         '''
-        flag=1
+        flag = 1
         for key in self.jobs[job_id].keys:
-            if self.jobs[job_id][key]==None:
-                flag=0
+            if self.jobs[job_id][key] is None:
+                flag = 0
                 break
-        if flag==1:
-            self.jobs_time[job_id][1]=time.time()
+        if flag == 1:
+            self.jobs_time[job_id][1] = time.time()
             self.writeJobsCSV(job_id)
-            
-    def isMapComplete(self,jobID):
+
+    def isMapComplete(self, jobID):
         """
         performs a check whether all map tasks in a job are complete
         This is to maintain map-reduce dependency
