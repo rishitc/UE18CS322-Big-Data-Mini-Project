@@ -236,8 +236,13 @@ class Tracker:
 
 
 if __name__ == "__main__":
+    # x is initially the JSON string
     x = ('{"job_id":111,"map_tasks":[{"task_id":3,"duration":5},'
          '{"task_id":77,"duration":6}],"reduce_tasks":[{"task_id":'
          '4,"duration":10},{"task_id":88,"duration":12}]}')
+
+    # The JSON string is the parsed into a Python dictionary
+    x = json.loads(x)
+
     JB = Tracker("RR")
     JB.addJob(x)
