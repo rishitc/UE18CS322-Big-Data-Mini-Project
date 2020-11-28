@@ -12,10 +12,10 @@ class Tracker:
     This Class also keeps track of the mapper reducer dependency.
     This Class creates csv log files for future analysis.
     The log files include:
-        *  jobs.csv    -> includes job_id, start time, end time and duration
-        *  tasks.csv   -> includes job_id, task_id, start time, end time and
+        *  ```jobs.csv```    -> includes job_id, start time, end time and duration
+        *  ```tasks.csv```   -> includes job_id, task_id, start time, end time and
                           duration
-        *  workers.csv -> includes job_id, worker_id, task_id, start time and
+        *  ```workers.csv``` -> includes job_id, worker_id, task_id, start time and
                           end time
     """
     def __init__(self, algorithm):
@@ -52,44 +52,49 @@ class Tracker:
         self.task_writer = t_writer
         self.worker_writer = w_writer
 
-    def addJob(self, request_message):
+    def addJob(self, parsed_json_request):  # request_message):
         """
-        Gets the Request message and initialises the dictionaries
-        to keep track of the jobs and associated tasks
-        """
-        #Get job_ids from request message, update jobs and tasks
-        json_string=json.loads(request_message)
-        #json_string=request_message
-        #Get the job id from request string
-        job_id=json_string["job_id"]
-        #jobs dictionary keeps track of jobs and tasks in the job
-        self.jobs[job_id]=dict()
-        #Map tracker
-        self.map_tracker[job_id]=dict()
-        #Reduce tracker
-        self.reduce_tracker[job_id]=dict()
-        '''
-        jobs_time keeps track of time to complete a job.
+        - Gets the Request message and initialises the dictionaries
+        to keep track of the jobs and associated tasks.
+        - Get job_ids from request message, update jobs and tasks
+        - jobs_time keeps track of time to complete a job.
         Starting time is initialized when request message is sent
-        Ending time is updated when all tasks in a job are complete and a response message is sent
-        '''
-        self.jobs_time[job_id]=[time.time(),None]
-        '''
-        tasks_time keeps track of start time and end time of a task
-        The start time and end time of a particular task are received in the response message
-        '''
-        self.tasks_time[job_id]=dict()
-        self.workers_time[job_id]=dict()
-        #Initializing the dictionaries below
-        for i in json_string["map_tasks"]:
-            self.jobs[job_id][i["task_id"]]=None
-            self.tasks_time[job_id][i["task_id"]]=None
-            self.map_tracker[job_id][i["task_id"]]=0
-        for i in json_string["reduce_tasks"]:
-            self.jobs[job_id][i["task_id"]]=None
-            self.tasks_time[job_id][i["task_id"]]=None
-            self.reduce_tracker[job_id][i["task_id"]]=0
-            
+        Ending time is updated when all tasks in a job are complete and a
+        response message is sent tasks_time keeps track of start time and
+        end time of a task
+        The start time and end time of a particular task are received in the
+        response message
+        """
+        # json_string = json.loads(request_message)
+
+        # Get the job id from request string
+        job_id = parsed_json_request["job_id"]
+
+        # The jobs dictionary keeps track of jobs as well as the tasks
+        # in the job
+        self.jobs[job_id] = dict()
+
+        self.map_tracker[job_id] = dict()  # Tracker for map tasks
+        self.reduce_tracker[job_id] = dict()  # Tracker for reduce tasks
+
+        # We log the start time of the job and set the end time of the job
+        # as None for now
+        self.jobs_time[job_id] = [time.time(), None]
+
+        self.tasks_time[job_id] = dict()
+        self.workers_time[job_id] = dict()
+
+        # Initializing the dictionaries below
+        for map_task in parsed_json_request["map_tasks"]:
+            self.jobs[job_id][map_task["task_id"]] = None
+            self.tasks_time[job_id][map_task["task_id"]] = None
+            self.map_tracker[job_id][map_task["task_id"]] = 0
+
+        for reduce_task in parsed_json_request["reduce_tasks"]:
+            self.jobs[job_id][reduce_task["task_id"]] = None
+            self.tasks_time[job_id][reduce_task["task_id"]] = None
+            self.reduce_tracker[job_id][reduce_task["task_id"]] = 0
+
     def updateJob(self, response_message):
         """
         Takes in the response message and 
