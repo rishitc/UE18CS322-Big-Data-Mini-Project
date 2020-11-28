@@ -118,8 +118,7 @@ Format for how the worker responds to the completion of the task (i.e. a single 
             {
             "task_id": "<task_id>",
             "start time": <arrival_time_of_task_at_Worker>,
-            "end time": <end_time_of_task_in_Worker>,
-            "task turnaround time": <in seconds>
+            "end time": <end_time_of_task_in_Worker>
             },
             ]
 }
