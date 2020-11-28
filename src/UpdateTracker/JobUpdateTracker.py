@@ -12,36 +12,45 @@ class Tracker:
     This Class also keeps track of the mapper reducer dependency.
     This Class creates csv log files for future analysis.
     The log files include:
-        *  jobs.csv -> includes job_id, start time, end time and duration
-        *  tasks.csv -> includes job_id, task_id, start time, end time and duration
-        *  workers.csv -> includes job_id, worker_id, task_id, start time and end time
+        *  jobs.csv    -> includes job_id, start time, end time and duration
+        *  tasks.csv   -> includes job_id, task_id, start time, end time and
+                          duration
+        *  workers.csv -> includes job_id, worker_id, task_id, start time and
+                          end time
     """
     def __init__(self, algorithm):
-        self.jobs=dict()
-        self.jobs_time=dict()
-        self.tasks_time=dict()
-        self.workers_time=dict()
-        self.map_tracker=dict()
-        self.reduce_tracker=dict()
-        self.algo=algorithm
+        self.jobs = dict()
+        self.jobs_time = dict()
+        self.tasks_time = dict()
+        self.workers_time = dict()
+        self.map_tracker = dict()
+        self.reduce_tracker = dict()
+        self.algo = algorithm
         self.LOCK = Lock()
-        fields_job=['JobID','start_time','end_time','duration']
-        fields_task=['JobID','TaskID','start_time','end_time','duration']
-        fields_worker=['JobID','WorkerID','TaskID','start_time','end_time']
+
+        fields_job = ['JobID', 'start_time', 'end_time', 'duration']
+        fields_task = ['JobID', 'TaskID', 'start_time', 'end_time', 'duration']
+        fields_worker = ['JobID', 'WorkerID', 'TaskID', 'start_time',
+                         'end_time']
+
+        # If the folder to store the logs of the application does not exist
         if not os.path.exists(algorithm):
             os.mkdir(algorithm)
-        self.f_jobs=open(os.path.join(algorithm,"jobs.csv"),'w')
-        self.f_tasks=open(os.path.join(algorithm,"tasks.csv"),'w')
-        self.f_workers=open(os.path.join(algorithm, "workers.csv"),'w')
-        j_writer=csv.writer(self.f_jobs)
-        t_writer=csv.writer(self.f_tasks)
-        w_writer=csv.writer(self.f_workers)
+
+        # Object attributes to hold the file handler, to store the logs
+        self.f_jobs = open(os.path.join(algorithm, "jobs.csv"), 'w')
+        self.f_tasks = open(os.path.join(algorithm, "tasks.csv"), 'w')
+        self.f_workers = open(os.path.join(algorithm, "workers.csv"), 'w')
+
+        j_writer = csv.writer(self.f_jobs)
+        t_writer = csv.writer(self.f_tasks)
+        w_writer = csv.writer(self.f_workers)
         j_writer.writerow(fields_job)
         t_writer.writerow(fields_task)
         w_writer.writerow(fields_worker)
-        self.job_writer=j_writer
-        self.task_writer=t_writer
-        self.worker_writer=w_writer
+        self.job_writer = j_writer
+        self.task_writer = t_writer
+        self.worker_writer = w_writer
 
     def addJob(self, request_message):
         """
@@ -133,7 +142,7 @@ class Tracker:
     def isMapComplete(self,jobID):
         """
         performs a check whether all map tasks in a job are complete
-        This is to maintain map-reduce depenency
+        This is to maintain map-reduce dependency
         """
         status=self.map_tracker[jobID].values()
         if 0 in status:
@@ -144,7 +153,7 @@ class Tracker:
     def isReduceComplete(self,jobID):
         """
         performs a check whether all reduce tasks in a job are complete
-        This is to maintain map-reduce depenency
+        This is to maintain map-reduce dependency
         """
         status=self.reduce_tracker[jobID].values()
         if 0 in status:
