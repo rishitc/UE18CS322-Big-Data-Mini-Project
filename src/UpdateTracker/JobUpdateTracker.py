@@ -226,9 +226,9 @@ class Tracker:
         self.worker_writer.writerow(row)
         del self.workers_time[JobID][WorkerID]
 
-    def closeFiles(self):
+    def __del__(self):
         """
-        This method closes all the open log files
+        The destructor of the class closes all the open log files
         """
         self.f_jobs.close()
         self.f_workers.close()
