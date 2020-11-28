@@ -98,12 +98,14 @@ class Tracker:
 
     def updateJob(self, parsed_json_request):
         """
-        Takes in the response message and
-        * Updates task end time
-        * If all tasks composing a job are done, updates job end time
-        * Updates task stats of a worker
-        * Writes out the stats of job, task, worker to a csv file
-        * Format of task_stats is [start_time, end_time]
+        This method takes in the response message and performs the following
+        tasks:
+
+        - Updates task end time
+        - If all tasks composing a job are done, updates job end time
+        - Updates task stats of a worker
+        - Writes out the stats of job, task, worker to a csv file
+        - Format of task_stats is [start_time, end_time]
         """
         # json_string = json.loads(response_message)
 
@@ -192,8 +194,8 @@ class Tracker:
 
     def writeTasksCSV(self, JobID, TaskID):
         """
-        If a task is completed, writes the stats of that particular
-        task to a log file.
+        If a task has completed, then this method is called to write the
+        stats of that particular task to a log file.
         """
         row = []
         row.append(JobID)
