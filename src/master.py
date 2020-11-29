@@ -3,6 +3,7 @@ import socket
 import sys
 import threading
 import colored as TC
+from colored.colored import attr
 import inflect
 
 from WorkerUtils.WorkerStateTracker import StateTracker
@@ -84,8 +85,18 @@ def workerUpdates(workerSocket, workerStateTracker,
 
 
 if __name__ == "__main__":
-    PATH_TO_CONFIG_FILE = sys.argv[1]
-    TYPE_OF_SCHEDULING = sys.argv[2]
+    # Make sure the required command line arguments are passed in
+    PATH_TO_CONFIG_FILE = TYPE_OF_SCHEDULING = None
+    try:
+        PATH_TO_CONFIG_FILE = sys.argv[1]
+        TYPE_OF_SCHEDULING = sys.argv[2]
+    except IndexError as e:
+        print(f"{TC.attr(1)+TC.attr(5)+TC.fg('red')}ERROR:{attr(0)} "
+              "Missing command line arguments: "
+              f"{TC.attr(1)+TC.attr(4)}PATH_TO_CONFIG_FILE{TC.attr(0)}"
+              f" or {TC.attr(1)+TC.attr(4)}TYPE_OF_SCHEDULING{TC.attr(0)}"
+              f" or {TC.attr(1)}both!{TC.attr(0)}")
+        print(e)
 
     try:
         with open(PATH_TO_CONFIG_FILE) as fHandler:
