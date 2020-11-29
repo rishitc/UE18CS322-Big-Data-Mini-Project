@@ -29,8 +29,10 @@ class Worker:
 
     def listenForTask(self, json_protcol_message):
         """
-        This listens for a ***createMessageToWorker()*** message and the sets
-        initial variables as per the incoming JSON message.
+        This listens for a JSON message which was created using the
+        ***createMessageToWorker()*** method (*i.e. following the set protocol
+        format*) and then sets its initial variables as per this incoming JSON
+        message.
         """
         # Convert JSON to python dictionary
         python_protocol_message = json.loads(json_protcol_message)
