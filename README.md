@@ -37,6 +37,26 @@ UE18CS322 Big Data Mini Project Repository
     7. **NOTE:** The same steps can also be done using the ```~/.bashrc``` file instead of the file ```~/.bash_profile```
        1. Using ```~/.bash_profile``` is recommended for systems running MacOS
        2. Any of the 2 files can used for Linux systems
+
+## How to generate the documentation?
+1. Make sure the BASH script called ```build_docs.sh``` has **execute permission** set for the user you
+   are running as.
+    - If not then you can easily add it using the ```chmod``` command
+    - Preferably the command you can run to give permissions as well as maintain system security is:
+    ```bash
+    $ sudo chmod 764 ./build_docs.sh
+    ```
+    ### or
+    ```bash
+    $ sudo chmod 774 ./build_docs.sh
+    ```
+2. The run the command:
+   ```bash
+   $ ./build_docs.sh
+   ```
+   - In the output you may notice *PEP-224 UserWarnings*, please ignore them.
+   - Other than this, **no other warnings or errors** should show up. If they do then please consider **opening an issue** on our (project repository)[https://github.com/rishitc/UE18CS322-Big-Data-Mini-Project]
+
 ## Contributors
 * Rishit C
 * Akhil E
