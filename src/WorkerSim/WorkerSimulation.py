@@ -54,16 +54,22 @@ class Worker:
     def simulateWorker(self):
         # While there is a task to execute in the task-pool
         while len(self.tasks) != 0:
-            for i in self.tasks:
-                if self.tasks[i]!=0: # Durations will be positive(non-zero) integers
-                    self.tasks[i]-=1
+            for task_id in self.tasks:
+                # Durations will be positive(non-zero) integers
+                if self.tasks[task_id] != 0:
+                    # Reduce the duration of the task by 1
+                    self.tasks[task_id] -= 1
                 else:
-                    taskComplete(self.tasks[i])
-            time.sleep(1) # Sleeps for 1 second until next check on the values
-        #Need to add the portion wherein the worker needs to listen for messages if dict is empty
-        #Need to first establish communication between master and worker for that for that
+                    self.taskComplete(self.tasks[task_id])
 
-    def taskComplete(self,task_id): #Called by simulateWorker() when duration becomes 0 and returns JSON object of format createMessageToMaster() of YACS Protocol
+            # Sleeps for 1 second until next check on the values
+            time.sleep(1)
+        # NOTE: Need to add the portion wherein the worker needs to listen
+        # for messages if dict is empty
+        # NOTE: Need to first establish communication between master and
+        # worker for that for that
+
+    def taskComplete(self, task_id): #Called by simulateWorker() when duration becomes 0 and returns JSON object of format createMessageToMaster() of YACS Protocol
         self.endTime=time.time() # End timer of the task
         self.turnoverTime=self.endTime-self.startTime #It is waiting+burst, i.e end-start in this context
         # Can also call the YACS Protocol class's createMessageToWorker() for this
