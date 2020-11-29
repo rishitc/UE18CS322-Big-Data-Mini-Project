@@ -6,22 +6,22 @@ from threading import Lock
 
 class Worker:
     """
-    - This Class simulates the worker through following steps:-
-    - 1) It gets YACS Protocol Message (CreateMessageToWorker()) from the Master
-    - 2) It adds the particular task to its exec pool. NOTE: (Assumption? based on scheduling algorithm) Worker will not be handed any task when exec pool is full
-    - 3) (Simulate) Run the tasks by decrementing the remaining_time value each second
-    - 4) Once a particular task finishes exec, the Worker removes it from the exec pool and sends a message back to the Master using YACS Protocol Message 
+    - This Class simulates the worker through following steps:
+      1. It gets YACS Protocol Message (CreateMessageToWorker()) from the Master
+      2. It adds the particular task to its exec pool. NOTE: (Assumption? based on scheduling algorithm) Worker will not be handed any task when exec pool is full
+      3. (Simulate) Run the tasks by decrementing the remaining_time value each second
+      4. Once a particular task finishes exec, the Worker removes it from the exec pool and sends a message back to the Master using YACS Protocol Message 
         (CreateMessageToMaster())
     """
-    def __init__(self,WorkerTaskPool): # Still need to add depending on specs
-        self.tasks={} # Task ID as key and duration as value
-        self.taskpool=WorkerTaskPool
-        self.lock=Lock() #Where to use??
-        self.startTime=0
-        self.endTime=0
-        self.turnoverTime=0
-    
-    
+    def __init__(self, WorkerTaskPool):  # Still need to add depending on specs
+        self.tasks = {}  # Task ID as key and duration as value
+        self.taskpool = WorkerTaskPool
+        self.LOCK = Lock()  # Where to use??
+        self.startTime = 0
+        self.endTime = 0
+        self.turnoverTime = 0
+
+
     def listenForTask(self,json_protcol_message): #Listens for a createMessageToWroker() message and sets initial variables
         python_protocol_message = json.loads(json_protcol_message) #Convert JSON to python dictionary
         self.task_in_message=python_protocol_message["task"]["task_id"]
