@@ -27,18 +27,25 @@ class Worker:
         self.endTime = 0
         self.turnoverTime = 0
 
+    def listenForTask(self, json_protcol_message):
+        """Listens for a ***createMessageToWorker()*** message and the sets
+        initial variables
+        """
+        # Convert JSON to python dictionary
+        python_protocol_message = json.loads(json_protcol_message)
+        self.task_in_message = python_protocol_message["task"][0]["task_id"]
+        self.duration_in_message = (python_protocol_message["task"][0]
+                                    ["duration"])
 
-    def listenForTask(self,json_protcol_message): #Listens for a createMessageToWroker() message and sets initial variables
-        python_protocol_message = json.loads(json_protcol_message) #Convert JSON to python dictionary
-        self.task_in_message=python_protocol_message["task"]["task_id"]
-        self.duration_in_message=python_protocol_message["task"]["duration"]
-        # The above 2 values are essential for the simulation/worker computation
-        # The below variables are essential for the CreateMessageToMaster() YACS Protocol once the task completes exec
-        self.workerID_in_message=python_protocol_message["worker_id"]
-        self.jobID_in_message=python_protocol_message["job_id"]
-        self.taskfamily_in_message=python_protocol_message["task family"]
-        self.tasks[self.task_in_message]=self.duration_in_message #Key-Value pair (both integers) with task id as key and intial duration as value
-        self.startTime=time.time() #Start the timer for the task
+        # The above 2 values are essential for the simulation or worker
+        # computation
+        # The below variables are essential for the CreateMessageToMaster()
+        # YACS Protocol once the task completes execution
+        self.workerID_in_message = python_protocol_message["worker_id"]
+        self.jobID_in_message = python_protocol_message["job_id"]
+        self.taskfamily_in_message = python_protocol_message["task family"]
+        self.tasks[self.task_in_message] = self.duration_in_message #Key-Value pair (both integers) with task id as key and intial duration as value
+        self.startTime = time.time()  #Start the timer for the task
 
     def simulateWorker(self):
         while (len(self.tasks)!=0):
