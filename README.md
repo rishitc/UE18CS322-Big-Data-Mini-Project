@@ -48,7 +48,7 @@ UE18CS322 Big Data Mini Project Repository
 # Note Point
 1. The starting time of the job is the time at which the worker received the first **map task** of the job.
    1. This value will be equal to the smallest value for the ```start time``` field among all the acknowledgement messages sent by the workers to the master for a particular job
-2. The ending time of the job is the time at which the worker finishes the last *reduce task* of the job.
+2. The ending time of the job is the time at which the worker finishes the last **reduce task** of the job.
    1. This value will be equal to the largest value for the ```end time``` field among all the acknowledgement messages sent by the workers to the master for a particular job
 
 ---
@@ -103,8 +103,8 @@ Format for how the master sends the task (i.e. a single task) to the worker: (``
 **Note points:**
 - "task": [] can only contain one task
 - task_family can only have 2 values "map_tasks" or "reduce_tasks"
-- job_id has to be and integer
-- Worker_id has to be and integer only
+- job_id has to be an integer
+- worker_id has to be an integer only
 - task_id has to be a string
 
 
@@ -125,13 +125,13 @@ Format for how the worker responds to the completion of the task (i.e. a single 
 ```
 **Note points:**
 - "task": [] can only contain one task
-- job_id has to be and integer
-- Worker_id has to be and integer only
+- job_id has to be an integer
+- Worker_id has to be an integer only
 - task_family can only have 2 values "map_tasks" or "reduce_tasks"
 - "task completion time" has to be an float type
 - "start time":<arrival_time_of_task_at_Worker> has to be a timestamp,
 - "end time":<end_time_of_task_in_Worker>, has to be to be a timestamp
-- "job completion time" has to a float type
+- "job completion time" has to be a float type
 -  task_id has to be a string
 
 ---
