@@ -13,7 +13,7 @@ class Worker:
             - **NOTE:** (Assumption? based on scheduling algorithm)
             - The worker will not be handed any task when its execution pool is
             full
-        1. Run (i.e. simulate) the tasks by decrementing the remaining_time
+        1. Run (i.e. simulate) the tasks by decrementing the *remaining_time*
             value each second
         1. Once a particular task finishes execution, the worker removes it
             from the execution pool and sends a message back to the Master
@@ -33,22 +33,27 @@ class Worker:
         """
         # Convert JSON to python dictionary
         python_protocol_message = json.loads(json_protcol_message)
+
+        # The below 2 values are essential for the simulation or worker
+        # computation
         self.task_in_message = python_protocol_message["task"][0]["task_id"]
         self.duration_in_message = (python_protocol_message["task"][0]
                                     ["duration"])
 
-        # The above 2 values are essential for the simulation or worker
-        # computation
         # The below variables are essential for the CreateMessageToMaster()
         # YACS Protocol once the task completes execution
         self.workerID_in_message = python_protocol_message["worker_id"]
         self.jobID_in_message = python_protocol_message["job_id"]
         self.taskfamily_in_message = python_protocol_message["task family"]
-        self.tasks[self.task_in_message] = self.duration_in_message #Key-Value pair (both integers) with task id as key and intial duration as value
-        self.startTime = time.time()  #Start the timer for the task
+
+        # Key-Value pair (both integers) with task id as key and initial
+        # duration as value
+        self.tasks[self.task_in_message] = self.duration_in_message
+        self.startTime = time.time()  # Store the starting time of the task
 
     def simulateWorker(self):
-        while (len(self.tasks)!=0):
+        # While there is a task to execute in the task-pool
+        while len(self.tasks) != 0:
             for i in self.tasks:
                 if self.tasks[i]!=0: # Durations will be positive(non-zero) integers
                     self.tasks[i]-=1
