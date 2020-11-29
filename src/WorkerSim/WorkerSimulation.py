@@ -1,20 +1,26 @@
-import time # For timestamps
-import os #Needed to test reference to YACS Protocol for createMessageToMaster()
-import json # For working on JSON data
+import time  # For timestamps
+import os  # Needed to test reference to YACS Protocol for createMessageToMaster()
+import json  # For working on JSON data
 from threading import Lock
 
 
 class Worker:
     """
     - This Class simulates the worker through following steps:
-      1. It gets YACS Protocol Message (CreateMessageToWorker()) from the Master
-      2. It adds the particular task to its exec pool. NOTE: (Assumption? based on scheduling algorithm) Worker will not be handed any task when exec pool is full
-      3. (Simulate) Run the tasks by decrementing the remaining_time value each second
-      4. Once a particular task finishes exec, the Worker removes it from the exec pool and sends a message back to the Master using YACS Protocol Message 
-        (CreateMessageToMaster())
+        1. It gets YACS Protocol Message (created using the
+            ***CreateMessageToWorker()***) from the Master
+        1. It adds the particular task to its execution pool.
+            - **NOTE:** (Assumption? based on scheduling algorithm)
+            - The worker will not be handed any task when its execution pool is
+            full
+        1. Run (i.e. simulate) the tasks by decrementing the remaining_time
+            value each second
+        1. Once a particular task finishes execution, the worker removes it
+            from the execution pool and sends a message back to the Master
+            using YACS Protocol Message (***CreateMessageToMaster()***)
     """
     def __init__(self, WorkerTaskPool):  # Still need to add depending on specs
-        self.tasks = {}  # Task ID as key and duration as value
+        self.tasks = dict()  # Task ID as key and duration as value
         self.taskpool = WorkerTaskPool
         self.LOCK = Lock()  # Where to use??
         self.startTime = 0
