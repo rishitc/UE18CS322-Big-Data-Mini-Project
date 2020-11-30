@@ -83,7 +83,8 @@ class Worker:
         # NOTE: Need to add the portion wherein the worker needs to listen
         # for messages if dict is empty
         # NOTE: Need to first establish communication between master and
-        # worker for that for that
+        # worker for that
+        # UPDATE: Acknowledged. Working on that right now. 
 
     def taskComplete(self, task_id):
         """
@@ -99,10 +100,8 @@ class Worker:
         # this context
         self.turnoverTime = self.endTime - self.startTime
 
-        # Can also call the YACS Protocol class's createMessageToWorker() for
+        # Can also call the YACS Protocol class's createMessageToMaster() for
         # this
-        # NOTE: You should call YACS Protocol class's createMessageToMaster()
-        #       for this! and not createMessageToWorker()
 
         # Python dictionary for response message
         response_message_to_master = dict()
