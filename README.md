@@ -55,7 +55,7 @@ UE18CS322 Big Data Mini Project Repository
    $ ./build_docs.sh
    ```
    - In the output you may notice *PEP-224 UserWarnings*, please ignore them.
-   - Other than this, **no other warnings or errors** should show up. If they do then please consider **opening an issue** on our (project repository)[https://github.com/rishitc/UE18CS322-Big-Data-Mini-Project]
+   - Other than this, **no other warnings or errors** should show up. If they do then please consider **opening an issue** on our [project repository](https://github.com/rishitc/UE18CS322-Big-Data-Mini-Project)
 
 ## Contributors
 * Rishit C
