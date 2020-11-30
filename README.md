@@ -112,12 +112,10 @@ Format for how the master sends the task (i.e. a single task) to the worker: (``
     "worker_id": <worker_id>,
     "job_id": <job_id>,
     "task family": <("map_tasks"|"reduce_tasks")>,
-    "task":[
-            {
+    "task": {
                 "task_id": "<task_id>",
                 "duration": <in seconds>
-            },
-            ]
+             }
 }
 ```
 **Note points:**
@@ -134,13 +132,11 @@ Format for how the worker responds to the completion of the task (i.e. a single 
     "worker_id":<worker_id>,
     "job_id":<job_id>,
     "task family": <("map_tasks"|"reduce_tasks")>,
-    "task":[
-            {
-            "task_id": "<task_id>",
-            "start time": <arrival_time_of_task_at_Worker>,
-            "end time": <end_time_of_task_in_Worker>
-            },
-            ]
+    "task": {
+                "task_id": "<task_id>",
+                "start time": <arrival_time_of_task_at_Worker>,
+                "end time": <end_time_of_task_in_Worker>
+             }
 }
 ```
 **Note points:**
