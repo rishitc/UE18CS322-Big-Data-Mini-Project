@@ -49,7 +49,7 @@ class JobRequestHandler:
                     1.2.1.1 Return any reduce task of the job and associated
                             meta-data
                 1.2.2 else
-                    1.2.2.1 Continue and hence move to the next pending job
+                    1.2.2.1 Continue and hence check the next pending job
         2. Return None as there is no assignable task available
         ```
 
