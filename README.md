@@ -65,7 +65,7 @@ UE18CS322 Big Data Mini Project Repository
 
 ---
 
-# Note Point
+# Note Points
 1. The starting time of the job is the time at which the worker received the first **map task** of the job.
    1. This value will be equal to the smallest value for the ```start time``` field among all the acknowledgement messages sent by the workers to the master for a particular job
 2. The ending time of the job is the time at which the worker finishes the last **reduce task** of the job.
