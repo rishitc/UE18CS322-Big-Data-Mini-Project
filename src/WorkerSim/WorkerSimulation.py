@@ -1,8 +1,11 @@
 import time  # For timestamps
 import os  # Needed to test reference to YACS Protocol for createMessageToMaster()
 import json  # For working on JSON data
+import threading
 from threading import Lock
-
+#import sys
+#PATH_TO_YACS_PROTOCOL = sys.PYTHONPATH.append('/Communication/')
+#print(PATH_TO_YACS_PROTOCOL)
 
 class Worker:
     """
@@ -19,9 +22,9 @@ class Worker:
             from the execution pool and sends a message back to the Master
             using YACS Protocol Message (***createMessageToMaster()***)
     """
-    def __init__(self, WorkerTaskPool):  # Still need to add depending on specs
+    def __init__(self, WorkerID):  # Still need to add depending on specs
         self.tasks = dict()  # Task ID as key and duration as value
-        self.taskpool = WorkerTaskPool
+        self.ID = WorkerID
         self.LOCK = Lock()  # Where to use??
         self.startTime = 0
         self.endTime = 0
