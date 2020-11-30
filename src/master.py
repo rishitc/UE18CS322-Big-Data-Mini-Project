@@ -2,6 +2,7 @@ import json
 import socket
 import sys
 import threading
+from typing import Optional, Tuple
 import colored as TC
 from colored.colored import attr
 import inflect
@@ -15,7 +16,12 @@ from Scheduler.RoundRobinScheduling import RoundRobinScheduler
 from Scheduler.LeastLoadedScheduling import LeastLoadedScheduler
 
 BUFFER_SIZE = 4096
+MISSING_CMD_LINE_ARGS = 1
+BROKEN_CONFIG_FILE_PATH = 2
+
 GE = inflect.engine()  # GE means Grammar Engine
+
+# This lock is used to get access to print onto the standard output
 PRINT_LOCK = threading.Lock()
 
 
@@ -28,7 +34,7 @@ def error_text(text):
 
 
 def listenForJobRequests(requestHandler, workerUpdatesTracker):
-    _JOB_REQUEST_ADDR = (socket.gethostname(), 5000)
+    _JOB_REQUEST_ADDR: Tuple[str, int] = (socket.gethostname(), 5000)
 
     # Setup the master socket to listen for job requests
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as jobReqSocket:
@@ -86,7 +92,9 @@ def workerUpdates(workerSocket, workerStateTracker,
 
 if __name__ == "__main__":
     # Make sure the required command line arguments are passed in
-    PATH_TO_CONFIG_FILE = TYPE_OF_SCHEDULING = None
+    PATH_TO_CONFIG_FILE: Optional[str] = None
+    TYPE_OF_SCHEDULING: Optional[str] = None
+
     try:
         PATH_TO_CONFIG_FILE = sys.argv[1]
         TYPE_OF_SCHEDULING = sys.argv[2]
@@ -97,50 +105,58 @@ if __name__ == "__main__":
               f" or {TC.attr(1)+TC.attr(4)}TYPE_OF_SCHEDULING{TC.attr(0)}"
               f" or {TC.attr(1)}both!{TC.attr(0)}")
         print(e)
+        sys.exit(MISSING_CMD_LINE_ARGS)
 
+    # Making sure that the configuration file can be opened
     try:
         with open(PATH_TO_CONFIG_FILE) as fHandler:
             # Load the data from the worker config file
-            workerConf = json.load(fHandler)
-
+            workerConf: dict = json.load(fHandler)
     except FileNotFoundError:
-        print(error_text(f"Unable to find the file given by path:\
- {PATH_TO_CONFIG_FILE}"))
-        sys.exit(1)
+        print(error_text(("Unable to find the file given by path: "
+                          f"{PATH_TO_CONFIG_FILE}")))
+        sys.exit(BROKEN_CONFIG_FILE_PATH)
 
+    # Get the number of workers to interact with
     WORKER_COUNT = len(workerConf['workers'])
 
     _ans = 'n'
-    while _ans in ['n', 'no']:
-        _ans = input(f"{'Have' if WORKER_COUNT > 1 else 'Has'} the\
- {WORKER_COUNT} {GE.plural_noun('worker', WORKER_COUNT)} been started,\
- yet? [y/n]").strip().lower()
+    while str.lower(_ans) in ['n', 'no']:
+        _ans = input((f"{'Have' if WORKER_COUNT > 1 else 'Has'} the"
+                      f"{WORKER_COUNT} "
+                      f"{GE.plural_noun('worker', WORKER_COUNT)}"
+                      " been started, yet? [y/n]")).strip().lower()
 
     """ Creating the thread-shared objects
     """
     # Worker State Tracker Object
-    obj_workerStateTracker = StateTracker(workerConf)
+    obj_workerStateTracker: StateTracker = StateTracker(workerConf)
 
     # Worker updates handler object
-    obj_jobUpdatesTracker = JobUpdateTracker(TYPE_OF_SCHEDULING)
+    obj_jobUpdatesTracker: JobUpdateTracker = \
+        JobUpdateTracker(TYPE_OF_SCHEDULING)
 
     # Job Request Handler Object
-    obj_requestHandler = JobRequestHandler(obj_jobUpdatesTracker)
+    obj_jobRequestHandler: JobRequestHandler = \
+        JobRequestHandler(obj_jobUpdatesTracker)
 
     # ---
     # After this points we create the threads for the master
+    # After this point any print statements need to acquire the
+    # PRINT_LOCK before printing
     # ---
 
-    """ Creating the various threads needed at the master machine and
+    """
+     - Creating the various threads needed at the master machine and
      passing in the required parameters.
-     All the threads are declared as daemon threads.
-     Daemon threads are those threads which are killed when the main
+     - All the threads are declared as daemon threads.
+     - Daemon threads are those threads which are killed when the main
      program exits.
     """
     jobRequestThread = threading.Thread(name=("Listen for Incoming Job"
                                               "Requests"),
                                         target=listenForJobRequests,
-                                        args=(obj_requestHandler))
+                                        args=(obj_jobRequestHandler,))
     jobRequestThread.daemon = True
 
     taskDispatchThread = None
@@ -149,14 +165,14 @@ if __name__ == "__main__":
                                                     "Random Scheduling"),
                                               target=RandomScheduler.
                                               jobDispatcher,
-                                              args=(obj_requestHandler,
+                                              args=(obj_jobRequestHandler,
                                                     obj_workerStateTracker))
     elif TYPE_OF_SCHEDULING == "RR":
         taskDispatchThread = threading.Thread(name=("Job Dispatcher -"
                                                     "Round-Robin Scheduling"),
                                               target=RoundRobinScheduler.
                                               jobDispatcher,
-                                              args=(obj_requestHandler,
+                                              args=(obj_jobRequestHandler,
                                                     obj_workerStateTracker,
                                                     WORKER_COUNT))
     elif TYPE_OF_SCHEDULING == "LL":
@@ -164,7 +180,7 @@ if __name__ == "__main__":
                                                     "Least-Loaded Scheduling"),
                                               target=LeastLoadedScheduler.
                                               jobDispatcher,
-                                              args=(obj_requestHandler,
+                                              args=(obj_jobRequestHandler,
                                                     obj_workerStateTracker,
                                                     WORKER_COUNT))
     else:
@@ -175,10 +191,13 @@ if __name__ == "__main__":
 
     taskDispatchThread.daemon = True
 
-    WORKER_UPDATES_PORT = 5001
-    WORKER_UPDATES_ADDR = (socket.gethostname(), WORKER_UPDATES_PORT)
+    WORKER_UPDATES_PORT: int = 5001
+    WORKER_UPDATES_ADDR: Tuple[str, int] = \
+        (socket.gethostname(), WORKER_UPDATES_PORT)
+
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as \
          worker_updates_socket:
+        # Bind the socket to the address tuple
         worker_updates_socket.bind(WORKER_UPDATES_ADDR)
 
         # Put the socket into listening mode
@@ -191,24 +210,26 @@ if __name__ == "__main__":
         # List to hold the threads listening to updates from the workers
         workerUpdateThreads = []
 
-        # A forever loop until client wants to exit
+        # Loop until all the workers connect to the master
         for _ in range(WORKER_COUNT):
-            # Establish connection with client
+            # Establish connection with the requesting worker
             workerSocket, workerAddress = worker_updates_socket.accept()
 
             # Get the worker number from the newly connected worker
-            WORKER_NUMBER = workerSocket.recv(BUFFER_SIZE).decode()
+            WORKER_ID: str = workerSocket.recv(BUFFER_SIZE).decode()
 
             # Printing connection updates
             PRINT_LOCK.acquire()
-            print(info_text("Connected to worker at address:"))
+            print(
+                  info_text(f"Connected to worker ID: {WORKER_ID} at address:")
+                  )
             print(f"IP Address: {workerAddress[0]}")
             print(f"Socket: {workerAddress[1]}")
             PRINT_LOCK.release()
 
             # Start a new thread and return its thread object
             _temp = threading.Thread(target=workerUpdates,
-                                     name=(f"Worker-{WORKER_NUMBER} Update "
+                                     name=(f"Worker-{WORKER_ID} Update "
                                            "Listener"),
                                      args=(workerSocket,
                                            obj_workerStateTracker,
@@ -231,6 +252,3 @@ if __name__ == "__main__":
     # Wait for the threads listening for worker updates to finish
     for updateThread in workerUpdateThreads:
         updateThread.join()
-
-    # Closing all task dispatch sockets to the workers
-    obj_workerStateTracker.closeDispatchTaskSockets()
