@@ -2,29 +2,27 @@ from threading import Lock
 
 
 class JobRequestHandler:
-    """This class stores the incoming job requests from the job request
-     port. The incoming jobs are stored with a certain priority; at the
-     moment First Come First Served technique is used. It also provides
-     waiting tasks for the highest priority job request,
-     in order of map tasks then reduce tasks.
+    """
+    This class stores the *incoming job requests* from the job request
+    port.
 
-    Once a job has been completely allocated to one or the worker. Its entry
-     is removed from this object.
+    Once a job has been completely allocated, i.e. all its map and reduced
+    tasks have been dispatched to one or the other worker, then its entry
+    is removed from this object.
     """
     def __init__(self, workerUpdatesTracker):
         self.jobRequests = {}
-        self.priorityOrder = []
+        # self.priorityOrder = []
         self.LOCK = Lock()
         self.workerUpdatesTracker = workerUpdatesTracker
 
     def addJobRequest(self, requestSpecs):
-        """Adds the request specification to the objects
-         jobRequests dictionary and adds the job ID to the
-         priorityOrder list as per the priority order of the
-         job.
+        """
+        ```addJobRequest``` adds the job request's specification to
+        the handler object's ```jobRequests``` dictionary
 
         :param requestSpecs: Dictionary got after converting the incoming
-         JSON request string into a dictionary
+        JSON request string into a dictionary
         :type requestSpecs: dict
         """
         _JOB_ID: int = requestSpecs["job_id"]
@@ -32,10 +30,11 @@ class JobRequestHandler:
             "map": requestSpecs["map_tasks"],
             "reduce": requestSpecs["reduce_tasks"]
         }
-        self.priorityOrder.append(requestSpecs["job_id"])
+        # self.priorityOrder.append(requestSpecs["job_id"])
 
     def getWaitingTask(self):
-        """getWaitingTask returns a task to be allocated on one of the workers
+        """
+        ```getWaitingTask``` returns a task to be allocated on one of the workers
         as well as task related meta-data
 
         Algorithm:
@@ -56,7 +55,7 @@ class JobRequestHandler:
         """
         # If there are no pending tasks and hence no pending jobs
         # then return None
-        if len(self.priorityOrder) == 0:
+        if len(self.jobRequests) == 0:
             return None
 
         _JOB_ID = None
@@ -88,9 +87,9 @@ class JobRequestHandler:
         if (not self.jobRequests[_JOB_ID]["map"]) and \
            (not self.jobRequests[_JOB_ID]["reduce"]):
             del self.jobRequests[_JOB_ID]
-            self.priorityOrder.remove(_JOB_ID)
+            # self.priorityOrder.remove(_JOB_ID)
 
         return (_JOB_ID, _TASK_TYPE, _SELECTED_TASK)
 
     def isEmpty(self):
-        return True if not self.priorityOrder else False
+        return True if not self.jobRequests else False
