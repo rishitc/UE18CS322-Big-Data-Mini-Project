@@ -3,9 +3,7 @@ import os  # Needed to test reference to YACS Protocol for createMessageToMaster
 import json  # For working on JSON data
 import threading
 from threading import Lock
-#import sys
-#PATH_TO_YACS_PROTOCOL = sys.PYTHONPATH.append('/Communication/')
-#print(PATH_TO_YACS_PROTOCOL)
+from Communication.protocol import YACS_Protocol
 
 class Worker:
     """
@@ -56,6 +54,7 @@ class Worker:
         # duration as value
         self.tasks[self.task_in_message] = self.duration_in_message
         self.startTime = time.time()  # Store the starting time of the task
+        simulateWorker()
 
     def simulateWorker(self):
         # While there is a task to execute in the task-pool
@@ -70,7 +69,7 @@ class Worker:
                 # Check if the duration has become 0, i.e. the task has
                 # finished execution
                 if self.tasks[task_id] == 0:
-                    self.taskComplete(self.tasks[task_id])
+                    return self.taskComplete(self.tasks[task_id])
 
                 # NOTE: Below is the older version of the code,
                 # What is seen above is the proposed replacement
@@ -106,8 +105,11 @@ class Worker:
         # Can also call the YACS Protocol class's createMessageToMaster() for
         # this
 
-        # Python dictionary for response message
-        response_message_to_master = dict()
+        # Calling the createMessageToMaster method of YACS_Protocol Class
+        response_message_to_master=YACS_Protocol.createMessageToMaster(self.jobID_in_message,self.taskfamily_in_message,self.task_in_message,self.startTime,
+                                                                       self.endTime,self.workerID_in_message,self.turnoverTime)
+        # Python dictionary for response message in case YACS_Protocol function is not called
+        """response_message_to_master = dict()
         response_message_to_master["worker_id"]=self.workerID_in_message
         response_message_to_master["job_id"]=self.jobID_in_message
         response_message_to_master["task family"]=self.taskfamily_in_message
@@ -116,7 +118,7 @@ class Worker:
         response_message_to_master["task"]["start time"]=self.startTime
         response_message_to_master["task"]["end time"]=self.endTime
         response_message_to_master["task"]["task turnaround time"]=self.turnoverTime
-        response_message_to_master["task"]["duration"]=self.duration_in_message
+        response_message_to_master["task"]["duration"]=self.duration_in_message"""
 
         # Remove the task entry from the execution pool
         del self.tasks[task_id]
