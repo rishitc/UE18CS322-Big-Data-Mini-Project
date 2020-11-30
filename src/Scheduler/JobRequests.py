@@ -1,6 +1,8 @@
 from threading import Lock
 from typing import Optional, Tuple
 
+from UpdateTracker.JobUpdateTracker import Tracker as JobUpdateTracker
+
 
 class JobRequestHandler:
     """
@@ -11,11 +13,11 @@ class JobRequestHandler:
     tasks have been dispatched to one or the other worker, then its entry
     is removed from this object.
     """
-    def __init__(self, workerUpdatesTracker):
+    def __init__(self, workerUpdatesTracker: JobUpdateTracker):
         self.jobRequests = {}
         # self.priorityOrder = []
         self.LOCK = Lock()
-        self.workerUpdatesTracker = workerUpdatesTracker
+        self.workerUpdatesTracker: JobUpdateTracker = workerUpdatesTracker
 
     def addJobRequest(self, requestSpecs):
         """
@@ -96,7 +98,7 @@ class JobRequestHandler:
         return (_JOB_ID, _TASK_TYPE, _SELECTED_TASK)
 
     def isEmpty(self) -> bool:
-        """isEmpty Check if the ```jobRequests``` dictionary is
+        """```isEmpty``` checks if the ```jobRequests``` dictionary is
         of the handler is empty
 
         :return: Return True if the ```jobRequests``` dictionary is
