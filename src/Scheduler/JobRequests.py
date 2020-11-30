@@ -1,4 +1,5 @@
 from threading import Lock
+from typing import Optional, Tuple
 
 
 class JobRequestHandler:
@@ -32,13 +33,14 @@ class JobRequestHandler:
         }
         # self.priorityOrder.append(requestSpecs["job_id"])
 
-    def getWaitingTask(self):
-        """
-        ```getWaitingTask``` returns a task to be allocated on one of the workers
-        as well as task related meta-data
+    def getWaitingTask(self) -> Optional[Tuple[Optional[int],
+                                               Optional[str],
+                                               Optional[dict]]]:
+        """```getWaitingTask``` returns a task to be allocated to one of the
+        workers for execution as well as the task's related meta-data
 
-        Algorithm:
-        ----------
+        ## Algorithm:
+        ```
         1. For every job in the jobRequests list:
             1.1 Check if the job has any pending map tasks
                 1.1.1 Return any map task of the job and associated meta-data
@@ -48,19 +50,21 @@ class JobRequestHandler:
                             meta-data
                 1.2.2 else
                     1.2.2.1 Continue and hence move to the next pending job
-        2. Return None as there is no assignable task available to 
+        2. Return None as there is no assignable task available
+        ```
 
-        :return: Task meta-data and the task dictionary
-        :rtype: Tuple
+        :return: Task meta-data and the task-dictionary
+        :rtype: Optional[Tuple[Optional[int], Optional[str], Optional[dict]]]
         """
         # If there are no pending tasks and hence no pending jobs
         # then return None
         if len(self.jobRequests) == 0:
             return None
 
-        _JOB_ID = None
-        _SELECTED_TASK = None
-        _TASK_TYPE = None
+        _JOB_ID: Optional[int] = None
+        _SELECTED_TASK: Optional[dict] = None
+        _TASK_TYPE: Optional[str] = None
+
         for jobID in self.jobRequests:
             # Check for a pending map task
             if self.jobRequests[jobID]["map"]:
@@ -91,5 +95,12 @@ class JobRequestHandler:
 
         return (_JOB_ID, _TASK_TYPE, _SELECTED_TASK)
 
-    def isEmpty(self):
-        return True if not self.jobRequests else False
+    def isEmpty(self) -> bool:
+        """isEmpty Check if the ```jobRequests``` dictionary is
+        of the handler is empty
+
+        :return: Return True if the ```jobRequests``` dictionary is
+        empty else it returns False
+        :rtype: bool
+        """
+        return not self.jobRequests
