@@ -2,7 +2,7 @@ import json
 import socket
 import sys
 import threading
-from typing import Optional, Tuple
+from typing import List, Optional, Tuple
 import colored as TC
 from colored.colored import attr
 import inflect
@@ -37,7 +37,17 @@ def error_text(text):
     return f"{TC.fg(1) + TC.attr(1)}ERROR:{TC.attr(0)} {text}"
 
 
-def listenForJobRequests(requestHandler, workerUpdatesTracker):
+def listenForJobRequests(jobRequestHandler: JobRequestHandler,
+                         jobUpdateTracker: JobUpdateTracker):
+    """```listenForJobRequests``` listens for new job requests from the client
+    code
+
+    :param jobRequestHandler: Used to track the task dispath status of the job
+    :type jobRequestHandler: JobRequestHandler
+    :param jobUpdateTracker: Used to track the updates from the workers about the
+    tasks assigned belonging to the different jobs
+    :type jobUpdateTracker: JobUpdateTracker
+    """
     _JOB_REQUEST_ADDR: Tuple[str, int] = (socket.gethostname(), 5000)
 
     # Setup the master socket to listen for job requests
@@ -63,20 +73,34 @@ def listenForJobRequests(requestHandler, workerUpdatesTracker):
 
             # Add new job request to job request handler object
             # for task dispatch
-            requestHandler.LOCK.acquire()
-            requestHandler.addJobRequest(parsedJSON_Msg)
-            requestHandler.LOCK.release()
+            jobRequestHandler.LOCK.acquire()
+            jobRequestHandler.addJobRequest(parsedJSON_Msg)
+            jobRequestHandler.LOCK.release()
 
             # Add new job request to job request handler object
             # for tracking dispatched tasks' completion by the
             # workers
-            workerUpdatesTracker.LOCK.acquire()
-            workerUpdatesTracker.addJob(parsedJSON_Msg)
-            workerUpdatesTracker.LOCK.release()
+            jobUpdateTracker.LOCK.acquire()
+            jobUpdateTracker.addJobRequest(parsedJSON_Msg)
+            jobUpdateTracker.LOCK.release()
 
 
-def workerUpdates(workerSocket, workerStateTracker,
-                  jobUpdatesTracker):
+def workerUpdates(workerSocket: socket.socket,
+                  workerStateTracker: StateTracker,
+                  jobUpdateTracker: JobUpdateTracker):
+    """workerUpdates captures the updates from the worker as and when
+    they complete the tasks assigned to them, and respond back
+
+    :param workerSocket: The socket object for listening to the specific
+    worker's updates
+    :type workerSocket: socket
+    :param workerStateTracker: Tracks the states of the worker nodes as to how
+    many free slots do they have
+    :type workerStateTracker: StateTracker
+    :param jobUpdateTracker: Tracks the jobs assigned to the workers, and
+    their corresponding updates
+    :type jobUpdateTracker: JobUpdateTracker
+    """
     while True:
         workerUpdate = workerSocket.recv(BUFFER_SIZE)
         if not workerUpdate:
@@ -85,9 +109,9 @@ def workerUpdates(workerSocket, workerStateTracker,
 
         parsedJSON_Msg = json.loads(workerUpdate)
 
-        jobUpdatesTracker.LOCK.acquire()
-        jobUpdatesTracker.updateJob(parsedJSON_Msg)
-        jobUpdatesTracker.LOCK.release()
+        jobUpdateTracker.LOCK.acquire()
+        jobUpdateTracker.updateJob(parsedJSON_Msg)
+        jobUpdateTracker.LOCK.release()
 
         workerStateTracker.LOCK.acquire()
         workerStateTracker.freeSlot(parsedJSON_Msg["worker_id"])
@@ -160,7 +184,8 @@ if __name__ == "__main__":
     jobRequestThread = threading.Thread(name=("Listen for Incoming Job"
                                               "Requests"),
                                         target=listenForJobRequests,
-                                        args=(obj_jobRequestHandler,))
+                                        args=(obj_jobRequestHandler,
+                                              obj_jobUpdatesTracker))
     jobRequestThread.daemon = True
 
     taskDispatchThread = None
@@ -212,7 +237,7 @@ if __name__ == "__main__":
         PRINT_LOCK.release()
 
         # List to hold the threads listening to updates from the workers
-        workerUpdateThreads = []
+        workerUpdateThreads: List[threading.Thread] = []
 
         # Loop until all the workers connect to the master
         for _ in range(WORKER_COUNT):
