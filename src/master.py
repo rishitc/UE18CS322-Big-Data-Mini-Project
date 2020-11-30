@@ -44,8 +44,8 @@ def listenForJobRequests(jobRequestHandler: JobRequestHandler,
 
     :param jobRequestHandler: Used to track the task dispath status of the job
     :type jobRequestHandler: JobRequestHandler
-    :param jobUpdateTracker: Used to track the updates from the workers about the
-    tasks assigned belonging to the different jobs
+    :param jobUpdateTracker: Used to track the updates from the workers about
+    the tasks assigned belonging to the different jobs
     :type jobUpdateTracker: JobUpdateTracker
     """
     _JOB_REQUEST_ADDR: Tuple[str, int] = (socket.gethostname(), 5000)
