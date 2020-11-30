@@ -99,6 +99,8 @@ class StateTracker:
 
         return _least_loaded_workerID
 
-    def closeDispatchTaskSockets(self):
+    def __del__(self):
+        """```__del__``` Closes all task dispatch sockets to the workers
+        """
         for workerID in self.workerIDs:
             self.workerState[workerID]["socket"].close()
