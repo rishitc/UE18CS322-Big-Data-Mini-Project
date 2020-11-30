@@ -26,7 +26,7 @@ class Tracker:
         self.workers_time = dict()
         self.map_tracker = dict()
         self.reduce_tracker = dict()
-        self.algo = algorithm
+        self.algorithm = algorithm
         self.LOCK = Lock()
 
         fields_job = ['JobID', 'start_time', 'end_time', 'duration']
@@ -53,7 +53,7 @@ class Tracker:
         self.task_writer = t_writer
         self.worker_writer = w_writer
 
-    def addJob(self, parsed_json_request):  # request_message):
+    def addJobRequest(self, parsed_json_request: dict):  # request_message):
         """
         - Gets the Request message and initialises the dictionaries
         to keep track of the jobs and associated tasks.
@@ -245,4 +245,4 @@ if __name__ == "__main__":
     x = json.loads(x)
 
     JB = Tracker("RR")
-    JB.addJob(x)
+    JB.addJobRequest(x)
