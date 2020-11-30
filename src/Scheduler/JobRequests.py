@@ -34,7 +34,7 @@ class JobRequestHandler:
         }
         self.priorityOrder.append(requestSpecs["job_id"])
 
-    def getWaitingTask(self, workerUpdatesTracker):
+    def getWaitingTask(self):
         """getWaitingTask returns a task to be allocated on one of the workers
         as well as task related meta-data
 
