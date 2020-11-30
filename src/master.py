@@ -15,9 +15,13 @@ from Scheduler.RandomScheduling import RandomScheduler
 from Scheduler.RoundRobinScheduling import RoundRobinScheduler
 from Scheduler.LeastLoadedScheduling import LeastLoadedScheduler
 
-BUFFER_SIZE = 4096
-MISSING_CMD_LINE_ARGS = 1
-BROKEN_CONFIG_FILE_PATH = 2
+BUFFER_SIZE: int = 4096
+
+# Error codes to return to the shell
+# The Unix programs' style for error codes has
+# been used here
+MISSING_CMD_LINE_ARGS: int = 2
+BROKEN_CONFIG_FILE_PATH: int = 1
 
 GE = inflect.engine()  # GE means Grammar Engine
 
@@ -118,7 +122,7 @@ if __name__ == "__main__":
         sys.exit(BROKEN_CONFIG_FILE_PATH)
 
     # Get the number of workers to interact with
-    WORKER_COUNT = len(workerConf['workers'])
+    WORKER_COUNT: int = len(workerConf['workers'])
 
     _ans = 'n'
     while str.lower(_ans) in ['n', 'no']:
