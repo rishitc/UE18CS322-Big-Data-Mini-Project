@@ -1,16 +1,19 @@
 import time
+from typing import Set
 
 from Communication.protocol import YACS_Protocol
 
 
 class RoundRobinScheduler:
     @staticmethod
-    def jobDispatcher(requestHandler, workerStateTracker, WORKER_COUNT):
+    def jobDispatcher(requestHandler, workerStateTracker, WORKER_COUNT: int):
+        workerIDsVisited: Set = set()
+        _temp: int = 0  # Initially we begin at the first worker
+
         while True:
             jobID_family_task = None
-            _temp = 0  # Initially we begin at the first worker
 
-            # Get a pending task
+            # Get a pending task, if any
             requestHandler.LOCK.acquire()
             if not requestHandler.isEmpty():
                 jobID_family_task = requestHandler.getWaitingTask()
@@ -18,10 +21,15 @@ class RoundRobinScheduler:
 
             # If there is a Task that needs to be executed
             if jobID_family_task is not None:
+                # Initially we have not visited any worker
+                workerIDsVisited.clear()
+
                 # Initially we have not found a worker with a free slot
-                workerFound = False
+                workerFound: bool = False
 
                 while workerFound is False:  # Until a free worker is not found
+                    workerIDsVisited.add(_temp)
+
                     workerStateTracker.LOCK.acquire()
 
                     # If the worker has a free slot
@@ -44,11 +52,23 @@ class RoundRobinScheduler:
                         workerStateTracker.getWorkerSocket(_temp)\
                             .sendall(protocolMsg)
                         workerStateTracker.allocateSlot(_temp)
+
+                        # We have found a worker and hence set this to True
+                        workerFound = True
+
                     workerStateTracker.LOCK.release()
 
                     _temp += 1
                     _temp %= WORKER_COUNT
 
-                    # Sleep for a second to allow for the workerStateTracker
-                    # to be updated by the thread: workerUpdates
-                    time.sleep(1)
+                    # In the case where none of the workers have a free slot
+                    if list(workerIDsVisited) == workerStateTracker.workerIDs:
+                        # Sleep for a second to allow for the
+                        # workerStateTracker to be updated by the
+                        # thread: workerUpdates
+                        time.sleep(1)
+
+                        # Clear the worker IDs visited set as we are
+                        # restarting our search for a free slot on one of the
+                        # workers
+                        workerIDsVisited.clear()
