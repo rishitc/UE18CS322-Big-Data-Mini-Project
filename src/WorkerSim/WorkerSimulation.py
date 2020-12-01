@@ -57,7 +57,8 @@ class Worker:
             # but not in the received message
 
             self.LOCK.acquire()  # Acquiring lock as shared object is accessed
-            self.tasks[job_in_message][task_in_message] = python_protocol_message
+            self.tasks[job_in_message][task_in_message] = \
+                python_protocol_message
             #  Value for the tasks dictionary will be all the info
             self.LOCK.release()  # Release lock as CS code is complete
 
@@ -81,20 +82,33 @@ class Worker:
 
                 # Check if the duration has become 0, i.e. the task has
                 # finished execution
-                        if self.tasks[job_id][task_id]["task"]["duration"] == 0 :
-                            self.tasks[job_id][task_id]["task"]["end time"] = time.time()  
+                        if (self.tasks[job_id][task_id]["task"]["duration"]
+                                == 0):
+                            self.tasks[job_id][task_id]["task"]["end time"] = \
+                                time.time()
                             # Store the end-time of the task
                             response_message_to_master = YACS_Protocol\
-                                .createMessageToMaster(self.tasks[job_id][task_id]["job_id"],
-                                                       self.tasks[job_id][task_id]["task family"],
-                                                       self.tasks[job_id][task_id]["task"]["task_id"],
-                                                       self.tasks[job_id][task_id]["task"]["start time"],
-                                                       self.tasks[job_id][task_id]["task"]["end time"],
-                                                       self.tasks[job_id][task_id]["worker_id"])
+                                .createMessageToMaster((self.tasks[job_id]
+                                                        [task_id]["job_id"]),
+                                                       (self.tasks[job_id]
+                                                        [task_id]
+                                                        ["task family"]),
+                                                       (self.tasks[job_id]
+                                                        [task_id]["task"]
+                                                        ["task_id"]),
+                                                       (self.tasks[job_id]
+                                                        [task_id]["task"]
+                                                        ["start time"]),
+                                                       (self.tasks[job_id]
+                                                        [task_id]["task"]
+                                                        ["end time"]),
+                                                       (self.tasks[job_id]
+                                                        [task_id]
+                                                        ["worker_id"]))
                             # YACS Protocol based response to master
                             self.updates_q.put(response_message_to_master)
                             # Adding the task in the completed tasks queue
-                            del self.tasks[job_id][task_id] 
+                            del self.tasks[job_id][task_id]
                             # Remove the task entry from the task exec pool
                             if len(self.tasks[job_id] == 0):
                                 del self.tasks[job_id]
@@ -109,7 +123,7 @@ class Worker:
         # NOTE: Need to first establish communication between master and
         # worker for that
         # UPDATE 1: Acknowledged. Working on that right now.
-        # UPDATE 2: The same has been implemened
+        # UPDATE 2: The same has been implemented
 
     def taskComplete(self, reply_socket: socket.socket):
         """
@@ -118,7 +132,7 @@ class Worker:
 
         This method is called by ***simulateWorker()*** method when the
         *remaining_duration attribute* of the task **becomes 0**.
-        """   
+        """
 
         while True:
             if not self.updates_q.empty():
