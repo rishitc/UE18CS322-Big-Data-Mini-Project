@@ -5,6 +5,13 @@ import numpy as np
 
 
 def graph_plot(df, ax, title):
+    """
+    * This function takes in the *workers.csv* for each algorithm separately and groups by worker id.
+    * For each worker, the number of tasks running at each secong in a time interval are calculated.
+    * There are 3 plots displayed in a window, with a plot each for a scheduling algorithm. The X axis 
+    * has the number of tasks and the Y axis has the time in seconds.
+    * For a given scheduling algorithm, each worker is represented with a line of a different colour.
+    """
     splits1 = list(df.groupby("WorkerID"))
     for i in range(len(splits1)):
         time = dict()
@@ -29,6 +36,14 @@ def graph_plot(df, ax, title):
 
 
 def get_analytics():
+    """
+    * This function reads all the log files generated for each scheduling algorithm.
+    * The objective of this function is to calculate the mean task completion time, mean job completion time,
+    median task completion time, median job completion time for each of the scheduling algorithms separately.
+    * Various bar plots are plotted comparing the mean and median times of the various scheduling algortihms.
+    * This function also calls the graph_plot function for each of the scheduling algorithms that plots the number
+    of tasks scheduled on each worker at each instance of time.
+    """
     fig, (ax1, ax2, ax3) = plt.subplots(3, figsize=(15, 25))
     fig.tight_layout(pad=10.0)
     mean_salgo1_task = 0
@@ -37,7 +52,16 @@ def get_analytics():
     mean_salgo1_job = 0
     mean_salgo2_job = 0
     mean_salgo3_job = 0
-
+    median_salgo1_task = 0 
+    median_salgo2_task = 0
+    median_salgo3_task = 0 
+    median_salgo1_job = 0
+    median_salgo2_job = 0
+    median_salgo3_job = 0
+    '''
+    Checking if the log files for Round Robin Algorithm exist.
+    If they exist perform the necessary statistical computation and plot the graphs to draw inferences.
+    '''
     if os.path.exists('Round-Robin'):
         algo = 'Round-Robin'
         job1 = pd.read_csv(os.path.join(algo, 'jobs.csv'))
@@ -57,7 +81,11 @@ def get_analytics():
 
     else:
         pass
-
+    
+    '''
+    Checking if the log files for Least Loaded Algorithm exist.
+    If they exist perform the necessary statistical computation and plot the graphs to draw inferences.
+    '''
     if os.path.exists('Least-Loaded'):
         algo = 'Least-Loaded'
         job2 = pd.read_csv(os.path.join(algo, 'jobs.csv'))
@@ -78,6 +106,10 @@ def get_analytics():
     else:
         pass
 
+    '''
+    Checking if the log files for Random Algorithm exist.
+    If they exist perform the necessary statistical computation and plot the graphs to draw inferences.
+    '''
     if os.path.exists('Random'):
         algo = 'Random'
         job3 = pd.read_csv(os.path.join(algo, 'jobs.csv'))
@@ -98,6 +130,11 @@ def get_analytics():
     else:
         pass
 
+    '''
+    The 3 blocks of code given below display the computed mean and median
+    values for each algorithm(if that algorithm was used) in a neat readable 
+    format which can be used to easily read the data plotted in a graph format.
+    '''
     if os.path.exists('Round-Robin'):
         print("\nRound-Robin Scheduling Algorithm")
         print(f"Mean of task completion time : {mean_salgo1_task}")
