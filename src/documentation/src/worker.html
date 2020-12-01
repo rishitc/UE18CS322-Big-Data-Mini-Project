@@ -42,10 +42,19 @@ Some of the important pointers to be implemented in this code are:-
 MESSAGE_BUFFER_SIZE = 4096
 
 
+def getCMDLineArgs():
+    &#34;&#34;&#34;```getCMDLineArgs``` returns the command line arguments
+    in order of ```port number``` and ```worker ID```
+
+    ```return```: Tuple containing ```port number``` and ```worker ID```
+
+    ```rtype```: Tuple[int, int]
+    &#34;&#34;&#34;
+    return int(sys.argv[1]), int(sys.argv[2])
+
 if __name__ == &#34;__main__&#34;:
     # The CLI to the program will be python worker.py port id
-    port_number = int(sys.argv[1])
-    worker_id = int(sys.argv[2])
+    port_number, worker_id = getCMDLineArgs()
 
     # Creating the socket tuple for the worker where
     # it will listen to task requests from the master
@@ -100,6 +109,32 @@ if __name__ == &#34;__main__&#34;:
 <section>
 </section>
 <section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="src.worker.getCMDLineArgs"><code class="name flex">
+<span>def <span class="ident">getCMDLineArgs</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p><code>getCMDLineArgs</code> returns the command line arguments
+in order of <code>port number</code> and <code>worker ID</code></p>
+<p><code>return</code>: Tuple containing <code>port number</code> and <code>worker ID</code></p>
+<p><code>rtype</code>: Tuple[int, int]</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def getCMDLineArgs():
+    &#34;&#34;&#34;```getCMDLineArgs``` returns the command line arguments
+    in order of ```port number``` and ```worker ID```
+
+    ```return```: Tuple containing ```port number``` and ```worker ID```
+
+    ```rtype```: Tuple[int, int]
+    &#34;&#34;&#34;
+    return int(sys.argv[1]), int(sys.argv[2])</code></pre>
+</details>
+</dd>
+</dl>
 </section>
 <section>
 </section>
@@ -113,6 +148,11 @@ if __name__ == &#34;__main__&#34;:
 <li><h3>Super-module</h3>
 <ul>
 <li><code><a title="src" href="index.html">src</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="src.worker.getCMDLineArgs" href="#src.worker.getCMDLineArgs">getCMDLineArgs</a></code></li>
 </ul>
 </li>
 </ul>
