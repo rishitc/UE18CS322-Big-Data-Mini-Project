@@ -126,7 +126,7 @@ def get_analytics():
     else:
         pass
     
-    ''' Plotting bar graph to compare scheduling algorithms'''
+    ''' Plotting bar graph to compare mean times of scheduling algorithms'''
     barWidth = 0.25
     fig = plt.figure(figsize = (10, 5))
     x1 = []
@@ -150,6 +150,33 @@ def get_analytics():
     plt.bar(br2, y2, color ='g', width = barWidth,edgecolor ='grey', label ='Jobs') 
     plt.xlabel('Scheduling algorithms')
     plt.ylabel('Average task and job completion time')
+    plt.xticks([r + barWidth for r in range(len(x1))],x1)
+    plt.legend()
+    
+    ''' Plotting bar graph to compare median times of scheduling algorithms'''
+    barWidth = 0.25
+    fig2 = plt.figure(figsize = (10, 5))
+    x1 = []
+    y1 = []
+    y2 = []
+    y1.append(median_salgo1_task)
+    y1.append(median_salgo2_task)
+    y1.append(median_salgo3_task)
+    
+    y2.append(median_salgo1_job)
+    y2.append(median_salgo2_job)
+    y2.append(median_salgo3_job)
+    
+    x1.append('Round Robin Scheduling')
+    x1.append('Least Loaded Scheduling')
+    x1.append('Random Scheduling')
+    
+    br1 = np.arange(len(x1)) 
+    br2 = [x + barWidth for x in br1] 
+    plt.bar(br1,y1, color ='r', width = barWidth,edgecolor ='grey', label ='Tasks') 
+    plt.bar(br2, y2, color ='g', width = barWidth,edgecolor ='grey', label ='Jobs') 
+    plt.xlabel('Scheduling algorithms')
+    plt.ylabel('Median task and job completion time')
     plt.xticks([r + barWidth for r in range(len(x1))],x1)
     plt.legend()
 
