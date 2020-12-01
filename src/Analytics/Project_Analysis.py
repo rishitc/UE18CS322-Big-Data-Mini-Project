@@ -37,10 +37,11 @@ def get_analytics():
     mean_salgo2_job = 0
     mean_salgo3_job = 0
     
-    if os.path.exists('rr'):
-        job1 = pd.read_csv(os.path.join('rr','jobs.csv'))
-        task1 = pd.read_csv(os.path.join('rr','tasks.csv'))
-        worker1 = pd.read_csv(os.path.join('rr','workers.csv'))
+    if os.path.exists('Round-Robin'):
+        algo='Round-Robin'
+        job1 = pd.read_csv(os.path.join(algo,'jobs.csv'))
+        task1 = pd.read_csv(os.path.join(algo,'tasks.csv'))
+        worker1 = pd.read_csv(os.path.join(algo,'workers.csv'))
         
         df1_w1 = pd.DataFrame(worker1)
         df1_j1 = pd.DataFrame(job1)
@@ -56,10 +57,11 @@ def get_analytics():
     else:
         pass
 
-    if os.path.exists('ll'):
-        job2 = pd.read_csv(os.path.join('ll','jobs.csv'))
-        task2 = pd.read_csv(os.path.join('ll','tasks.csv'))
-        worker2 = pd.read_csv(os.path.join('ll','workers.csv'))
+    if os.path.exists('Least-Loaded'):
+        algo='Least-Loaded'
+        job2 = pd.read_csv(os.path.join(algo,'jobs.csv'))
+        task2 = pd.read_csv(os.path.join(algo,'tasks.csv'))
+        worker2 = pd.read_csv(os.path.join(algo,'workers.csv'))
         
         df1_w2 = pd.DataFrame(worker2)
         df1_j2 = pd.DataFrame(job2)
@@ -76,10 +78,11 @@ def get_analytics():
         pass
         
         
-    if os.path.exists('random'):
-        job3 = pd.read_csv(os.path.join('random','jobs.csv'))
-        task3 = pd.read_csv(os.path.join('random','tasks.csv'))
-        worker3 = pd.read_csv(os.path.join('random','workers.csv'))
+    if os.path.exists('Random'):
+        algo='Random'
+        job3 = pd.read_csv(os.path.join(algo,'jobs.csv'))
+        task3 = pd.read_csv(os.path.join(algo,'tasks.csv'))
+        worker3 = pd.read_csv(os.path.join(algo,'workers.csv'))
         
         df1_w3 = pd.DataFrame(worker3)
         df1_j3 = pd.DataFrame(job3)
@@ -96,30 +99,30 @@ def get_analytics():
         pass
  
     
-    if os.path.exists('rr'):
-        print("\n1st Scheduling algorithm")
-        print(f"Task completion of 1st scheduling algorithm mean : {mean_salgo1_task}")
-        print(f"Job completion of 1st scheduling algorithm mean : {mean_salgo1_job}")
-        print(f"Task completion of 1st scheduling algorithm median : {median_salgo1_task}")
-        print(f"Job completion of 1st scheduling algorithm median : {median_salgo1_job}\n")  
+    if os.path.exists('Round-Robin'):
+        print("\nRound-Robin Scheduling Algorithm")
+        print(f"Mean of task completion time : {mean_salgo1_task}")
+        print(f"Mean of job completion time : {mean_salgo1_job}")
+        print(f"Median of task completion time : {median_salgo1_task}")
+        print(f"Median of job completion time : {median_salgo1_job}\n")  
     else:
         pass
         
-    if os.path.exists('ll'):
-        print("\n2nd scheduling algorithm")
-        print(f"Task completion of 2nd scheduling algorithm mean : {mean_salgo2_task}")
-        print(f"Job completion of 2nd scheduling algorithm mean : {mean_salgo2_job}")
-        print(f"Task completion of 2nd scheduling algorithm median : {median_salgo2_task}")
-        print(f"Job completion of 2nd scheduling algorithm median : {median_salgo2_job}\n")
+    if os.path.exists('Least-Loaded'):
+        print("\nLeast-Loaded Scheduling Algorithm")
+        print(f"Mean of task completion time : {mean_salgo2_task}")
+        print(f"Mean of job completion time : {mean_salgo2_job}")
+        print(f"Median of task completion time : {median_salgo2_task}")
+        print(f"Median of job completion time : {median_salgo2_job}\n")
     else:
         pass
         
-    if os.path.exists('random'):
-        print("\n3rd scheduling algorithm")
-        print(f"Task completion of 3rd scheduling algorithm mean : {mean_salgo3_task}")
-        print(f"Job completion of 3rd scheduling algorithm mean : {mean_salgo3_job}")
-        print(f"Task completion of 3rd scheduling algorithm median : {median_salgo3_task}")
-        print(f"Job completion of 3rd scheduling algorithm median : {median_salgo3_job}\n")    
+    if os.path.exists('Random'):
+        print("\nRandom Scheduling Algorithm")
+        print(f"Mean of task completion time : {mean_salgo3_task}")
+        print(f"Mean of job completion time : {mean_salgo3_job}")
+        print(f"Median of task completion time : {median_salgo3_task}")
+        print(f"Median of job completion time : {median_salgo3_job}\n")    
     else:
         pass
     
