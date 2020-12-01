@@ -16,7 +16,7 @@ class JobRequestHandler:
     def __init__(self, workerUpdatesTracker: JobUpdateTracker):
         self.jobRequests = {}
         # self.priorityOrder = []
-       self.LOCK = Lock()
+        self.LOCK = Lock()
         self.workerUpdatesTracker: JobUpdateTracker = workerUpdatesTracker
 
     def addJobRequest(self, requestSpecs):
@@ -74,21 +74,28 @@ class JobRequestHandler:
                 _TASK_TYPE = "map"
                 _JOB_ID = jobID
 
-            else:
+                # Exit the loop as we have found a suitable task
+                break
+
+            else:  # Check for pending reduce tasks, if any
                 self.workerUpdatesTracker.LOCK.acquire()
                 _temp = self.workerUpdatesTracker.isMapComplete(jobID)
                 self.workerUpdatesTracker.LOCK.release()
 
                 # if jobID:
-                    # print(f"Have all map tasks completed {_temp} for {jobID}")
+                #   print(f"Have all map tasks completed {_temp} for {jobID}")
 
-                if _temp:
+                if _temp:  # If the map tasks of the job have completed
                     if self.jobRequests[jobID]["reduce"]:
                         # Check for a pending reduce task
-                        _SELECTED_TASK = self.jobRequests[jobID]["reduce"].pop(0)
+                        _SELECTED_TASK = self.jobRequests[jobID]["reduce"]\
+                            .pop(0)
                         # print(f"{_SELECTED_TASK=}")
                         _TASK_TYPE = "reduce"
                         _JOB_ID = jobID
+
+                        # Exit the loop as we have found a suitable task
+                        break
 
         if (_SELECTED_TASK is None) and (_JOB_ID is None) and\
            (_TASK_TYPE is None):
