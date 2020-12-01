@@ -25,7 +25,7 @@ class RandomScheduler:
 
         **type** ```requestHandler```: JobRequestHandler
 
-        **param** ```workerStateTracker```:  This object will track and update
+        **param** ```workerStateTracker```: This object will track and update
         how loaded the workers are, i.e. how many free slots fo they have
 
         **type** ```workerStateTracker```: StateTracker
