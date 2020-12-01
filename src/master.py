@@ -60,21 +60,23 @@ def listenForJobRequests(jobRequestHandler: JobRequestHandler,
 
     # Setup the master socket to listen for job requests
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as jobReqSocket:
+        jobReqSocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         jobReqSocket.bind(_JOB_REQUEST_ADDR)
-        jobReqSocket.listen()
-        clientConn, clientAddr = jobReqSocket.accept()
-
-        PRINT_LOCK.acquire()
-        print(f"Something connected to me!! {clientAddr}")
-        PRINT_LOCK.release()
-
-        PRINT_LOCK.acquire()
-        print(info_text("Connected to client at address:"))
-        print(f"IP Address: {clientAddr[0]}")
-        print(f"Socket: {clientAddr[1]}")
-        PRINT_LOCK.release()
-
         while True:
+            jobReqSocket.listen()
+            clientConn, clientAddr = jobReqSocket.accept()
+
+            PRINT_LOCK.acquire()
+            print(f"Something connected to me!! {clientAddr}")
+            PRINT_LOCK.release()
+
+            PRINT_LOCK.acquire()
+            print(info_text("Connected to client at address:"))
+            print(f"IP Address: {clientAddr[0]}")
+            print(f"Socket: {clientAddr[1]}")
+            PRINT_LOCK.release()
+
+            # while True:
             jobRequest = clientConn.recv(BUFFER_SIZE)
             if not jobRequest:
                 clientConn.close()
@@ -95,6 +97,8 @@ def listenForJobRequests(jobRequestHandler: JobRequestHandler,
             jobUpdateTracker.LOCK.acquire()
             jobUpdateTracker.addJobRequest(parsedJSON_Msg)
             jobUpdateTracker.LOCK.release()
+
+            clientConn.close()
 
 
 def workerUpdates(workerSocket: socket.socket,
@@ -216,7 +220,7 @@ if __name__ == "__main__":
                                         target=listenForJobRequests,
                                         args=(obj_jobRequestHandler,
                                               obj_jobUpdatesTracker))
-    # jobRequestThread.daemon = True
+    jobRequestThread.daemon = True
     jobRequestThread.start()
 
     taskDispatchThread = None
@@ -249,7 +253,7 @@ if __name__ == "__main__":
         PRINT_LOCK.release()
         sys.exit(1)
 
-    # taskDispatchThread.daemon = True
+    taskDispatchThread.daemon = True
     taskDispatchThread.start()
 
     WORKER_UPDATES_PORT: int = 5001
@@ -258,6 +262,8 @@ if __name__ == "__main__":
 
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as \
          worker_updates_socket:
+        worker_updates_socket.setsockopt(socket.SOL_SOCKET,
+                                         socket.SO_REUSEADDR, 1)
         # Bind the socket to the address tuple
         worker_updates_socket.bind(WORKER_UPDATES_ADDR)
 
@@ -295,7 +301,7 @@ if __name__ == "__main__":
                                      args=(workerSocket,
                                            obj_workerStateTracker,
                                            obj_jobUpdatesTracker))
-            # _temp.daemon = True
+            _temp.daemon = True
             _temp.start()
 
             # Store the thread object in a list

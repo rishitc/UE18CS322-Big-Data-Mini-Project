@@ -79,7 +79,7 @@ class RoundRobinScheduler:
                                             .workerIDs[_temp]
                                        ))
                         # Once a worker with a free slot is found then
-                        # 1. We dispatch the job to the worker
+                        # 1. We dispatch the job to the wor     ker
                         # 2. Update its state
                         workerStateTracker.getWorkerSocket(workerStateTracker.
                                                            workerIDs[_temp])\
