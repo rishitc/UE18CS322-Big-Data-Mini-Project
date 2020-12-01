@@ -187,6 +187,7 @@ if __name__ == "__main__":
                                         args=(obj_jobRequestHandler,
                                               obj_jobUpdatesTracker))
     jobRequestThread.daemon = True
+    jobRequestThread.start()
 
     taskDispatchThread = None
     if TYPE_OF_SCHEDULING == "RANDOM":
@@ -219,6 +220,7 @@ if __name__ == "__main__":
         sys.exit(1)
 
     taskDispatchThread.daemon = True
+    taskDispatchThread.start()
 
     WORKER_UPDATES_PORT: int = 5001
     WORKER_UPDATES_ADDR: Tuple[str, int] = \
@@ -264,6 +266,7 @@ if __name__ == "__main__":
                                            obj_workerStateTracker,
                                            obj_jobUpdatesTracker))
             _temp.daemon = True
+            _temp.start()
 
             # Store the thread object in a list
             workerUpdateThreads.append(_temp)
