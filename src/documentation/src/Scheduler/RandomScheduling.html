@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
-<meta name="generator" content="pdoc 0.9.1" />
+<meta name="generator" content="pdoc 0.9.2" />
 <title>src.Scheduler.RandomScheduling API documentation</title>
 <meta name="description" content="" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
@@ -28,17 +28,25 @@
 </summary>
 <pre><code class="python">import random
 import time
+from typing import Set
 
 from Communication.protocol import YACS_Protocol
+from Scheduler.JobRequests import JobRequestHandler
+from WorkerUtils.WorkerStateTracker import StateTracker
 
 
 class RandomScheduler:
     @staticmethod
-    def jobDispatcher(requestHandler, workerStateTracker):
+    def jobDispatcher(requestHandler: JobRequestHandler,
+                      workerStateTracker: StateTracker):
         #  Initialize the random number generator.
         random.seed()
+        workerIDsVisited: Set = set()
+
         while True:
             jobID_family_task = None
+
+            # Get a pending task, if any
             requestHandler.LOCK.acquire()
             if not requestHandler.isEmpty():
                 jobID_family_task = requestHandler.getWaitingTask()
@@ -46,13 +54,18 @@ class RandomScheduler:
 
             # If there is a Task that needs to be executed
             if jobID_family_task is not None:
+                # Initially we have not visited any worker
+                workerIDsVisited.clear()
+
                 # Initially we have not found a worker with a free slot
-                workerFound = False
+                workerFound: bool = False
 
                 while workerFound is False:  # Until a free worker is not found
                     workerStateTracker.LOCK.acquire()
+
                     # Pick a worker at random
                     _temp = random.choice(workerStateTracker.workerIDs)
+                    workerIDsVisited.add(_temp)
 
                     # If the worker has a free slot
                     if workerStateTracker.isWorkerFree(_temp):
@@ -66,6 +79,8 @@ class RandomScheduler:
                                                  [&#34;task_id&#34;]),
                                         duration=(jobID_family_task[2]
                                                   [&#34;duration&#34;]),
+                                        # We only get _temp in the LOCK
+                                        # i.e. critical section
                                         worker_ID=_temp
                                         ))
                         # Once a worker with a free slot is found then
@@ -74,11 +89,23 @@ class RandomScheduler:
                         workerStateTracker.getWorkerSocket(_temp)\
                             .sendall(protocolMsg)
                         workerStateTracker.allocateSlot(_temp)
+
+                        # We have found a worker and hence set this to True
+                        workerFound = True
+
                     workerStateTracker.LOCK.release()
 
-                    # Sleep for a second to allow for the workerStateTracker
-                    # to be updated by the thread: workerUpdates
-                    time.sleep(1)</code></pre>
+                    # In the case where none of the workers have a free slot
+                    if list(workerIDsVisited) == workerStateTracker.workerIDs:
+                        # Sleep for a second to allow for the
+                        # workerStateTracker to be updated by the
+                        # thread: workerUpdates
+                        time.sleep(1)
+
+                        # Clear the worker IDs visited set as we are
+                        # restarting our search for a free slot on one of the
+                        # workers
+                        workerIDsVisited.clear()</code></pre>
 </details>
 </section>
 <section>
@@ -101,11 +128,16 @@ class RandomScheduler:
 </summary>
 <pre><code class="python">class RandomScheduler:
     @staticmethod
-    def jobDispatcher(requestHandler, workerStateTracker):
+    def jobDispatcher(requestHandler: JobRequestHandler,
+                      workerStateTracker: StateTracker):
         #  Initialize the random number generator.
         random.seed()
+        workerIDsVisited: Set = set()
+
         while True:
             jobID_family_task = None
+
+            # Get a pending task, if any
             requestHandler.LOCK.acquire()
             if not requestHandler.isEmpty():
                 jobID_family_task = requestHandler.getWaitingTask()
@@ -113,13 +145,18 @@ class RandomScheduler:
 
             # If there is a Task that needs to be executed
             if jobID_family_task is not None:
+                # Initially we have not visited any worker
+                workerIDsVisited.clear()
+
                 # Initially we have not found a worker with a free slot
-                workerFound = False
+                workerFound: bool = False
 
                 while workerFound is False:  # Until a free worker is not found
                     workerStateTracker.LOCK.acquire()
+
                     # Pick a worker at random
                     _temp = random.choice(workerStateTracker.workerIDs)
+                    workerIDsVisited.add(_temp)
 
                     # If the worker has a free slot
                     if workerStateTracker.isWorkerFree(_temp):
@@ -133,6 +170,8 @@ class RandomScheduler:
                                                  [&#34;task_id&#34;]),
                                         duration=(jobID_family_task[2]
                                                   [&#34;duration&#34;]),
+                                        # We only get _temp in the LOCK
+                                        # i.e. critical section
                                         worker_ID=_temp
                                         ))
                         # Once a worker with a free slot is found then
@@ -141,16 +180,28 @@ class RandomScheduler:
                         workerStateTracker.getWorkerSocket(_temp)\
                             .sendall(protocolMsg)
                         workerStateTracker.allocateSlot(_temp)
+
+                        # We have found a worker and hence set this to True
+                        workerFound = True
+
                     workerStateTracker.LOCK.release()
 
-                    # Sleep for a second to allow for the workerStateTracker
-                    # to be updated by the thread: workerUpdates
-                    time.sleep(1)</code></pre>
+                    # In the case where none of the workers have a free slot
+                    if list(workerIDsVisited) == workerStateTracker.workerIDs:
+                        # Sleep for a second to allow for the
+                        # workerStateTracker to be updated by the
+                        # thread: workerUpdates
+                        time.sleep(1)
+
+                        # Clear the worker IDs visited set as we are
+                        # restarting our search for a free slot on one of the
+                        # workers
+                        workerIDsVisited.clear()</code></pre>
 </details>
 <h3>Static methods</h3>
 <dl>
 <dt id="src.Scheduler.RandomScheduling.RandomScheduler.jobDispatcher"><code class="name flex">
-<span>def <span class="ident">jobDispatcher</span></span>(<span>requestHandler, workerStateTracker)</span>
+<span>def <span class="ident">jobDispatcher</span></span>(<span>requestHandler: Scheduler.JobRequests.JobRequestHandler, workerStateTracker: WorkerUtils.WorkerStateTracker.StateTracker)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -159,11 +210,16 @@ class RandomScheduler:
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@staticmethod
-def jobDispatcher(requestHandler, workerStateTracker):
+def jobDispatcher(requestHandler: JobRequestHandler,
+                  workerStateTracker: StateTracker):
     #  Initialize the random number generator.
     random.seed()
+    workerIDsVisited: Set = set()
+
     while True:
         jobID_family_task = None
+
+        # Get a pending task, if any
         requestHandler.LOCK.acquire()
         if not requestHandler.isEmpty():
             jobID_family_task = requestHandler.getWaitingTask()
@@ -171,13 +227,18 @@ def jobDispatcher(requestHandler, workerStateTracker):
 
         # If there is a Task that needs to be executed
         if jobID_family_task is not None:
+            # Initially we have not visited any worker
+            workerIDsVisited.clear()
+
             # Initially we have not found a worker with a free slot
-            workerFound = False
+            workerFound: bool = False
 
             while workerFound is False:  # Until a free worker is not found
                 workerStateTracker.LOCK.acquire()
+
                 # Pick a worker at random
                 _temp = random.choice(workerStateTracker.workerIDs)
+                workerIDsVisited.add(_temp)
 
                 # If the worker has a free slot
                 if workerStateTracker.isWorkerFree(_temp):
@@ -191,6 +252,8 @@ def jobDispatcher(requestHandler, workerStateTracker):
                                              [&#34;task_id&#34;]),
                                     duration=(jobID_family_task[2]
                                               [&#34;duration&#34;]),
+                                    # We only get _temp in the LOCK
+                                    # i.e. critical section
                                     worker_ID=_temp
                                     ))
                     # Once a worker with a free slot is found then
@@ -199,11 +262,23 @@ def jobDispatcher(requestHandler, workerStateTracker):
                     workerStateTracker.getWorkerSocket(_temp)\
                         .sendall(protocolMsg)
                     workerStateTracker.allocateSlot(_temp)
+
+                    # We have found a worker and hence set this to True
+                    workerFound = True
+
                 workerStateTracker.LOCK.release()
 
-                # Sleep for a second to allow for the workerStateTracker
-                # to be updated by the thread: workerUpdates
-                time.sleep(1)</code></pre>
+                # In the case where none of the workers have a free slot
+                if list(workerIDsVisited) == workerStateTracker.workerIDs:
+                    # Sleep for a second to allow for the
+                    # workerStateTracker to be updated by the
+                    # thread: workerUpdates
+                    time.sleep(1)
+
+                    # Clear the worker IDs visited set as we are
+                    # restarting our search for a free slot on one of the
+                    # workers
+                    workerIDsVisited.clear()</code></pre>
 </details>
 </dd>
 </dl>
@@ -236,7 +311,7 @@ def jobDispatcher(requestHandler, workerStateTracker):
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.1</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
 </footer>
 </body>
 </html>

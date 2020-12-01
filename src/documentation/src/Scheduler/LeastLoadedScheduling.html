@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
-<meta name="generator" content="pdoc 0.9.1" />
+<meta name="generator" content="pdoc 0.9.2" />
 <title>src.Scheduler.LeastLoadedScheduling API documentation</title>
 <meta name="description" content="" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
@@ -27,15 +27,34 @@
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">import time
+from typing import Optional
+
 from Communication.protocol import YACS_Protocol
+from Scheduler.JobRequests import JobRequestHandler
+from WorkerUtils.WorkerStateTracker import StateTracker
 
 
 class LeastLoadedScheduler:
     @staticmethod
-    def jobDispatcher(requestHandler, workerStateTracker):
+    def jobDispatcher(requestHandler: JobRequestHandler,
+                      workerStateTracker: StateTracker):
+        &#34;&#34;&#34;```jobDispatcher``` The Master looks at the state of all the
+        machines and checks which machine has most number of free slots.
+        It then launches the task on that machine. If none of the machines
+        have free slots available, the Master waits for 1 second and repeats
+        the process. This process continues until a free slot is found.
+
+        :param requestHandler: This object will track the tasks of incomplete jobs,
+        and provide them for allocation respecting the *map-reduce* dependency
+        :type requestHandler: JobRequestHandler
+        :param workerStateTracker: This object will track and update how
+        loaded the workers are, i.e. how many free slots fo they have
+        :type workerStateTracker: StateTracker
+        &#34;&#34;&#34;
         while True:
-            # Get a pending task if any
             jobID_family_task = None
+
+            # Get a pending task if any
             requestHandler.LOCK.acquire()
             if not requestHandler.isEmpty():
                 jobID_family_task = requestHandler.getWaitingTask()
@@ -44,13 +63,14 @@ class LeastLoadedScheduler:
             # If there is a Task that needs to be executed
             if jobID_family_task is not None:
                 # Initially we have not found a worker with a free slot
-                workerFound = False
+                workerFound: bool = False
 
                 while workerFound is False:  # Until a free worker is not found
                     workerStateTracker.LOCK.acquire()
 
                     # Get the least loaded worker if present, else None
-                    _temp = workerStateTracker.getLeastLoadedWorkerID()
+                    _temp: Optional[int] = workerStateTracker\
+                        .getLeastLoadedWorkerID()
 
                     # If a least loaded worker is found
                     if _temp is not None:
@@ -77,6 +97,9 @@ class LeastLoadedScheduler:
 
                     workerStateTracker.LOCK.release()
 
+                    # If none of the machines have free slots available,
+                    # then the Master waits for 1 second and repeats the
+                    # process
                     if workerFound is False:
                         # Sleep for a second to allow for the
                         # workerStateTracker to be updated by
@@ -104,10 +127,25 @@ class LeastLoadedScheduler:
 </summary>
 <pre><code class="python">class LeastLoadedScheduler:
     @staticmethod
-    def jobDispatcher(requestHandler, workerStateTracker):
+    def jobDispatcher(requestHandler: JobRequestHandler,
+                      workerStateTracker: StateTracker):
+        &#34;&#34;&#34;```jobDispatcher``` The Master looks at the state of all the
+        machines and checks which machine has most number of free slots.
+        It then launches the task on that machine. If none of the machines
+        have free slots available, the Master waits for 1 second and repeats
+        the process. This process continues until a free slot is found.
+
+        :param requestHandler: This object will track the tasks of incomplete jobs,
+        and provide them for allocation respecting the *map-reduce* dependency
+        :type requestHandler: JobRequestHandler
+        :param workerStateTracker: This object will track and update how
+        loaded the workers are, i.e. how many free slots fo they have
+        :type workerStateTracker: StateTracker
+        &#34;&#34;&#34;
         while True:
-            # Get a pending task if any
             jobID_family_task = None
+
+            # Get a pending task if any
             requestHandler.LOCK.acquire()
             if not requestHandler.isEmpty():
                 jobID_family_task = requestHandler.getWaitingTask()
@@ -116,13 +154,14 @@ class LeastLoadedScheduler:
             # If there is a Task that needs to be executed
             if jobID_family_task is not None:
                 # Initially we have not found a worker with a free slot
-                workerFound = False
+                workerFound: bool = False
 
                 while workerFound is False:  # Until a free worker is not found
                     workerStateTracker.LOCK.acquire()
 
                     # Get the least loaded worker if present, else None
-                    _temp = workerStateTracker.getLeastLoadedWorkerID()
+                    _temp: Optional[int] = workerStateTracker\
+                        .getLeastLoadedWorkerID()
 
                     # If a least loaded worker is found
                     if _temp is not None:
@@ -149,6 +188,9 @@ class LeastLoadedScheduler:
 
                     workerStateTracker.LOCK.release()
 
+                    # If none of the machines have free slots available,
+                    # then the Master waits for 1 second and repeats the
+                    # process
                     if workerFound is False:
                         # Sleep for a second to allow for the
                         # workerStateTracker to be updated by
@@ -158,19 +200,44 @@ class LeastLoadedScheduler:
 <h3>Static methods</h3>
 <dl>
 <dt id="src.Scheduler.LeastLoadedScheduling.LeastLoadedScheduler.jobDispatcher"><code class="name flex">
-<span>def <span class="ident">jobDispatcher</span></span>(<span>requestHandler, workerStateTracker)</span>
+<span>def <span class="ident">jobDispatcher</span></span>(<span>requestHandler: Scheduler.JobRequests.JobRequestHandler, workerStateTracker: WorkerUtils.WorkerStateTracker.StateTracker)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p><code>jobDispatcher</code> The Master looks at the state of all the
+machines and checks which machine has most number of free slots.
+It then launches the task on that machine. If none of the machines
+have free slots available, the Master waits for 1 second and repeats
+the process. This process continues until a free slot is found.</p>
+<p>:param requestHandler: This object will track the tasks of incomplete jobs,
+and provide them for allocation respecting the <em>map-reduce</em> dependency
+:type requestHandler: JobRequestHandler
+:param workerStateTracker: This object will track and update how
+loaded the workers are, i.e. how many free slots fo they have
+:type workerStateTracker: StateTracker</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@staticmethod
-def jobDispatcher(requestHandler, workerStateTracker):
+def jobDispatcher(requestHandler: JobRequestHandler,
+                  workerStateTracker: StateTracker):
+    &#34;&#34;&#34;```jobDispatcher``` The Master looks at the state of all the
+    machines and checks which machine has most number of free slots.
+    It then launches the task on that machine. If none of the machines
+    have free slots available, the Master waits for 1 second and repeats
+    the process. This process continues until a free slot is found.
+
+    :param requestHandler: This object will track the tasks of incomplete jobs,
+    and provide them for allocation respecting the *map-reduce* dependency
+    :type requestHandler: JobRequestHandler
+    :param workerStateTracker: This object will track and update how
+    loaded the workers are, i.e. how many free slots fo they have
+    :type workerStateTracker: StateTracker
+    &#34;&#34;&#34;
     while True:
-        # Get a pending task if any
         jobID_family_task = None
+
+        # Get a pending task if any
         requestHandler.LOCK.acquire()
         if not requestHandler.isEmpty():
             jobID_family_task = requestHandler.getWaitingTask()
@@ -179,13 +246,14 @@ def jobDispatcher(requestHandler, workerStateTracker):
         # If there is a Task that needs to be executed
         if jobID_family_task is not None:
             # Initially we have not found a worker with a free slot
-            workerFound = False
+            workerFound: bool = False
 
             while workerFound is False:  # Until a free worker is not found
                 workerStateTracker.LOCK.acquire()
 
                 # Get the least loaded worker if present, else None
-                _temp = workerStateTracker.getLeastLoadedWorkerID()
+                _temp: Optional[int] = workerStateTracker\
+                    .getLeastLoadedWorkerID()
 
                 # If a least loaded worker is found
                 if _temp is not None:
@@ -212,6 +280,9 @@ def jobDispatcher(requestHandler, workerStateTracker):
 
                 workerStateTracker.LOCK.release()
 
+                # If none of the machines have free slots available,
+                # then the Master waits for 1 second and repeats the
+                # process
                 if workerFound is False:
                     # Sleep for a second to allow for the
                     # workerStateTracker to be updated by
@@ -249,7 +320,7 @@ def jobDispatcher(requestHandler, workerStateTracker):
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.1</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
 </footer>
 </body>
 </html>

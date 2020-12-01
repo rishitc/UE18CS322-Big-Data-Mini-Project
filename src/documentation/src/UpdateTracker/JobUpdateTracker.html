@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
-<meta name="generator" content="pdoc 0.9.1" />
+<meta name="generator" content="pdoc 0.9.2" />
 <title>src.UpdateTracker.JobUpdateTracker API documentation</title>
 <meta name="description" content="" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
@@ -54,7 +54,7 @@ class Tracker:
         self.workers_time = dict()
         self.map_tracker = dict()
         self.reduce_tracker = dict()
-        self.algo = algorithm
+        self.algorithm = algorithm
         self.LOCK = Lock()
 
         fields_job = [&#39;JobID&#39;, &#39;start_time&#39;, &#39;end_time&#39;, &#39;duration&#39;]
@@ -81,7 +81,7 @@ class Tracker:
         self.task_writer = t_writer
         self.worker_writer = w_writer
 
-    def addJob(self, parsed_json_request):  # request_message):
+    def addJobRequest(self, parsed_json_request: dict):  # request_message):
         &#34;&#34;&#34;
         - Gets the Request message and initialises the dictionaries
         to keep track of the jobs and associated tasks.
@@ -142,15 +142,15 @@ class Tracker:
         # Get the job id from the response message
         job_id = parsed_json_request[&#34;job_id&#34;]
         # Get the task id from the response message
-        task_id = parsed_json_request[&#34;task&#34;][0][&#34;task_id&#34;]
+        task_id = parsed_json_request[&#34;task&#34;][&#34;task_id&#34;]
         # Get the worker id from the response message
         worker_id = parsed_json_request[&#34;worker_id&#34;]
         # Get the task family from the response message
         task_fam = parsed_json_request[&#34;task family&#34;]
 
         # Get task start and end time on worker
-        task_stats = [parsed_json_request[&#34;task&#34;][0][&#34;start time&#34;],
-                      parsed_json_request[&#34;task&#34;][0][&#34;end time&#34;]]
+        task_stats = [parsed_json_request[&#34;task&#34;][&#34;start time&#34;],
+                      parsed_json_request[&#34;task&#34;][&#34;end time&#34;]]
         self.jobs[job_id][task_id] = response_message
         # Stores start time and end time for a task
         self.tasks_time[job_id][task_id] = task_stats
@@ -273,7 +273,7 @@ if __name__ == &#34;__main__&#34;:
     x = json.loads(x)
 
     JB = Tracker(&#34;RR&#34;)
-    JB.addJob(x)</code></pre>
+    JB.addJobRequest(x)</code></pre>
 </details>
 </section>
 <section>
@@ -346,7 +346,7 @@ if __name__ == &#34;__main__&#34;:
         self.workers_time = dict()
         self.map_tracker = dict()
         self.reduce_tracker = dict()
-        self.algo = algorithm
+        self.algorithm = algorithm
         self.LOCK = Lock()
 
         fields_job = [&#39;JobID&#39;, &#39;start_time&#39;, &#39;end_time&#39;, &#39;duration&#39;]
@@ -373,7 +373,7 @@ if __name__ == &#34;__main__&#34;:
         self.task_writer = t_writer
         self.worker_writer = w_writer
 
-    def addJob(self, parsed_json_request):  # request_message):
+    def addJobRequest(self, parsed_json_request: dict):  # request_message):
         &#34;&#34;&#34;
         - Gets the Request message and initialises the dictionaries
         to keep track of the jobs and associated tasks.
@@ -434,15 +434,15 @@ if __name__ == &#34;__main__&#34;:
         # Get the job id from the response message
         job_id = parsed_json_request[&#34;job_id&#34;]
         # Get the task id from the response message
-        task_id = parsed_json_request[&#34;task&#34;][0][&#34;task_id&#34;]
+        task_id = parsed_json_request[&#34;task&#34;][&#34;task_id&#34;]
         # Get the worker id from the response message
         worker_id = parsed_json_request[&#34;worker_id&#34;]
         # Get the task family from the response message
         task_fam = parsed_json_request[&#34;task family&#34;]
 
         # Get task start and end time on worker
-        task_stats = [parsed_json_request[&#34;task&#34;][0][&#34;start time&#34;],
-                      parsed_json_request[&#34;task&#34;][0][&#34;end time&#34;]]
+        task_stats = [parsed_json_request[&#34;task&#34;][&#34;start time&#34;],
+                      parsed_json_request[&#34;task&#34;][&#34;end time&#34;]]
         self.jobs[job_id][task_id] = response_message
         # Stores start time and end time for a task
         self.tasks_time[job_id][task_id] = task_stats
@@ -556,8 +556,8 @@ if __name__ == &#34;__main__&#34;:
 </details>
 <h3>Methods</h3>
 <dl>
-<dt id="src.UpdateTracker.JobUpdateTracker.Tracker.addJob"><code class="name flex">
-<span>def <span class="ident">addJob</span></span>(<span>self, parsed_json_request)</span>
+<dt id="src.UpdateTracker.JobUpdateTracker.Tracker.addJobRequest"><code class="name flex">
+<span>def <span class="ident">addJobRequest</span></span>(<span>self, parsed_json_request: dict)</span>
 </code></dt>
 <dd>
 <div class="desc"><ul>
@@ -576,7 +576,7 @@ response message</li>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def addJob(self, parsed_json_request):  # request_message):
+<pre><code class="python">def addJobRequest(self, parsed_json_request: dict):  # request_message):
     &#34;&#34;&#34;
     - Gets the Request message and initialises the dictionaries
     to keep track of the jobs and associated tasks.
@@ -703,15 +703,15 @@ tasks:</p>
     # Get the job id from the response message
     job_id = parsed_json_request[&#34;job_id&#34;]
     # Get the task id from the response message
-    task_id = parsed_json_request[&#34;task&#34;][0][&#34;task_id&#34;]
+    task_id = parsed_json_request[&#34;task&#34;][&#34;task_id&#34;]
     # Get the worker id from the response message
     worker_id = parsed_json_request[&#34;worker_id&#34;]
     # Get the task family from the response message
     task_fam = parsed_json_request[&#34;task family&#34;]
 
     # Get task start and end time on worker
-    task_stats = [parsed_json_request[&#34;task&#34;][0][&#34;start time&#34;],
-                  parsed_json_request[&#34;task&#34;][0][&#34;end time&#34;]]
+    task_stats = [parsed_json_request[&#34;task&#34;][&#34;start time&#34;],
+                  parsed_json_request[&#34;task&#34;][&#34;end time&#34;]]
     self.jobs[job_id][task_id] = response_message
     # Stores start time and end time for a task
     self.tasks_time[job_id][task_id] = task_stats
@@ -847,7 +847,7 @@ stats of that particular task to a log file.</p></div>
 <li>
 <h4><code><a title="src.UpdateTracker.JobUpdateTracker.Tracker" href="#src.UpdateTracker.JobUpdateTracker.Tracker">Tracker</a></code></h4>
 <ul class="two-column">
-<li><code><a title="src.UpdateTracker.JobUpdateTracker.Tracker.addJob" href="#src.UpdateTracker.JobUpdateTracker.Tracker.addJob">addJob</a></code></li>
+<li><code><a title="src.UpdateTracker.JobUpdateTracker.Tracker.addJobRequest" href="#src.UpdateTracker.JobUpdateTracker.Tracker.addJobRequest">addJobRequest</a></code></li>
 <li><code><a title="src.UpdateTracker.JobUpdateTracker.Tracker.isMapComplete" href="#src.UpdateTracker.JobUpdateTracker.Tracker.isMapComplete">isMapComplete</a></code></li>
 <li><code><a title="src.UpdateTracker.JobUpdateTracker.Tracker.isReduceComplete" href="#src.UpdateTracker.JobUpdateTracker.Tracker.isReduceComplete">isReduceComplete</a></code></li>
 <li><code><a title="src.UpdateTracker.JobUpdateTracker.Tracker.updateJob" href="#src.UpdateTracker.JobUpdateTracker.Tracker.updateJob">updateJob</a></code></li>
@@ -862,7 +862,7 @@ stats of that particular task to a log file.</p></div>
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.1</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
 </footer>
 </body>
 </html>

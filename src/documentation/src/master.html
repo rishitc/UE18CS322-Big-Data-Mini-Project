@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
-<meta name="generator" content="pdoc 0.9.1" />
+<meta name="generator" content="pdoc 0.9.2" />
 <title>src.master API documentation</title>
 <meta name="description" content="" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
@@ -30,7 +30,9 @@
 import socket
 import sys
 import threading
+from typing import List, Optional, Tuple
 import colored as TC
+from colored.colored import attr
 import inflect
 
 from WorkerUtils.WorkerStateTracker import StateTracker
@@ -41,8 +43,17 @@ from Scheduler.RandomScheduling import RandomScheduler
 from Scheduler.RoundRobinScheduling import RoundRobinScheduler
 from Scheduler.LeastLoadedScheduling import LeastLoadedScheduler
 
-BUFFER_SIZE = 4096
+BUFFER_SIZE: int = 4096
+
+# Error codes to return to the shell
+# The Unix programs&#39; style for error codes has
+# been used here
+MISSING_CMD_LINE_ARGS: int = 2
+BROKEN_CONFIG_FILE_PATH: int = 1
+
 GE = inflect.engine()  # GE means Grammar Engine
+
+# This lock is used to get access to print onto the standard output
 PRINT_LOCK = threading.Lock()
 
 
@@ -54,8 +65,18 @@ def error_text(text):
     return f&#34;{TC.fg(1) + TC.attr(1)}ERROR:{TC.attr(0)} {text}&#34;
 
 
-def listenForJobRequests(requestHandler, workerUpdatesTracker):
-    _JOB_REQUEST_ADDR = (socket.gethostname(), 5000)
+def listenForJobRequests(jobRequestHandler: JobRequestHandler,
+                         jobUpdateTracker: JobUpdateTracker):
+    &#34;&#34;&#34;```listenForJobRequests``` listens for new job requests from the client
+    code
+
+    :param jobRequestHandler: Used to track the task dispath status of the job
+    :type jobRequestHandler: JobRequestHandler
+    :param jobUpdateTracker: Used to track the updates from the workers about
+    the tasks assigned belonging to the different jobs
+    :type jobUpdateTracker: JobUpdateTracker
+    &#34;&#34;&#34;
+    _JOB_REQUEST_ADDR: Tuple[str, int] = (socket.gethostname(), 5000)
 
     # Setup the master socket to listen for job requests
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as jobReqSocket:
@@ -80,20 +101,34 @@ def listenForJobRequests(requestHandler, workerUpdatesTracker):
 
             # Add new job request to job request handler object
             # for task dispatch
-            requestHandler.LOCK.acquire()
-            requestHandler.addJobRequest(parsedJSON_Msg)
-            requestHandler.LOCK.release()
+            jobRequestHandler.LOCK.acquire()
+            jobRequestHandler.addJobRequest(parsedJSON_Msg)
+            jobRequestHandler.LOCK.release()
 
             # Add new job request to job request handler object
             # for tracking dispatched tasks&#39; completion by the
             # workers
-            workerUpdatesTracker.LOCK.acquire()
-            workerUpdatesTracker.addJob(parsedJSON_Msg)
-            workerUpdatesTracker.LOCK.release()
+            jobUpdateTracker.LOCK.acquire()
+            jobUpdateTracker.addJobRequest(parsedJSON_Msg)
+            jobUpdateTracker.LOCK.release()
 
 
-def workerUpdates(workerSocket, workerStateTracker,
-                  jobUpdatesTracker):
+def workerUpdates(workerSocket: socket.socket,
+                  workerStateTracker: StateTracker,
+                  jobUpdateTracker: JobUpdateTracker):
+    &#34;&#34;&#34;workerUpdates captures the updates from the worker as and when
+    they complete the tasks assigned to them, and respond back
+
+    :param workerSocket: The socket object for listening to the specific
+    worker&#39;s updates
+    :type workerSocket: socket
+    :param workerStateTracker: Tracks the states of the worker nodes as to how
+    many free slots do they have
+    :type workerStateTracker: StateTracker
+    :param jobUpdateTracker: Tracks the jobs assigned to the workers, and
+    their corresponding updates
+    :type jobUpdateTracker: JobUpdateTracker
+    &#34;&#34;&#34;
     while True:
         workerUpdate = workerSocket.recv(BUFFER_SIZE)
         if not workerUpdate:
@@ -102,9 +137,9 @@ def workerUpdates(workerSocket, workerStateTracker,
 
         parsedJSON_Msg = json.loads(workerUpdate)
 
-        jobUpdatesTracker.LOCK.acquire()
-        jobUpdatesTracker.updateJob(parsedJSON_Msg)
-        jobUpdatesTracker.LOCK.release()
+        jobUpdateTracker.LOCK.acquire()
+        jobUpdateTracker.updateJob(parsedJSON_Msg)
+        jobUpdateTracker.LOCK.release()
 
         workerStateTracker.LOCK.acquire()
         workerStateTracker.freeSlot(parsedJSON_Msg[&#34;worker_id&#34;])
@@ -112,53 +147,75 @@ def workerUpdates(workerSocket, workerStateTracker,
 
 
 if __name__ == &#34;__main__&#34;:
-    PATH_TO_CONFIG_FILE = sys.argv[1]
-    TYPE_OF_SCHEDULING = sys.argv[2]
+    # Make sure the required command line arguments are passed in
+    PATH_TO_CONFIG_FILE: Optional[str] = None
+    TYPE_OF_SCHEDULING: Optional[str] = None
 
+    try:
+        PATH_TO_CONFIG_FILE = sys.argv[1]
+        TYPE_OF_SCHEDULING = sys.argv[2]
+    except IndexError as e:
+        print(f&#34;{TC.attr(1)+TC.attr(5)+TC.fg(&#39;red&#39;)}ERROR:{attr(0)} &#34;
+              &#34;Missing command line arguments: &#34;
+              f&#34;{TC.attr(1)+TC.attr(4)}PATH_TO_CONFIG_FILE{TC.attr(0)}&#34;
+              f&#34; or {TC.attr(1)+TC.attr(4)}TYPE_OF_SCHEDULING{TC.attr(0)}&#34;
+              f&#34; or {TC.attr(1)}both!{TC.attr(0)}&#34;)
+        print(e)
+        sys.exit(MISSING_CMD_LINE_ARGS)
+
+    # Making sure that the configuration file can be opened
     try:
         with open(PATH_TO_CONFIG_FILE) as fHandler:
             # Load the data from the worker config file
-            workerConf = json.load(fHandler)
-
+            workerConf: dict = json.load(fHandler)
     except FileNotFoundError:
-        print(error_text(f&#34;Unable to find the file given by path:\
- {PATH_TO_CONFIG_FILE}&#34;))
-        sys.exit(1)
+        print(error_text((&#34;Unable to find the file given by path: &#34;
+                          f&#34;{PATH_TO_CONFIG_FILE}&#34;)))
+        sys.exit(BROKEN_CONFIG_FILE_PATH)
 
-    WORKER_COUNT = len(workerConf[&#39;workers&#39;])
+    # Get the number of workers to interact with
+    WORKER_COUNT: int = len(workerConf[&#39;workers&#39;])
 
     _ans = &#39;n&#39;
-    while _ans in [&#39;n&#39;, &#39;no&#39;]:
-        _ans = input(f&#34;{&#39;Have&#39; if WORKER_COUNT &gt; 1 else &#39;Has&#39;} the\
- {WORKER_COUNT} {GE.plural_noun(&#39;worker&#39;, WORKER_COUNT)} been started,\
- yet? [y/n]&#34;).strip().lower()
+    while str.lower(_ans) in [&#39;n&#39;, &#39;no&#39;]:
+        _ans = input((f&#34;{&#39;Have&#39; if WORKER_COUNT &gt; 1 else &#39;Has&#39;} the&#34;
+                      f&#34;{WORKER_COUNT} &#34;
+                      f&#34;{GE.plural_noun(&#39;worker&#39;, WORKER_COUNT)}&#34;
+                      &#34; been started, yet? [y/n]&#34;)).strip().lower()
 
     &#34;&#34;&#34; Creating the thread-shared objects
     &#34;&#34;&#34;
     # Worker State Tracker Object
-    obj_workerStateTracker = StateTracker(workerConf)
+    obj_workerStateTracker: StateTracker = StateTracker(workerConf)
 
     # Worker updates handler object
-    obj_jobUpdatesTracker = JobUpdateTracker(TYPE_OF_SCHEDULING)
+    obj_jobUpdatesTracker: JobUpdateTracker = \
+        JobUpdateTracker(TYPE_OF_SCHEDULING)
 
     # Job Request Handler Object
-    obj_requestHandler = JobRequestHandler(obj_jobUpdatesTracker)
+    obj_jobRequestHandler: JobRequestHandler = \
+        JobRequestHandler(obj_jobUpdatesTracker)
 
     # ---
     # After this points we create the threads for the master
+    # After this point any print statements need to acquire the
+    # PRINT_LOCK before printing
     # ---
 
-    &#34;&#34;&#34; Creating the various threads needed at the master machine and
+    &#34;&#34;&#34;
+     - Creating the various threads needed at the master machine and
      passing in the required parameters.
-     All the threads are declared as daemon threads.
-     Daemon threads are those threads which are killed when the main
+     - All the threads are declared as daemon threads.
+     - Daemon threads are those threads which are killed when the main
      program exits.
     &#34;&#34;&#34;
     jobRequestThread = threading.Thread(name=(&#34;Listen for Incoming Job&#34;
                                               &#34;Requests&#34;),
                                         target=listenForJobRequests,
-                                        args=(obj_requestHandler))
+                                        args=(obj_jobRequestHandler,
+                                              obj_jobUpdatesTracker))
     jobRequestThread.daemon = True
+    jobRequestThread.start()
 
     taskDispatchThread = None
     if TYPE_OF_SCHEDULING == &#34;RANDOM&#34;:
@@ -166,14 +223,14 @@ if __name__ == &#34;__main__&#34;:
                                                     &#34;Random Scheduling&#34;),
                                               target=RandomScheduler.
                                               jobDispatcher,
-                                              args=(obj_requestHandler,
+                                              args=(obj_jobRequestHandler,
                                                     obj_workerStateTracker))
     elif TYPE_OF_SCHEDULING == &#34;RR&#34;:
         taskDispatchThread = threading.Thread(name=(&#34;Job Dispatcher -&#34;
                                                     &#34;Round-Robin Scheduling&#34;),
                                               target=RoundRobinScheduler.
                                               jobDispatcher,
-                                              args=(obj_requestHandler,
+                                              args=(obj_jobRequestHandler,
                                                     obj_workerStateTracker,
                                                     WORKER_COUNT))
     elif TYPE_OF_SCHEDULING == &#34;LL&#34;:
@@ -181,7 +238,7 @@ if __name__ == &#34;__main__&#34;:
                                                     &#34;Least-Loaded Scheduling&#34;),
                                               target=LeastLoadedScheduler.
                                               jobDispatcher,
-                                              args=(obj_requestHandler,
+                                              args=(obj_jobRequestHandler,
                                                     obj_workerStateTracker,
                                                     WORKER_COUNT))
     else:
@@ -191,11 +248,15 @@ if __name__ == &#34;__main__&#34;:
         sys.exit(1)
 
     taskDispatchThread.daemon = True
+    taskDispatchThread.start()
 
-    WORKER_UPDATES_PORT = 5001
-    WORKER_UPDATES_ADDR = (socket.gethostname(), WORKER_UPDATES_PORT)
+    WORKER_UPDATES_PORT: int = 5001
+    WORKER_UPDATES_ADDR: Tuple[str, int] = \
+        (socket.gethostname(), WORKER_UPDATES_PORT)
+
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as \
          worker_updates_socket:
+        # Bind the socket to the address tuple
         worker_updates_socket.bind(WORKER_UPDATES_ADDR)
 
         # Put the socket into listening mode
@@ -206,31 +267,34 @@ if __name__ == &#34;__main__&#34;:
         PRINT_LOCK.release()
 
         # List to hold the threads listening to updates from the workers
-        workerUpdateThreads = []
+        workerUpdateThreads: List[threading.Thread] = []
 
-        # A forever loop until client wants to exit
+        # Loop until all the workers connect to the master
         for _ in range(WORKER_COUNT):
-            # Establish connection with client
+            # Establish connection with the requesting worker
             workerSocket, workerAddress = worker_updates_socket.accept()
 
             # Get the worker number from the newly connected worker
-            WORKER_NUMBER = workerSocket.recv(BUFFER_SIZE).decode()
+            WORKER_ID: str = workerSocket.recv(BUFFER_SIZE).decode()
 
             # Printing connection updates
             PRINT_LOCK.acquire()
-            print(info_text(&#34;Connected to worker at address:&#34;))
+            print(
+                  info_text(f&#34;Connected to worker ID: {WORKER_ID} at address:&#34;)
+                  )
             print(f&#34;IP Address: {workerAddress[0]}&#34;)
             print(f&#34;Socket: {workerAddress[1]}&#34;)
             PRINT_LOCK.release()
 
             # Start a new thread and return its thread object
             _temp = threading.Thread(target=workerUpdates,
-                                     name=(f&#34;Worker-{WORKER_NUMBER} Update &#34;
+                                     name=(f&#34;Worker-{WORKER_ID} Update &#34;
                                            &#34;Listener&#34;),
                                      args=(workerSocket,
                                            obj_workerStateTracker,
                                            obj_jobUpdatesTracker))
             _temp.daemon = True
+            _temp.start()
 
             # Store the thread object in a list
             workerUpdateThreads.append(_temp)
@@ -247,10 +311,7 @@ if __name__ == &#34;__main__&#34;:
 
     # Wait for the threads listening for worker updates to finish
     for updateThread in workerUpdateThreads:
-        updateThread.join()
-
-    # Closing all task dispatch sockets to the workers
-    obj_workerStateTracker.closeDispatchTaskSockets()</code></pre>
+        updateThread.join()</code></pre>
 </details>
 </section>
 <section>
@@ -287,16 +348,32 @@ if __name__ == &#34;__main__&#34;:
 </details>
 </dd>
 <dt id="src.master.listenForJobRequests"><code class="name flex">
-<span>def <span class="ident">listenForJobRequests</span></span>(<span>requestHandler, workerUpdatesTracker)</span>
+<span>def <span class="ident">listenForJobRequests</span></span>(<span>jobRequestHandler: Scheduler.JobRequests.JobRequestHandler, jobUpdateTracker: UpdateTracker.JobUpdateTracker.Tracker)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p><code>listenForJobRequests</code> listens for new job requests from the client
+code</p>
+<p>:param jobRequestHandler: Used to track the task dispath status of the job
+:type jobRequestHandler: JobRequestHandler
+:param jobUpdateTracker: Used to track the updates from the workers about
+the tasks assigned belonging to the different jobs
+:type jobUpdateTracker: JobUpdateTracker</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def listenForJobRequests(requestHandler, workerUpdatesTracker):
-    _JOB_REQUEST_ADDR = (socket.gethostname(), 5000)
+<pre><code class="python">def listenForJobRequests(jobRequestHandler: JobRequestHandler,
+                         jobUpdateTracker: JobUpdateTracker):
+    &#34;&#34;&#34;```listenForJobRequests``` listens for new job requests from the client
+    code
+
+    :param jobRequestHandler: Used to track the task dispath status of the job
+    :type jobRequestHandler: JobRequestHandler
+    :param jobUpdateTracker: Used to track the updates from the workers about
+    the tasks assigned belonging to the different jobs
+    :type jobUpdateTracker: JobUpdateTracker
+    &#34;&#34;&#34;
+    _JOB_REQUEST_ADDR: Tuple[str, int] = (socket.gethostname(), 5000)
 
     # Setup the master socket to listen for job requests
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as jobReqSocket:
@@ -321,29 +398,53 @@ if __name__ == &#34;__main__&#34;:
 
             # Add new job request to job request handler object
             # for task dispatch
-            requestHandler.LOCK.acquire()
-            requestHandler.addJobRequest(parsedJSON_Msg)
-            requestHandler.LOCK.release()
+            jobRequestHandler.LOCK.acquire()
+            jobRequestHandler.addJobRequest(parsedJSON_Msg)
+            jobRequestHandler.LOCK.release()
 
             # Add new job request to job request handler object
             # for tracking dispatched tasks&#39; completion by the
             # workers
-            workerUpdatesTracker.LOCK.acquire()
-            workerUpdatesTracker.addJob(parsedJSON_Msg)
-            workerUpdatesTracker.LOCK.release()</code></pre>
+            jobUpdateTracker.LOCK.acquire()
+            jobUpdateTracker.addJobRequest(parsedJSON_Msg)
+            jobUpdateTracker.LOCK.release()</code></pre>
 </details>
 </dd>
 <dt id="src.master.workerUpdates"><code class="name flex">
-<span>def <span class="ident">workerUpdates</span></span>(<span>workerSocket, workerStateTracker, jobUpdatesTracker)</span>
+<span>def <span class="ident">workerUpdates</span></span>(<span>workerSocket: socket.socket, workerStateTracker: WorkerUtils.WorkerStateTracker.StateTracker, jobUpdateTracker: UpdateTracker.JobUpdateTracker.Tracker)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>workerUpdates captures the updates from the worker as and when
+they complete the tasks assigned to them, and respond back</p>
+<p>:param workerSocket: The socket object for listening to the specific
+worker's updates
+:type workerSocket: socket
+:param workerStateTracker: Tracks the states of the worker nodes as to how
+many free slots do they have
+:type workerStateTracker: StateTracker
+:param jobUpdateTracker: Tracks the jobs assigned to the workers, and
+their corresponding updates
+:type jobUpdateTracker: JobUpdateTracker</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def workerUpdates(workerSocket, workerStateTracker,
-                  jobUpdatesTracker):
+<pre><code class="python">def workerUpdates(workerSocket: socket.socket,
+                  workerStateTracker: StateTracker,
+                  jobUpdateTracker: JobUpdateTracker):
+    &#34;&#34;&#34;workerUpdates captures the updates from the worker as and when
+    they complete the tasks assigned to them, and respond back
+
+    :param workerSocket: The socket object for listening to the specific
+    worker&#39;s updates
+    :type workerSocket: socket
+    :param workerStateTracker: Tracks the states of the worker nodes as to how
+    many free slots do they have
+    :type workerStateTracker: StateTracker
+    :param jobUpdateTracker: Tracks the jobs assigned to the workers, and
+    their corresponding updates
+    :type jobUpdateTracker: JobUpdateTracker
+    &#34;&#34;&#34;
     while True:
         workerUpdate = workerSocket.recv(BUFFER_SIZE)
         if not workerUpdate:
@@ -352,9 +453,9 @@ if __name__ == &#34;__main__&#34;:
 
         parsedJSON_Msg = json.loads(workerUpdate)
 
-        jobUpdatesTracker.LOCK.acquire()
-        jobUpdatesTracker.updateJob(parsedJSON_Msg)
-        jobUpdatesTracker.LOCK.release()
+        jobUpdateTracker.LOCK.acquire()
+        jobUpdateTracker.updateJob(parsedJSON_Msg)
+        jobUpdateTracker.LOCK.release()
 
         workerStateTracker.LOCK.acquire()
         workerStateTracker.freeSlot(parsedJSON_Msg[&#34;worker_id&#34;])
@@ -389,7 +490,7 @@ if __name__ == &#34;__main__&#34;:
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.1</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
 </footer>
 </body>
 </html>

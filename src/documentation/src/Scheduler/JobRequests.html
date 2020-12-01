@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
-<meta name="generator" content="pdoc 0.9.1" />
+<meta name="generator" content="pdoc 0.9.2" />
 <title>src.Scheduler.JobRequests API documentation</title>
 <meta name="description" content="" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
@@ -27,32 +27,33 @@
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">from threading import Lock
+from typing import Optional, Tuple
+
+from UpdateTracker.JobUpdateTracker import Tracker as JobUpdateTracker
 
 
 class JobRequestHandler:
-    &#34;&#34;&#34;This class stores the incoming job requests from the job request
-     port. The incoming jobs are stored with a certain priority; at the
-     moment First Come First Served technique is used. It also provides
-     waiting tasks for the highest priority job request,
-     in order of map tasks then reduce tasks.
-
-    Once a job has been completely allocated to one or the worker. Its entry
-     is removed from this object.
     &#34;&#34;&#34;
-    def __init__(self, workerUpdatesTracker):
+    This class stores the *incoming job requests* from the job request
+    port.
+
+    Once a job has been completely allocated, i.e. all its map and reduced
+    tasks have been dispatched to one or the other worker, then its entry
+    is removed from this object.
+    &#34;&#34;&#34;
+    def __init__(self, workerUpdatesTracker: JobUpdateTracker):
         self.jobRequests = {}
-        self.priorityOrder = []
+        # self.priorityOrder = []
         self.LOCK = Lock()
-        self.workerUpdatesTracker = workerUpdatesTracker
+        self.workerUpdatesTracker: JobUpdateTracker = workerUpdatesTracker
 
     def addJobRequest(self, requestSpecs):
-        &#34;&#34;&#34;Adds the request specification to the objects
-         jobRequests dictionary and adds the job ID to the
-         priorityOrder list as per the priority order of the
-         job.
+        &#34;&#34;&#34;
+        ```addJobRequest``` adds the job request&#39;s specification to
+        the handler object&#39;s ```jobRequests``` dictionary
 
         :param requestSpecs: Dictionary got after converting the incoming
-         JSON request string into a dictionary
+        JSON request string into a dictionary
         :type requestSpecs: dict
         &#34;&#34;&#34;
         _JOB_ID: int = requestSpecs[&#34;job_id&#34;]
@@ -60,14 +61,16 @@ class JobRequestHandler:
             &#34;map&#34;: requestSpecs[&#34;map_tasks&#34;],
             &#34;reduce&#34;: requestSpecs[&#34;reduce_tasks&#34;]
         }
-        self.priorityOrder.append(requestSpecs[&#34;job_id&#34;])
+        # self.priorityOrder.append(requestSpecs[&#34;job_id&#34;])
 
-    def getWaitingTask(self, workerUpdatesTracker):
-        &#34;&#34;&#34;getWaitingTask returns a task to be allocated on one of the workers
-        as well as task related meta-data
+    def getWaitingTask(self) -&gt; Optional[Tuple[Optional[int],
+                                               Optional[str],
+                                               Optional[dict]]]:
+        &#34;&#34;&#34;```getWaitingTask``` returns a task to be allocated to one of the
+        workers for execution as well as the task&#39;s related meta-data
 
-        Algorithm:
-        ----------
+        ## Algorithm:
+        ```
         1. For every job in the jobRequests list:
             1.1 Check if the job has any pending map tasks
                 1.1.1 Return any map task of the job and associated meta-data
@@ -76,20 +79,22 @@ class JobRequestHandler:
                     1.2.1.1 Return any reduce task of the job and associated
                             meta-data
                 1.2.2 else
-                    1.2.2.1 Continue and hence move to the next pending job
-        2. Return None as there is no assignable task available to 
+                    1.2.2.1 Continue and hence check the next pending job
+        2. Return None as there is no assignable task available
+        ```
 
-        :return: Task meta-data and the task dictionary
-        :rtype: Tuple
+        :return: Task meta-data and the task-dictionary
+        :rtype: Optional[Tuple[Optional[int], Optional[str], Optional[dict]]]
         &#34;&#34;&#34;
         # If there are no pending tasks and hence no pending jobs
         # then return None
-        if len(self.priorityOrder) == 0:
+        if len(self.jobRequests) == 0:
             return None
 
-        _JOB_ID = None
-        _SELECTED_TASK = None
-        _TASK_TYPE = None
+        _JOB_ID: Optional[int] = None
+        _SELECTED_TASK: Optional[dict] = None
+        _TASK_TYPE: Optional[str] = None
+
         for jobID in self.jobRequests:
             # Check for a pending map task
             if self.jobRequests[jobID][&#34;map&#34;]:
@@ -116,12 +121,19 @@ class JobRequestHandler:
         if (not self.jobRequests[_JOB_ID][&#34;map&#34;]) and \
            (not self.jobRequests[_JOB_ID][&#34;reduce&#34;]):
             del self.jobRequests[_JOB_ID]
-            self.priorityOrder.remove(_JOB_ID)
+            # self.priorityOrder.remove(_JOB_ID)
 
         return (_JOB_ID, _TASK_TYPE, _SELECTED_TASK)
 
-    def isEmpty(self):
-        return True if not self.priorityOrder else False</code></pre>
+    def isEmpty(self) -&gt; bool:
+        &#34;&#34;&#34;```isEmpty``` checks if the ```jobRequests``` dictionary is
+        of the handler is empty
+
+        :return: Return True if the ```jobRequests``` dictionary is
+        empty else it returns False
+        :rtype: bool
+        &#34;&#34;&#34;
+        return not self.jobRequests</code></pre>
 </details>
 </section>
 <section>
@@ -135,44 +147,40 @@ class JobRequestHandler:
 <dl>
 <dt id="src.Scheduler.JobRequests.JobRequestHandler"><code class="flex name class">
 <span>class <span class="ident">JobRequestHandler</span></span>
-<span>(</span><span>workerUpdatesTracker)</span>
+<span>(</span><span>workerUpdatesTracker: UpdateTracker.JobUpdateTracker.Tracker)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>This class stores the incoming job requests from the job request
-port. The incoming jobs are stored with a certain priority; at the
-moment First Come First Served technique is used. It also provides
-waiting tasks for the highest priority job request,
-in order of map tasks then reduce tasks.</p>
-<p>Once a job has been completely allocated to one or the worker. Its entry
+<div class="desc"><p>This class stores the <em>incoming job requests</em> from the job request
+port.</p>
+<p>Once a job has been completely allocated, i.e. all its map and reduced
+tasks have been dispatched to one or the other worker, then its entry
 is removed from this object.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class JobRequestHandler:
-    &#34;&#34;&#34;This class stores the incoming job requests from the job request
-     port. The incoming jobs are stored with a certain priority; at the
-     moment First Come First Served technique is used. It also provides
-     waiting tasks for the highest priority job request,
-     in order of map tasks then reduce tasks.
-
-    Once a job has been completely allocated to one or the worker. Its entry
-     is removed from this object.
     &#34;&#34;&#34;
-    def __init__(self, workerUpdatesTracker):
+    This class stores the *incoming job requests* from the job request
+    port.
+
+    Once a job has been completely allocated, i.e. all its map and reduced
+    tasks have been dispatched to one or the other worker, then its entry
+    is removed from this object.
+    &#34;&#34;&#34;
+    def __init__(self, workerUpdatesTracker: JobUpdateTracker):
         self.jobRequests = {}
-        self.priorityOrder = []
+        # self.priorityOrder = []
         self.LOCK = Lock()
-        self.workerUpdatesTracker = workerUpdatesTracker
+        self.workerUpdatesTracker: JobUpdateTracker = workerUpdatesTracker
 
     def addJobRequest(self, requestSpecs):
-        &#34;&#34;&#34;Adds the request specification to the objects
-         jobRequests dictionary and adds the job ID to the
-         priorityOrder list as per the priority order of the
-         job.
+        &#34;&#34;&#34;
+        ```addJobRequest``` adds the job request&#39;s specification to
+        the handler object&#39;s ```jobRequests``` dictionary
 
         :param requestSpecs: Dictionary got after converting the incoming
-         JSON request string into a dictionary
+        JSON request string into a dictionary
         :type requestSpecs: dict
         &#34;&#34;&#34;
         _JOB_ID: int = requestSpecs[&#34;job_id&#34;]
@@ -180,14 +188,16 @@ is removed from this object.</p></div>
             &#34;map&#34;: requestSpecs[&#34;map_tasks&#34;],
             &#34;reduce&#34;: requestSpecs[&#34;reduce_tasks&#34;]
         }
-        self.priorityOrder.append(requestSpecs[&#34;job_id&#34;])
+        # self.priorityOrder.append(requestSpecs[&#34;job_id&#34;])
 
-    def getWaitingTask(self, workerUpdatesTracker):
-        &#34;&#34;&#34;getWaitingTask returns a task to be allocated on one of the workers
-        as well as task related meta-data
+    def getWaitingTask(self) -&gt; Optional[Tuple[Optional[int],
+                                               Optional[str],
+                                               Optional[dict]]]:
+        &#34;&#34;&#34;```getWaitingTask``` returns a task to be allocated to one of the
+        workers for execution as well as the task&#39;s related meta-data
 
-        Algorithm:
-        ----------
+        ## Algorithm:
+        ```
         1. For every job in the jobRequests list:
             1.1 Check if the job has any pending map tasks
                 1.1.1 Return any map task of the job and associated meta-data
@@ -196,20 +206,22 @@ is removed from this object.</p></div>
                     1.2.1.1 Return any reduce task of the job and associated
                             meta-data
                 1.2.2 else
-                    1.2.2.1 Continue and hence move to the next pending job
-        2. Return None as there is no assignable task available to 
+                    1.2.2.1 Continue and hence check the next pending job
+        2. Return None as there is no assignable task available
+        ```
 
-        :return: Task meta-data and the task dictionary
-        :rtype: Tuple
+        :return: Task meta-data and the task-dictionary
+        :rtype: Optional[Tuple[Optional[int], Optional[str], Optional[dict]]]
         &#34;&#34;&#34;
         # If there are no pending tasks and hence no pending jobs
         # then return None
-        if len(self.priorityOrder) == 0:
+        if len(self.jobRequests) == 0:
             return None
 
-        _JOB_ID = None
-        _SELECTED_TASK = None
-        _TASK_TYPE = None
+        _JOB_ID: Optional[int] = None
+        _SELECTED_TASK: Optional[dict] = None
+        _TASK_TYPE: Optional[str] = None
+
         for jobID in self.jobRequests:
             # Check for a pending map task
             if self.jobRequests[jobID][&#34;map&#34;]:
@@ -236,12 +248,19 @@ is removed from this object.</p></div>
         if (not self.jobRequests[_JOB_ID][&#34;map&#34;]) and \
            (not self.jobRequests[_JOB_ID][&#34;reduce&#34;]):
             del self.jobRequests[_JOB_ID]
-            self.priorityOrder.remove(_JOB_ID)
+            # self.priorityOrder.remove(_JOB_ID)
 
         return (_JOB_ID, _TASK_TYPE, _SELECTED_TASK)
 
-    def isEmpty(self):
-        return True if not self.priorityOrder else False</code></pre>
+    def isEmpty(self) -&gt; bool:
+        &#34;&#34;&#34;```isEmpty``` checks if the ```jobRequests``` dictionary is
+        of the handler is empty
+
+        :return: Return True if the ```jobRequests``` dictionary is
+        empty else it returns False
+        :rtype: bool
+        &#34;&#34;&#34;
+        return not self.jobRequests</code></pre>
 </details>
 <h3>Methods</h3>
 <dl>
@@ -249,10 +268,8 @@ is removed from this object.</p></div>
 <span>def <span class="ident">addJobRequest</span></span>(<span>self, requestSpecs)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Adds the request specification to the objects
-jobRequests dictionary and adds the job ID to the
-priorityOrder list as per the priority order of the
-job.</p>
+<div class="desc"><p><code>addJobRequest</code> adds the job request's specification to
+the handler object's <code>jobRequests</code> dictionary</p>
 <p>:param requestSpecs: Dictionary got after converting the incoming
 JSON request string into a dictionary
 :type requestSpecs: dict</p></div>
@@ -261,54 +278,53 @@ JSON request string into a dictionary
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def addJobRequest(self, requestSpecs):
-    &#34;&#34;&#34;Adds the request specification to the objects
-     jobRequests dictionary and adds the job ID to the
-     priorityOrder list as per the priority order of the
-     job.
+    &#34;&#34;&#34;
+    ```addJobRequest``` adds the job request&#39;s specification to
+    the handler object&#39;s ```jobRequests``` dictionary
 
     :param requestSpecs: Dictionary got after converting the incoming
-     JSON request string into a dictionary
+    JSON request string into a dictionary
     :type requestSpecs: dict
     &#34;&#34;&#34;
     _JOB_ID: int = requestSpecs[&#34;job_id&#34;]
     self.jobRequests[_JOB_ID] = {
         &#34;map&#34;: requestSpecs[&#34;map_tasks&#34;],
         &#34;reduce&#34;: requestSpecs[&#34;reduce_tasks&#34;]
-    }
-    self.priorityOrder.append(requestSpecs[&#34;job_id&#34;])</code></pre>
+    }</code></pre>
 </details>
 </dd>
 <dt id="src.Scheduler.JobRequests.JobRequestHandler.getWaitingTask"><code class="name flex">
-<span>def <span class="ident">getWaitingTask</span></span>(<span>self, workerUpdatesTracker)</span>
+<span>def <span class="ident">getWaitingTask</span></span>(<span>self) ‑> Union[Tuple[Union[int, NoneType], Union[str, NoneType], Union[dict, NoneType]], NoneType]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>getWaitingTask returns a task to be allocated on one of the workers
-as well as task related meta-data</p>
+<div class="desc"><p><code>getWaitingTask</code> returns a task to be allocated to one of the
+workers for execution as well as the task's related meta-data</p>
 <h2 id="algorithm">Algorithm:</h2>
-<ol>
-<li>For every job in the jobRequests list:
-1.1 Check if the job has any pending map tasks
-1.1.1 Return any map task of the job and associated meta-data
-1.2 else
-1.2.1 Check if all the job's map tasks have completed
-1.2.1.1 Return any reduce task of the job and associated
-meta-data
-1.2.2 else
-1.2.2.1 Continue and hence move to the next pending job</li>
-<li>Return None as there is no assignable task available to </li>
-</ol>
-<p>:return: Task meta-data and the task dictionary
-:rtype: Tuple</p></div>
+<pre><code>1. For every job in the jobRequests list:
+    1.1 Check if the job has any pending map tasks
+        1.1.1 Return any map task of the job and associated meta-data
+    1.2 else
+        1.2.1 Check if all the job's map tasks have completed
+            1.2.1.1 Return any reduce task of the job and associated
+                    meta-data
+        1.2.2 else
+            1.2.2.1 Continue and hence check the next pending job
+2. Return None as there is no assignable task available
+</code></pre>
+<p>:return: Task meta-data and the task-dictionary
+:rtype: Optional[Tuple[Optional[int], Optional[str], Optional[dict]]]</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def getWaitingTask(self, workerUpdatesTracker):
-    &#34;&#34;&#34;getWaitingTask returns a task to be allocated on one of the workers
-    as well as task related meta-data
+<pre><code class="python">def getWaitingTask(self) -&gt; Optional[Tuple[Optional[int],
+                                           Optional[str],
+                                           Optional[dict]]]:
+    &#34;&#34;&#34;```getWaitingTask``` returns a task to be allocated to one of the
+    workers for execution as well as the task&#39;s related meta-data
 
-    Algorithm:
-    ----------
+    ## Algorithm:
+    ```
     1. For every job in the jobRequests list:
         1.1 Check if the job has any pending map tasks
             1.1.1 Return any map task of the job and associated meta-data
@@ -317,20 +333,22 @@ meta-data
                 1.2.1.1 Return any reduce task of the job and associated
                         meta-data
             1.2.2 else
-                1.2.2.1 Continue and hence move to the next pending job
-    2. Return None as there is no assignable task available to 
+                1.2.2.1 Continue and hence check the next pending job
+    2. Return None as there is no assignable task available
+    ```
 
-    :return: Task meta-data and the task dictionary
-    :rtype: Tuple
+    :return: Task meta-data and the task-dictionary
+    :rtype: Optional[Tuple[Optional[int], Optional[str], Optional[dict]]]
     &#34;&#34;&#34;
     # If there are no pending tasks and hence no pending jobs
     # then return None
-    if len(self.priorityOrder) == 0:
+    if len(self.jobRequests) == 0:
         return None
 
-    _JOB_ID = None
-    _SELECTED_TASK = None
-    _TASK_TYPE = None
+    _JOB_ID: Optional[int] = None
+    _SELECTED_TASK: Optional[dict] = None
+    _TASK_TYPE: Optional[str] = None
+
     for jobID in self.jobRequests:
         # Check for a pending map task
         if self.jobRequests[jobID][&#34;map&#34;]:
@@ -357,22 +375,33 @@ meta-data
     if (not self.jobRequests[_JOB_ID][&#34;map&#34;]) and \
        (not self.jobRequests[_JOB_ID][&#34;reduce&#34;]):
         del self.jobRequests[_JOB_ID]
-        self.priorityOrder.remove(_JOB_ID)
+        # self.priorityOrder.remove(_JOB_ID)
 
     return (_JOB_ID, _TASK_TYPE, _SELECTED_TASK)</code></pre>
 </details>
 </dd>
 <dt id="src.Scheduler.JobRequests.JobRequestHandler.isEmpty"><code class="name flex">
-<span>def <span class="ident">isEmpty</span></span>(<span>self)</span>
+<span>def <span class="ident">isEmpty</span></span>(<span>self) ‑> bool</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p><code>isEmpty</code> checks if the <code>jobRequests</code> dictionary is
+of the handler is empty</p>
+<p>:return: Return True if the <code>jobRequests</code> dictionary is
+empty else it returns False
+:rtype: bool</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def isEmpty(self):
-    return True if not self.priorityOrder else False</code></pre>
+<pre><code class="python">def isEmpty(self) -&gt; bool:
+    &#34;&#34;&#34;```isEmpty``` checks if the ```jobRequests``` dictionary is
+    of the handler is empty
+
+    :return: Return True if the ```jobRequests``` dictionary is
+    empty else it returns False
+    :rtype: bool
+    &#34;&#34;&#34;
+    return not self.jobRequests</code></pre>
 </details>
 </dd>
 </dl>
@@ -407,7 +436,7 @@ meta-data
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.1</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
 </footer>
 </body>
 </html>
