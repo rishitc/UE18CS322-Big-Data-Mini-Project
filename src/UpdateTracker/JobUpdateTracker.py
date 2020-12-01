@@ -52,6 +52,7 @@ class Tracker:
         self.job_writer = j_writer
         self.task_writer = t_writer
         self.worker_writer = w_writer
+        print("Job Tracker Initialized")
 
     def addJobRequest(self, parsed_json_request: dict):  # request_message):
         """
@@ -134,17 +135,18 @@ class Tracker:
 
         # If the task is a mapper task then update map_tracker else
         # update reduce tracker
-        if task_fam == "map tasks":
+        if task_fam == "map":
             self.map_tracker[job_id][task_id] = 1
         else:
             self.reduce_tracker[job_id][task_id] = 1
         '''
         Check if all tasks that compose a job are finished
         This is checked using a flag. If flag remains 1, then all tasks
-        in a job are completed and the job end time is written to the jobs_time dictionary
+        in a job are completed and the job end time is written to the
+        jobs_time dictionary
         '''
         flag = 1
-        for key in self.jobs[job_id].keys:
+        for key in self.jobs[job_id].keys():
             if self.jobs[job_id][key] is None:
                 flag = 0
                 break
@@ -159,9 +161,9 @@ class Tracker:
         """
         status = self.map_tracker[jobID].values()
         if 0 in status:
-            return 0
+            return False
         else:
-            return 1
+            return True
 
     def isReduceComplete(self, jobID):
         """
@@ -170,9 +172,9 @@ class Tracker:
         """
         status = self.reduce_tracker[jobID].values()
         if 0 in status:
-            return 0
+            return False
         else:
-            return 1
+            return True
 
     def writeJobsCSV(self, JobID):
         """

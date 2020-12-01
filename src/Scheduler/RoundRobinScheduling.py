@@ -1,9 +1,13 @@
+import threading
 import time
 from typing import Set
 
 from Communication.protocol import YACS_Protocol
 from Scheduler.JobRequests import JobRequestHandler
 from WorkerUtils.WorkerStateTracker import StateTracker
+
+
+PRINT_LOCK = threading.Lock()
 
 
 class RoundRobinScheduler:
@@ -49,6 +53,10 @@ class RoundRobinScheduler:
                 jobID_family_task = requestHandler.getWaitingTask()
             requestHandler.LOCK.release()
 
+            # PRINT_LOCK.acquire()
+            # print(requestHandler.jobRequests)
+            # PRINT_LOCK.release()
+
             # If there is a Task that needs to be executed
             if jobID_family_task is not None:
                 # Initially we have not visited any worker
@@ -76,16 +84,27 @@ class RoundRobinScheduler:
                                         duration=(jobID_family_task[2]
                                                   ["duration"]),
                                         worker_ID=workerStateTracker
-                                            .workerIDs[_temp]
+                                                        .workerIDs[_temp]
                                        ))
                         # Once a worker with a free slot is found then
-                        # 1. We dispatch the job to the wor     ker
+                        # 1. We dispatch the job to the worker
                         # 2. Update its state
                         workerStateTracker.getWorkerSocket(workerStateTracker.
                                                            workerIDs[_temp])\
-                            .sendall(protocolMsg)
+                            .sendall(protocolMsg.encode())
+
+                        PRINT_LOCK.acquire()
+                        print(f"Sending task to worker: {protocolMsg}")
+                        PRINT_LOCK.release()
                         workerStateTracker.allocateSlot(workerStateTracker
                                                         .workerIDs[_temp])
+                        PRINT_LOCK.acquire()
+                        workerStateTracker.showWorkerStates()
+                        PRINT_LOCK.release()
+
+                        PRINT_LOCK.acquire()
+                        print(f"{requestHandler.jobRequests=}")
+                        PRINT_LOCK.release()
 
                         # We have found a worker and hence set this to True
                         workerFound = True
@@ -106,3 +125,5 @@ class RoundRobinScheduler:
                         # restarting our search for a free slot on one of the
                         # workers
                         workerIDsVisited.clear()
+
+                time.sleep(0.01)

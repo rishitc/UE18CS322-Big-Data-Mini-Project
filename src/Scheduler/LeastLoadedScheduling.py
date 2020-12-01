@@ -72,7 +72,7 @@ class LeastLoadedScheduler:
                         # 1. We dispatch the job to the worker
                         # 2. Update its state
                         workerStateTracker.getWorkerSocket(_temp)\
-                            .sendall(protocolMsg)
+                            .sendall(protocolMsg.encode())
                         workerStateTracker.allocateSlot(_temp)
 
                     workerStateTracker.LOCK.release()

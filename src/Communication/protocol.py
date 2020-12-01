@@ -5,6 +5,9 @@ class YACS_Protocol:
     @staticmethod
     def createMessageToWorker(job_ID, task_family, task_ID, duration,
                               worker_ID):
+        assert task_family in ["map", "reduce"], ("Task family name "
+                                                  f"{task_family} is "
+                                                  "incorrect!")
         """
         The final JSON string will be as follows:
 
@@ -12,7 +15,7 @@ class YACS_Protocol:
         {
             "worker_id": <worker_id>,
             "job_id": <job_id>,
-            "task family": <("map_tasks"|"reduce_tasks")>,
+            "task family": <("map"|"reduce")>,
             "task": {
                         "task_id": "<task_id>",
                         "duration": <in seconds>
@@ -34,6 +37,9 @@ class YACS_Protocol:
     @staticmethod
     def createMessageToMaster(job_ID, task_family, task_ID, start_time,
                               end_time, worker_ID):
+        assert task_family in ["map", "reduce"], ("Task family name "
+                                                  f"{task_family} is "
+                                                  "incorrect!")
         """
         The final JSON string will be as follows:
 
@@ -41,7 +47,7 @@ class YACS_Protocol:
         {
             "worker_id":<worker_id>,
             "job_id":<job_id>,
-            "task family": <("map_tasks"|"reduce_tasks")>,
+            "task family": <("map"|"reduce")>,
             "task": {
                         "task_id": "<task_id>",
                         "start time": <arrival_time_of_task_at_Worker>,
@@ -66,6 +72,9 @@ class YACS_Protocol:
     @staticmethod
     def prettyPrintMessageToWorker(job_ID, task_family, task_ID, duration,
                                    worker_ID):
+        assert task_family in ["map", "reduce"], ("Task family name "
+                                                  f"{task_family} is "
+                                                  "incorrect!")
         """
         The final JSON string will be as follows:
 
@@ -73,7 +82,7 @@ class YACS_Protocol:
         {
             "worker_id": <worker_id>,
             "job_id": <job_id>,
-            "task family": <("map_tasks"|"reduce_tasks")>,
+            "task family": <("map"|"reduce")>,
             "task": {
                         "task_id": "<task_id>",
                         "duration": <in seconds>
@@ -96,6 +105,9 @@ class YACS_Protocol:
     @staticmethod
     def prettyPrintMessageToMaster(job_ID, task_family, task_ID, start_time,
                                    end_time, worker_ID):
+        assert task_family in ["map", "reduce"], ("Task family name "
+                                                  f"{task_family} is "
+                                                  "incorrect!")
         """
         The final JSON string will be as follows:
 
@@ -103,7 +115,7 @@ class YACS_Protocol:
         {
             "worker_id":<worker_id>,
             "job_id":<job_id>,
-            "task family": <("map_tasks"|"reduce_tasks")>,
+            "task family": <("map"|"reduce")>,
             "task": {
                         "task_id": "<task_id>",
                         "start time": <arrival_time_of_task_at_Worker>,

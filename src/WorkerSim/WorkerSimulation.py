@@ -5,9 +5,13 @@ import socket  # For function parameters
 import queue  # For storing the completed tasks
 
 from Communication.protocol import YACS_Protocol
+# from master import PRINT_LOCK
 #  For sending message back to master
 
 MESSAGE_BUFFER_SIZE = 4096  # Socket receiving length
+
+
+PRINT_LOCK = threading.Lock()
 
 
 class Worker:
@@ -44,6 +48,11 @@ class Worker:
             if not taskRequest:
                 taskRequestSocket.close()
                 break
+
+            PRINT_LOCK.acquire()
+            print(f"Task received at worker: {taskRequest}")
+            PRINT_LOCK.release()
+
             # Convert JSON to python dictionary
             python_protocol_message = json.loads(taskRequest)
 
@@ -55,12 +64,22 @@ class Worker:
             python_protocol_message["task"]["end time"] = 0
             # Adding components that are there in reply message to the master
             # but not in the received message
-
+            PRINT_LOCK.acquire()
+            print(python_protocol_message)
+            PRINT_LOCK.release()
             self.LOCK.acquire()  # Acquiring lock as shared object is accessed
+            if self.tasks.get(job_in_message) is None:
+                self.tasks[job_in_message] = dict()
+
             self.tasks[job_in_message][task_in_message] = \
                 python_protocol_message
+
             #  Value for the tasks dictionary will be all the info
             self.LOCK.release()  # Release lock as CS code is complete
+
+            PRINT_LOCK.acquire()
+            print(self.tasks)
+            PRINT_LOCK.release()
 
     def simulateWorker(self):
         # While there is a task to execute in the task exec pool
@@ -73,15 +92,22 @@ class Worker:
             # If there are tasks to execute in the task pool
             if tasksInExecutionPool_Count != 0:
                 self.LOCK.acquire()  # Lock as shared object is accessed
-                for job_id in self.tasks:
+                _temp_1 = list(self.tasks)
+                for job_id in _temp_1:
                     """Durations (i.e. the value in the dictionary) will be
                     positive(non-zero) integers."""
-                    for task_id in job_id:
+                    _temp_2 = list(self.tasks[job_id])
+                    for task_id in _temp_2:
                         # Reduce the duration of the task by 1
+                        PRINT_LOCK.acquire()
+                        print(type(self.tasks[job_id][task_id]["task"]
+                                   ["duration"]))
+                        print(self.tasks[job_id][task_id]["task"]["duration"])
+                        PRINT_LOCK.release()
                         self.tasks[job_id][task_id]["task"]["duration"] -= 1
 
-                # Check if the duration has become 0, i.e. the task has
-                # finished execution
+                        # Check if the duration has become 0, i.e. the task has
+                        # finished execution
                         if (self.tasks[job_id][task_id]["task"]["duration"]
                                 == 0):
                             self.tasks[job_id][task_id]["task"]["end time"] = \
@@ -110,13 +136,13 @@ class Worker:
                             # Adding the task in the completed tasks queue
                             del self.tasks[job_id][task_id]
                             # Remove the task entry from the task exec pool
-                            if len(self.tasks[job_id] == 0):
+                            if len(self.tasks[job_id]) == 0:
                                 del self.tasks[job_id]
                             # Remove the job entry if there are no tasks of
                             # that particular job
                 # Sleeps for 1 second until next check on the values
-                    self.LOCK.release()  # Release lock as CS code is complete
-                    time.sleep(1)
+                self.LOCK.release()  # Release lock as CS code is complete
+                time.sleep(1)
         # NOTE: Need to add the portion wherein the worker needs to listen
         # for messages if dict is empty
         # UPDATE: Taken care of by the forever loop
@@ -140,6 +166,10 @@ class Worker:
                 self.updates_q.task_done()
                 # Sending to master
                 reply_socket.sendall(response_msg.encode())
+                PRINT_LOCK.acquire()
+                print(f"Task sent: {response_msg}!")
+                PRINT_LOCK.release()
+                time.sleep(0.01)
 
     def __del__(self):
         self.updates_q.join()

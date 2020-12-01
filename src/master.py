@@ -98,6 +98,10 @@ def listenForJobRequests(jobRequestHandler: JobRequestHandler,
             jobUpdateTracker.addJobRequest(parsedJSON_Msg)
             jobUpdateTracker.LOCK.release()
 
+            PRINT_LOCK.acquire()
+            print(f"{jobRequestHandler.jobRequests=}")
+            PRINT_LOCK.release()
+
             clientConn.close()
 
 
@@ -123,10 +127,14 @@ def workerUpdates(workerSocket: socket.socket,
     **type** ```jobUpdateTracker```: JobUpdateTracker
     """
     while True:
-        workerUpdate = workerSocket.recv(BUFFER_SIZE)
+        workerUpdate = workerSocket.recv(BUFFER_SIZE).decode()
         if not workerUpdate:
             workerSocket.close()
             break
+
+        PRINT_LOCK.acquire()
+        print(f"Received worker update at master: {workerUpdate}")
+        PRINT_LOCK.release()
 
         parsedJSON_Msg = json.loads(workerUpdate)
 
@@ -137,6 +145,11 @@ def workerUpdates(workerSocket: socket.socket,
         workerStateTracker.LOCK.acquire()
         workerStateTracker.freeSlot(parsedJSON_Msg["worker_id"])
         workerStateTracker.LOCK.release()
+
+        # PRINT_LOCK.acquire()
+        # workerStateTracker.showWorkerStates()
+
+        # PRINT_LOCK.release()
 
 
 if __name__ == "__main__":
@@ -195,6 +208,7 @@ if __name__ == "__main__":
     }
 
     # Worker updates handler object
+    print("JobUpdateTracker Initialized")
     obj_jobUpdatesTracker: JobUpdateTracker = \
         JobUpdateTracker(_converter[TYPE_OF_SCHEDULING])
 

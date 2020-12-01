@@ -16,7 +16,7 @@ class JobRequestHandler:
     def __init__(self, workerUpdatesTracker: JobUpdateTracker):
         self.jobRequests = {}
         # self.priorityOrder = []
-        self.LOCK = Lock()
+       self.LOCK = Lock()
         self.workerUpdatesTracker: JobUpdateTracker = workerUpdatesTracker
 
     def addJobRequest(self, requestSpecs):
@@ -78,11 +78,17 @@ class JobRequestHandler:
                 self.workerUpdatesTracker.LOCK.acquire()
                 _temp = self.workerUpdatesTracker.isMapComplete(jobID)
                 self.workerUpdatesTracker.LOCK.release()
+
+                # if jobID:
+                    # print(f"Have all map tasks completed {_temp} for {jobID}")
+
                 if _temp:
-                    # Check for a pending reduce task
-                    _SELECTED_TASK = self.jobRequests[jobID]["reduce"].pop(0)
-                    _TASK_TYPE = "reduce"
-                    _JOB_ID = jobID
+                    if self.jobRequests[jobID]["reduce"]:
+                        # Check for a pending reduce task
+                        _SELECTED_TASK = self.jobRequests[jobID]["reduce"].pop(0)
+                        # print(f"{_SELECTED_TASK=}")
+                        _TASK_TYPE = "reduce"
+                        _JOB_ID = jobID
 
         if (_SELECTED_TASK is None) and (_JOB_ID is None) and\
            (_TASK_TYPE is None):
@@ -95,6 +101,7 @@ class JobRequestHandler:
             del self.jobRequests[_JOB_ID]
             # self.priorityOrder.remove(_JOB_ID)
 
+        print("Selected tuple:", (_JOB_ID, _TASK_TYPE, _SELECTED_TASK))
         return (_JOB_ID, _TASK_TYPE, _SELECTED_TASK)
 
     def isEmpty(self) -> bool:

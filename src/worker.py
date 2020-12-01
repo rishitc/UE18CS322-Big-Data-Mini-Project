@@ -36,6 +36,7 @@ def createWorkerSocket(task_request_addr):
     ```rtype```: socket.socket
     """
     socket_object = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    socket_object.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     socket_object.bind(task_request_addr)
     return socket_object
 
@@ -49,6 +50,7 @@ def createMasterSocket(task_complete_addr):
     ```rtype```: socket.socket
     """
     socket_object = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    socket_object.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     socket_object.connect(task_complete_addr)
     return socket_object
 

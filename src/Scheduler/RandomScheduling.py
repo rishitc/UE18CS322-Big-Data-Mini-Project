@@ -78,7 +78,7 @@ class RandomScheduler:
                         # 1. We dispatch the job to the worker
                         # 2. Update its state
                         workerStateTracker.getWorkerSocket(_temp)\
-                            .sendall(protocolMsg)
+                            .sendall(protocolMsg.encode())
                         workerStateTracker.allocateSlot(_temp)
 
                         # We have found a worker and hence set this to True
