@@ -50,7 +50,7 @@ class YACS_Protocol:
                     }
         }
         ```
- 
+
         """
         msg_dict = {}
         msg_dict["worker_id"] = worker_ID
