@@ -85,7 +85,8 @@ class Worker:
             # but not in the received message
 
             self.LOCK.acquire()  # Acquiring lock as shared object is accessed
-            self.tasks[job_in_message][task_in_message] = python_protocol_message
+            self.tasks[job_in_message][task_in_message] = \
+                python_protocol_message
             #  Value for the tasks dictionary will be all the info
             self.LOCK.release()  # Release lock as CS code is complete
 
@@ -109,20 +110,33 @@ class Worker:
 
                 # Check if the duration has become 0, i.e. the task has
                 # finished execution
-                        if self.tasks[job_id][task_id][&#34;task&#34;][&#34;duration&#34;] == 0 :
-                            self.tasks[job_id][task_id][&#34;task&#34;][&#34;end time&#34;] = time.time()  
+                        if (self.tasks[job_id][task_id][&#34;task&#34;][&#34;duration&#34;]
+                                == 0):
+                            self.tasks[job_id][task_id][&#34;task&#34;][&#34;end time&#34;] = \
+                                time.time()
                             # Store the end-time of the task
                             response_message_to_master = YACS_Protocol\
-                                .createMessageToMaster(self.tasks[job_id][task_id][&#34;job_id&#34;],
-                                                       self.tasks[job_id][task_id][&#34;task family&#34;],
-                                                       self.tasks[job_id][task_id][&#34;task&#34;][&#34;task_id&#34;],
-                                                       self.tasks[job_id][task_id][&#34;task&#34;][&#34;start time&#34;],
-                                                       self.tasks[job_id][task_id][&#34;task&#34;][&#34;end time&#34;],
-                                                       self.tasks[job_id][task_id][&#34;worker_id&#34;])
+                                .createMessageToMaster((self.tasks[job_id]
+                                                        [task_id][&#34;job_id&#34;]),
+                                                       (self.tasks[job_id]
+                                                        [task_id]
+                                                        [&#34;task family&#34;]),
+                                                       (self.tasks[job_id]
+                                                        [task_id][&#34;task&#34;]
+                                                        [&#34;task_id&#34;]),
+                                                       (self.tasks[job_id]
+                                                        [task_id][&#34;task&#34;]
+                                                        [&#34;start time&#34;]),
+                                                       (self.tasks[job_id]
+                                                        [task_id][&#34;task&#34;]
+                                                        [&#34;end time&#34;]),
+                                                       (self.tasks[job_id]
+                                                        [task_id]
+                                                        [&#34;worker_id&#34;]))
                             # YACS Protocol based response to master
                             self.updates_q.put(response_message_to_master)
                             # Adding the task in the completed tasks queue
-                            del self.tasks[job_id][task_id] 
+                            del self.tasks[job_id][task_id]
                             # Remove the task entry from the task exec pool
                             if len(self.tasks[job_id] == 0):
                                 del self.tasks[job_id]
@@ -137,7 +151,7 @@ class Worker:
         # NOTE: Need to first establish communication between master and
         # worker for that
         # UPDATE 1: Acknowledged. Working on that right now.
-        # UPDATE 2: The same has been implemened
+        # UPDATE 2: The same has been implemented
 
     def taskComplete(self, reply_socket: socket.socket):
         &#34;&#34;&#34;
@@ -146,14 +160,17 @@ class Worker:
 
         This method is called by ***simulateWorker()*** method when the
         *remaining_duration attribute* of the task **becomes 0**.
-        &#34;&#34;&#34;   
+        &#34;&#34;&#34;
 
         while True:
             if not self.updates_q.empty():
                 response_msg: str = self.updates_q.get()
                 self.updates_q.task_done()
                 # Sending to master
-                reply_socket.sendall(response_msg.encode())</code></pre>
+                reply_socket.sendall(response_msg.encode())
+
+    def __del__(self):
+        self.updates_q.join()</code></pre>
 </details>
 </section>
 <section>
@@ -238,7 +255,8 @@ using YACS Protocol Message (<strong><em>createMessageToMaster()</em></strong>)<
             # but not in the received message
 
             self.LOCK.acquire()  # Acquiring lock as shared object is accessed
-            self.tasks[job_in_message][task_in_message] = python_protocol_message
+            self.tasks[job_in_message][task_in_message] = \
+                python_protocol_message
             #  Value for the tasks dictionary will be all the info
             self.LOCK.release()  # Release lock as CS code is complete
 
@@ -262,20 +280,33 @@ using YACS Protocol Message (<strong><em>createMessageToMaster()</em></strong>)<
 
                 # Check if the duration has become 0, i.e. the task has
                 # finished execution
-                        if self.tasks[job_id][task_id][&#34;task&#34;][&#34;duration&#34;] == 0 :
-                            self.tasks[job_id][task_id][&#34;task&#34;][&#34;end time&#34;] = time.time()  
+                        if (self.tasks[job_id][task_id][&#34;task&#34;][&#34;duration&#34;]
+                                == 0):
+                            self.tasks[job_id][task_id][&#34;task&#34;][&#34;end time&#34;] = \
+                                time.time()
                             # Store the end-time of the task
                             response_message_to_master = YACS_Protocol\
-                                .createMessageToMaster(self.tasks[job_id][task_id][&#34;job_id&#34;],
-                                                       self.tasks[job_id][task_id][&#34;task family&#34;],
-                                                       self.tasks[job_id][task_id][&#34;task&#34;][&#34;task_id&#34;],
-                                                       self.tasks[job_id][task_id][&#34;task&#34;][&#34;start time&#34;],
-                                                       self.tasks[job_id][task_id][&#34;task&#34;][&#34;end time&#34;],
-                                                       self.tasks[job_id][task_id][&#34;worker_id&#34;])
+                                .createMessageToMaster((self.tasks[job_id]
+                                                        [task_id][&#34;job_id&#34;]),
+                                                       (self.tasks[job_id]
+                                                        [task_id]
+                                                        [&#34;task family&#34;]),
+                                                       (self.tasks[job_id]
+                                                        [task_id][&#34;task&#34;]
+                                                        [&#34;task_id&#34;]),
+                                                       (self.tasks[job_id]
+                                                        [task_id][&#34;task&#34;]
+                                                        [&#34;start time&#34;]),
+                                                       (self.tasks[job_id]
+                                                        [task_id][&#34;task&#34;]
+                                                        [&#34;end time&#34;]),
+                                                       (self.tasks[job_id]
+                                                        [task_id]
+                                                        [&#34;worker_id&#34;]))
                             # YACS Protocol based response to master
                             self.updates_q.put(response_message_to_master)
                             # Adding the task in the completed tasks queue
-                            del self.tasks[job_id][task_id] 
+                            del self.tasks[job_id][task_id]
                             # Remove the task entry from the task exec pool
                             if len(self.tasks[job_id] == 0):
                                 del self.tasks[job_id]
@@ -290,7 +321,7 @@ using YACS Protocol Message (<strong><em>createMessageToMaster()</em></strong>)<
         # NOTE: Need to first establish communication between master and
         # worker for that
         # UPDATE 1: Acknowledged. Working on that right now.
-        # UPDATE 2: The same has been implemened
+        # UPDATE 2: The same has been implemented
 
     def taskComplete(self, reply_socket: socket.socket):
         &#34;&#34;&#34;
@@ -299,14 +330,17 @@ using YACS Protocol Message (<strong><em>createMessageToMaster()</em></strong>)<
 
         This method is called by ***simulateWorker()*** method when the
         *remaining_duration attribute* of the task **becomes 0**.
-        &#34;&#34;&#34;   
+        &#34;&#34;&#34;
 
         while True:
             if not self.updates_q.empty():
                 response_msg: str = self.updates_q.get()
                 self.updates_q.task_done()
                 # Sending to master
-                reply_socket.sendall(response_msg.encode())</code></pre>
+                reply_socket.sendall(response_msg.encode())
+
+    def __del__(self):
+        self.updates_q.join()</code></pre>
 </details>
 <h3>Methods</h3>
 <dl>
@@ -350,7 +384,8 @@ i.e the dictionary obtained from <strong>createMessageToWorker()</strong> method
         # but not in the received message
 
         self.LOCK.acquire()  # Acquiring lock as shared object is accessed
-        self.tasks[job_in_message][task_in_message] = python_protocol_message
+        self.tasks[job_in_message][task_in_message] = \
+            python_protocol_message
         #  Value for the tasks dictionary will be all the info
         self.LOCK.release()  # Release lock as CS code is complete</code></pre>
 </details>
@@ -384,20 +419,33 @@ i.e the dictionary obtained from <strong>createMessageToWorker()</strong> method
 
             # Check if the duration has become 0, i.e. the task has
             # finished execution
-                    if self.tasks[job_id][task_id][&#34;task&#34;][&#34;duration&#34;] == 0 :
-                        self.tasks[job_id][task_id][&#34;task&#34;][&#34;end time&#34;] = time.time()  
+                    if (self.tasks[job_id][task_id][&#34;task&#34;][&#34;duration&#34;]
+                            == 0):
+                        self.tasks[job_id][task_id][&#34;task&#34;][&#34;end time&#34;] = \
+                            time.time()
                         # Store the end-time of the task
                         response_message_to_master = YACS_Protocol\
-                            .createMessageToMaster(self.tasks[job_id][task_id][&#34;job_id&#34;],
-                                                   self.tasks[job_id][task_id][&#34;task family&#34;],
-                                                   self.tasks[job_id][task_id][&#34;task&#34;][&#34;task_id&#34;],
-                                                   self.tasks[job_id][task_id][&#34;task&#34;][&#34;start time&#34;],
-                                                   self.tasks[job_id][task_id][&#34;task&#34;][&#34;end time&#34;],
-                                                   self.tasks[job_id][task_id][&#34;worker_id&#34;])
+                            .createMessageToMaster((self.tasks[job_id]
+                                                    [task_id][&#34;job_id&#34;]),
+                                                   (self.tasks[job_id]
+                                                    [task_id]
+                                                    [&#34;task family&#34;]),
+                                                   (self.tasks[job_id]
+                                                    [task_id][&#34;task&#34;]
+                                                    [&#34;task_id&#34;]),
+                                                   (self.tasks[job_id]
+                                                    [task_id][&#34;task&#34;]
+                                                    [&#34;start time&#34;]),
+                                                   (self.tasks[job_id]
+                                                    [task_id][&#34;task&#34;]
+                                                    [&#34;end time&#34;]),
+                                                   (self.tasks[job_id]
+                                                    [task_id]
+                                                    [&#34;worker_id&#34;]))
                         # YACS Protocol based response to master
                         self.updates_q.put(response_message_to_master)
                         # Adding the task in the completed tasks queue
-                        del self.tasks[job_id][task_id] 
+                        del self.tasks[job_id][task_id]
                         # Remove the task entry from the task exec pool
                         if len(self.tasks[job_id] == 0):
                             del self.tasks[job_id]
@@ -427,7 +475,7 @@ of format createMessageToMaster() of YACS Protocol.</p>
 
     This method is called by ***simulateWorker()*** method when the
     *remaining_duration attribute* of the task **becomes 0**.
-    &#34;&#34;&#34;   
+    &#34;&#34;&#34;
 
     while True:
         if not self.updates_q.empty():

@@ -31,32 +31,33 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 
-def graph_plot(df,ax,title):
+
+def graph_plot(df, ax, title):
     splits1 = list(df.groupby(&#34;WorkerID&#34;))
     for i in range(len(splits1)):
-        time={}
-        a=pd.DataFrame(splits1[i][1],columns=[&#39;JobId&#39;,&#39;WorkerID&#39;,&#39;TaskId&#39;,&#39;start_time&#39;,&#39;end_time&#39;,&#39;duration&#39;])
-        end_time= a[&#34;end_time&#34;].iloc[-1]
-        for m in range(0,end_time):
-            count=0
+        time = dict()
+        a = pd.DataFrame(splits1[i][1], columns=[&#39;JobId&#39;, &#39;WorkerID&#39;, &#39;TaskId&#39;, &#39;start_time&#39;, &#39;end_time&#39;, &#39;duration&#39;])
+        end_time = a[&#34;end_time&#34;].iloc[-1]
+        for m in range(0, end_time):
+            count = 0
             for n in range(len(a[&#34;TaskId&#34;])):
                 if m &gt;= a[&#34;start_time&#34;].iloc[n] and m &lt;= a[&#34;end_time&#34;].iloc[n]:
-                    count=count+1    
+                    count = count + 1
                 else:
                     pass
             time[m] = count
-        l = &#34;Worker&#34; + &#34;:&#34;+str(splits1[i][0])
+        label = &#34;Worker&#34; + &#34;:&#34;+str(splits1[i][0])
         x = list(time.keys())
         y = list(time.values())
         ax.set_xlabel(&#39;Time&#39;)
         ax.set_ylabel(&#39;Number of tasks&#39;)
-        ax.plot(x,y,marker=&#34;o&#34;,label=l)
+        ax.plot(x, y, marker=&#34;o&#34;, label=label)
         ax.set_title(title)
         ax.legend()
 
 
 def get_analytics():
-    fig, (ax1, ax2 , ax3) = plt.subplots(3,figsize=(15,25))
+    fig, (ax1, ax2, ax3) = plt.subplots(3, figsize=(15, 25))
     fig.tight_layout(pad=10.0)
     mean_salgo1_task = 0
     mean_salgo2_task = 0
@@ -64,69 +65,67 @@ def get_analytics():
     mean_salgo1_job = 0
     mean_salgo2_job = 0
     mean_salgo3_job = 0
-    
+
     if os.path.exists(&#39;Round-Robin&#39;):
-        algo=&#39;Round-Robin&#39;
-        job1 = pd.read_csv(os.path.join(algo,&#39;jobs.csv&#39;))
-        task1 = pd.read_csv(os.path.join(algo,&#39;tasks.csv&#39;))
-        worker1 = pd.read_csv(os.path.join(algo,&#39;workers.csv&#39;))
-        
+        algo = &#39;Round-Robin&#39;
+        job1 = pd.read_csv(os.path.join(algo, &#39;jobs.csv&#39;))
+        task1 = pd.read_csv(os.path.join(algo, &#39;tasks.csv&#39;))
+        worker1 = pd.read_csv(os.path.join(algo, &#39;workers.csv&#39;))
+
         df1_w1 = pd.DataFrame(worker1)
         df1_j1 = pd.DataFrame(job1)
         df1_t1 = pd.DataFrame(task1)
-        
+
         mean_salgo1_task = df1_t1[&#34;duration&#34;].mean()
         mean_salgo1_job = df1_j1[&#34;duration&#34;].mean()
         median_salgo1_task = df1_t1[&#34;duration&#34;].median()
         median_salgo1_job = df1_j1[&#34;duration&#34;].median()
 
-        graph_plot(df1_w1 , ax1 ,&#39;Round Robin Scheduling&#39;)
-    
+        graph_plot(df1_w1, ax1, &#39;Round Robin Scheduling&#39;)
+
     else:
         pass
 
     if os.path.exists(&#39;Least-Loaded&#39;):
-        algo=&#39;Least-Loaded&#39;
-        job2 = pd.read_csv(os.path.join(algo,&#39;jobs.csv&#39;))
-        task2 = pd.read_csv(os.path.join(algo,&#39;tasks.csv&#39;))
-        worker2 = pd.read_csv(os.path.join(algo,&#39;workers.csv&#39;))
-        
+        algo = &#39;Least-Loaded&#39;
+        job2 = pd.read_csv(os.path.join(algo, &#39;jobs.csv&#39;))
+        task2 = pd.read_csv(os.path.join(algo, &#39;tasks.csv&#39;))
+        worker2 = pd.read_csv(os.path.join(algo, &#39;workers.csv&#39;))
+
         df1_w2 = pd.DataFrame(worker2)
         df1_j2 = pd.DataFrame(job2)
         df1_t2 = pd.DataFrame(task2)
-        
+
         mean_salgo2_task = df1_t2[&#34;duration&#34;].mean()
         mean_salgo2_job = df1_j2[&#34;duration&#34;].mean()
         median_salgo2_task = df1_t2[&#34;duration&#34;].median()
         median_salgo2_job = df1_j2[&#34;duration&#34;].median()
-        
-        graph_plot(df1_w2 , ax2 ,&#39;Least Loaded Scheduling&#39;)
-    
+
+        graph_plot(df1_w2, ax2, &#39;Least Loaded Scheduling&#39;)
+
     else:
         pass
-        
-        
+
     if os.path.exists(&#39;Random&#39;):
-        algo=&#39;Random&#39;
-        job3 = pd.read_csv(os.path.join(algo,&#39;jobs.csv&#39;))
-        task3 = pd.read_csv(os.path.join(algo,&#39;tasks.csv&#39;))
-        worker3 = pd.read_csv(os.path.join(algo,&#39;workers.csv&#39;))
-        
+        algo = &#39;Random&#39;
+        job3 = pd.read_csv(os.path.join(algo, &#39;jobs.csv&#39;))
+        task3 = pd.read_csv(os.path.join(algo, &#39;tasks.csv&#39;))
+        worker3 = pd.read_csv(os.path.join(algo, &#39;workers.csv&#39;))
+
         df1_w3 = pd.DataFrame(worker3)
         df1_j3 = pd.DataFrame(job3)
         df1_t3 = pd.DataFrame(task3)
-        
+
         mean_salgo3_task = df1_t3[&#34;duration&#34;].mean()
         mean_salgo3_job = df1_j3[&#34;duration&#34;].mean()
         median_salgo3_task = df1_t3[&#34;duration&#34;].median()
         median_salgo3_job = df1_j3[&#34;duration&#34;].median()
-        
-        graph_plot(df1_w3 , ax3 ,&#39;Random Scheduling&#39;)
-    
-    else :
+
+        graph_plot(df1_w3, ax3, &#39;Random Scheduling&#39;)
+
+    else:
         pass
- 
-    
+
     if os.path.exists(&#39;Round-Robin&#39;):
         print(&#34;\nRound-Robin Scheduling Algorithm&#34;)
         print(f&#34;Mean of task completion time : {mean_salgo1_task}&#34;)
@@ -135,7 +134,7 @@ def get_analytics():
         print(f&#34;Median of job completion time : {median_salgo1_job}\n&#34;)  
     else:
         pass
-        
+
     if os.path.exists(&#39;Least-Loaded&#39;):
         print(&#34;\nLeast-Loaded Scheduling Algorithm&#34;)
         print(f&#34;Mean of task completion time : {mean_salgo2_task}&#34;)
@@ -144,7 +143,7 @@ def get_analytics():
         print(f&#34;Median of job completion time : {median_salgo2_job}\n&#34;)
     else:
         pass
-        
+
     if os.path.exists(&#39;Random&#39;):
         print(&#34;\nRandom Scheduling Algorithm&#34;)
         print(f&#34;Mean of task completion time : {mean_salgo3_task}&#34;)
@@ -153,68 +152,68 @@ def get_analytics():
         print(f&#34;Median of job completion time : {median_salgo3_job}\n&#34;)    
     else:
         pass
-    
+
     &#39;&#39;&#39; Plotting bar graph to compare mean times of scheduling algorithms&#39;&#39;&#39;
     barWidth = 0.25
-    fig = plt.figure(figsize = (10, 5))
+    fig = plt.figure(figsize=(10, 5))
     x1 = []
     y1 = []
     y2 = []
     y1.append(mean_salgo1_task)
     y1.append(mean_salgo2_task)
     y1.append(mean_salgo3_task)
-    
+
     y2.append(mean_salgo1_job)
     y2.append(mean_salgo2_job)
     y2.append(mean_salgo3_job)
-    
+
     x1.append(&#39;Round Robin Scheduling&#39;)
     x1.append(&#39;Least Loaded Scheduling&#39;)
     x1.append(&#39;Random Scheduling&#39;)
-    
-    br1 = np.arange(len(x1)) 
+
+    br1 = np.arange(len(x1))
     br2 = [x + barWidth for x in br1] 
-    plt.bar(br1,y1, color =&#39;r&#39;, width = barWidth,edgecolor =&#39;grey&#39;, label =&#39;Tasks&#39;) 
-    plt.bar(br2, y2, color =&#39;g&#39;, width = barWidth,edgecolor =&#39;grey&#39;, label =&#39;Jobs&#39;) 
+    plt.bar(br1, y1, color=&#39;r&#39;, width=barWidth, edgecolor=&#39;grey&#39;, label=&#39;Tasks&#39;) 
+    plt.bar(br2, y2, color=&#39;g&#39;, width=barWidth, edgecolor=&#39;grey&#39;, label=&#39;Jobs&#39;) 
     plt.xlabel(&#39;Scheduling algorithms&#39;)
     plt.ylabel(&#39;Average task and job completion time&#39;)
-    plt.xticks([r + barWidth for r in range(len(x1))],x1)
+    plt.xticks([r + barWidth for r in range(len(x1))], x1)
     plt.legend()
-    
+
     &#39;&#39;&#39; Plotting bar graph to compare median times of scheduling algorithms&#39;&#39;&#39;
     barWidth = 0.25
-    fig2 = plt.figure(figsize = (10, 5))
+    fig2 = plt.figure(figsize=(10, 5))
     x1 = []
     y1 = []
     y2 = []
     y1.append(median_salgo1_task)
     y1.append(median_salgo2_task)
     y1.append(median_salgo3_task)
-    
+
     y2.append(median_salgo1_job)
     y2.append(median_salgo2_job)
     y2.append(median_salgo3_job)
-    
+
     x1.append(&#39;Round Robin Scheduling&#39;)
     x1.append(&#39;Least Loaded Scheduling&#39;)
     x1.append(&#39;Random Scheduling&#39;)
-    
+
     br1 = np.arange(len(x1)) 
     br2 = [x + barWidth for x in br1] 
-    plt.bar(br1,y1, color =&#39;r&#39;, width = barWidth,edgecolor =&#39;grey&#39;, label =&#39;Tasks&#39;) 
-    plt.bar(br2, y2, color =&#39;g&#39;, width = barWidth,edgecolor =&#39;grey&#39;, label =&#39;Jobs&#39;) 
+    plt.bar(br1, y1, color=&#39;r&#39;, width=barWidth, edgecolor=&#39;grey&#39;, label=&#39;Tasks&#39;) 
+    plt.bar(br2, y2, color=&#39;g&#39;, width=barWidth, edgecolor=&#39;grey&#39;, label=&#39;Jobs&#39;) 
     plt.xlabel(&#39;Scheduling algorithms&#39;)
     plt.ylabel(&#39;Median task and job completion time&#39;)
-    plt.xticks([r + barWidth for r in range(len(x1))],x1)
+    plt.xticks([r + barWidth for r in range(len(x1))], x1)
     plt.legend()
+
 
 def main():
     get_analytics()
+
+
 if __name__ == &#39;__main__&#39;:
-    main()
-        
-    
-    </code></pre>
+    main()</code></pre>
 </details>
 </section>
 <section>
@@ -234,7 +233,7 @@ if __name__ == &#39;__main__&#39;:
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def get_analytics():
-    fig, (ax1, ax2 , ax3) = plt.subplots(3,figsize=(15,25))
+    fig, (ax1, ax2, ax3) = plt.subplots(3, figsize=(15, 25))
     fig.tight_layout(pad=10.0)
     mean_salgo1_task = 0
     mean_salgo2_task = 0
@@ -242,69 +241,67 @@ if __name__ == &#39;__main__&#39;:
     mean_salgo1_job = 0
     mean_salgo2_job = 0
     mean_salgo3_job = 0
-    
+
     if os.path.exists(&#39;Round-Robin&#39;):
-        algo=&#39;Round-Robin&#39;
-        job1 = pd.read_csv(os.path.join(algo,&#39;jobs.csv&#39;))
-        task1 = pd.read_csv(os.path.join(algo,&#39;tasks.csv&#39;))
-        worker1 = pd.read_csv(os.path.join(algo,&#39;workers.csv&#39;))
-        
+        algo = &#39;Round-Robin&#39;
+        job1 = pd.read_csv(os.path.join(algo, &#39;jobs.csv&#39;))
+        task1 = pd.read_csv(os.path.join(algo, &#39;tasks.csv&#39;))
+        worker1 = pd.read_csv(os.path.join(algo, &#39;workers.csv&#39;))
+
         df1_w1 = pd.DataFrame(worker1)
         df1_j1 = pd.DataFrame(job1)
         df1_t1 = pd.DataFrame(task1)
-        
+
         mean_salgo1_task = df1_t1[&#34;duration&#34;].mean()
         mean_salgo1_job = df1_j1[&#34;duration&#34;].mean()
         median_salgo1_task = df1_t1[&#34;duration&#34;].median()
         median_salgo1_job = df1_j1[&#34;duration&#34;].median()
 
-        graph_plot(df1_w1 , ax1 ,&#39;Round Robin Scheduling&#39;)
-    
+        graph_plot(df1_w1, ax1, &#39;Round Robin Scheduling&#39;)
+
     else:
         pass
 
     if os.path.exists(&#39;Least-Loaded&#39;):
-        algo=&#39;Least-Loaded&#39;
-        job2 = pd.read_csv(os.path.join(algo,&#39;jobs.csv&#39;))
-        task2 = pd.read_csv(os.path.join(algo,&#39;tasks.csv&#39;))
-        worker2 = pd.read_csv(os.path.join(algo,&#39;workers.csv&#39;))
-        
+        algo = &#39;Least-Loaded&#39;
+        job2 = pd.read_csv(os.path.join(algo, &#39;jobs.csv&#39;))
+        task2 = pd.read_csv(os.path.join(algo, &#39;tasks.csv&#39;))
+        worker2 = pd.read_csv(os.path.join(algo, &#39;workers.csv&#39;))
+
         df1_w2 = pd.DataFrame(worker2)
         df1_j2 = pd.DataFrame(job2)
         df1_t2 = pd.DataFrame(task2)
-        
+
         mean_salgo2_task = df1_t2[&#34;duration&#34;].mean()
         mean_salgo2_job = df1_j2[&#34;duration&#34;].mean()
         median_salgo2_task = df1_t2[&#34;duration&#34;].median()
         median_salgo2_job = df1_j2[&#34;duration&#34;].median()
-        
-        graph_plot(df1_w2 , ax2 ,&#39;Least Loaded Scheduling&#39;)
-    
+
+        graph_plot(df1_w2, ax2, &#39;Least Loaded Scheduling&#39;)
+
     else:
         pass
-        
-        
+
     if os.path.exists(&#39;Random&#39;):
-        algo=&#39;Random&#39;
-        job3 = pd.read_csv(os.path.join(algo,&#39;jobs.csv&#39;))
-        task3 = pd.read_csv(os.path.join(algo,&#39;tasks.csv&#39;))
-        worker3 = pd.read_csv(os.path.join(algo,&#39;workers.csv&#39;))
-        
+        algo = &#39;Random&#39;
+        job3 = pd.read_csv(os.path.join(algo, &#39;jobs.csv&#39;))
+        task3 = pd.read_csv(os.path.join(algo, &#39;tasks.csv&#39;))
+        worker3 = pd.read_csv(os.path.join(algo, &#39;workers.csv&#39;))
+
         df1_w3 = pd.DataFrame(worker3)
         df1_j3 = pd.DataFrame(job3)
         df1_t3 = pd.DataFrame(task3)
-        
+
         mean_salgo3_task = df1_t3[&#34;duration&#34;].mean()
         mean_salgo3_job = df1_j3[&#34;duration&#34;].mean()
         median_salgo3_task = df1_t3[&#34;duration&#34;].median()
         median_salgo3_job = df1_j3[&#34;duration&#34;].median()
-        
-        graph_plot(df1_w3 , ax3 ,&#39;Random Scheduling&#39;)
-    
-    else :
+
+        graph_plot(df1_w3, ax3, &#39;Random Scheduling&#39;)
+
+    else:
         pass
- 
-    
+
     if os.path.exists(&#39;Round-Robin&#39;):
         print(&#34;\nRound-Robin Scheduling Algorithm&#34;)
         print(f&#34;Mean of task completion time : {mean_salgo1_task}&#34;)
@@ -313,7 +310,7 @@ if __name__ == &#39;__main__&#39;:
         print(f&#34;Median of job completion time : {median_salgo1_job}\n&#34;)  
     else:
         pass
-        
+
     if os.path.exists(&#39;Least-Loaded&#39;):
         print(&#34;\nLeast-Loaded Scheduling Algorithm&#34;)
         print(f&#34;Mean of task completion time : {mean_salgo2_task}&#34;)
@@ -322,7 +319,7 @@ if __name__ == &#39;__main__&#39;:
         print(f&#34;Median of job completion time : {median_salgo2_job}\n&#34;)
     else:
         pass
-        
+
     if os.path.exists(&#39;Random&#39;):
         print(&#34;\nRandom Scheduling Algorithm&#34;)
         print(f&#34;Mean of task completion time : {mean_salgo3_task}&#34;)
@@ -331,59 +328,59 @@ if __name__ == &#39;__main__&#39;:
         print(f&#34;Median of job completion time : {median_salgo3_job}\n&#34;)    
     else:
         pass
-    
+
     &#39;&#39;&#39; Plotting bar graph to compare mean times of scheduling algorithms&#39;&#39;&#39;
     barWidth = 0.25
-    fig = plt.figure(figsize = (10, 5))
+    fig = plt.figure(figsize=(10, 5))
     x1 = []
     y1 = []
     y2 = []
     y1.append(mean_salgo1_task)
     y1.append(mean_salgo2_task)
     y1.append(mean_salgo3_task)
-    
+
     y2.append(mean_salgo1_job)
     y2.append(mean_salgo2_job)
     y2.append(mean_salgo3_job)
-    
+
     x1.append(&#39;Round Robin Scheduling&#39;)
     x1.append(&#39;Least Loaded Scheduling&#39;)
     x1.append(&#39;Random Scheduling&#39;)
-    
-    br1 = np.arange(len(x1)) 
+
+    br1 = np.arange(len(x1))
     br2 = [x + barWidth for x in br1] 
-    plt.bar(br1,y1, color =&#39;r&#39;, width = barWidth,edgecolor =&#39;grey&#39;, label =&#39;Tasks&#39;) 
-    plt.bar(br2, y2, color =&#39;g&#39;, width = barWidth,edgecolor =&#39;grey&#39;, label =&#39;Jobs&#39;) 
+    plt.bar(br1, y1, color=&#39;r&#39;, width=barWidth, edgecolor=&#39;grey&#39;, label=&#39;Tasks&#39;) 
+    plt.bar(br2, y2, color=&#39;g&#39;, width=barWidth, edgecolor=&#39;grey&#39;, label=&#39;Jobs&#39;) 
     plt.xlabel(&#39;Scheduling algorithms&#39;)
     plt.ylabel(&#39;Average task and job completion time&#39;)
-    plt.xticks([r + barWidth for r in range(len(x1))],x1)
+    plt.xticks([r + barWidth for r in range(len(x1))], x1)
     plt.legend()
-    
+
     &#39;&#39;&#39; Plotting bar graph to compare median times of scheduling algorithms&#39;&#39;&#39;
     barWidth = 0.25
-    fig2 = plt.figure(figsize = (10, 5))
+    fig2 = plt.figure(figsize=(10, 5))
     x1 = []
     y1 = []
     y2 = []
     y1.append(median_salgo1_task)
     y1.append(median_salgo2_task)
     y1.append(median_salgo3_task)
-    
+
     y2.append(median_salgo1_job)
     y2.append(median_salgo2_job)
     y2.append(median_salgo3_job)
-    
+
     x1.append(&#39;Round Robin Scheduling&#39;)
     x1.append(&#39;Least Loaded Scheduling&#39;)
     x1.append(&#39;Random Scheduling&#39;)
-    
+
     br1 = np.arange(len(x1)) 
     br2 = [x + barWidth for x in br1] 
-    plt.bar(br1,y1, color =&#39;r&#39;, width = barWidth,edgecolor =&#39;grey&#39;, label =&#39;Tasks&#39;) 
-    plt.bar(br2, y2, color =&#39;g&#39;, width = barWidth,edgecolor =&#39;grey&#39;, label =&#39;Jobs&#39;) 
+    plt.bar(br1, y1, color=&#39;r&#39;, width=barWidth, edgecolor=&#39;grey&#39;, label=&#39;Tasks&#39;) 
+    plt.bar(br2, y2, color=&#39;g&#39;, width=barWidth, edgecolor=&#39;grey&#39;, label=&#39;Jobs&#39;) 
     plt.xlabel(&#39;Scheduling algorithms&#39;)
     plt.ylabel(&#39;Median task and job completion time&#39;)
-    plt.xticks([r + barWidth for r in range(len(x1))],x1)
+    plt.xticks([r + barWidth for r in range(len(x1))], x1)
     plt.legend()</code></pre>
 </details>
 </dd>
@@ -396,26 +393,26 @@ if __name__ == &#39;__main__&#39;:
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def graph_plot(df,ax,title):
+<pre><code class="python">def graph_plot(df, ax, title):
     splits1 = list(df.groupby(&#34;WorkerID&#34;))
     for i in range(len(splits1)):
-        time={}
-        a=pd.DataFrame(splits1[i][1],columns=[&#39;JobId&#39;,&#39;WorkerID&#39;,&#39;TaskId&#39;,&#39;start_time&#39;,&#39;end_time&#39;,&#39;duration&#39;])
-        end_time= a[&#34;end_time&#34;].iloc[-1]
-        for m in range(0,end_time):
-            count=0
+        time = dict()
+        a = pd.DataFrame(splits1[i][1], columns=[&#39;JobId&#39;, &#39;WorkerID&#39;, &#39;TaskId&#39;, &#39;start_time&#39;, &#39;end_time&#39;, &#39;duration&#39;])
+        end_time = a[&#34;end_time&#34;].iloc[-1]
+        for m in range(0, end_time):
+            count = 0
             for n in range(len(a[&#34;TaskId&#34;])):
                 if m &gt;= a[&#34;start_time&#34;].iloc[n] and m &lt;= a[&#34;end_time&#34;].iloc[n]:
-                    count=count+1    
+                    count = count + 1
                 else:
                     pass
             time[m] = count
-        l = &#34;Worker&#34; + &#34;:&#34;+str(splits1[i][0])
+        label = &#34;Worker&#34; + &#34;:&#34;+str(splits1[i][0])
         x = list(time.keys())
         y = list(time.values())
         ax.set_xlabel(&#39;Time&#39;)
         ax.set_ylabel(&#39;Number of tasks&#39;)
-        ax.plot(x,y,marker=&#34;o&#34;,label=l)
+        ax.plot(x, y, marker=&#34;o&#34;, label=label)
         ax.set_title(title)
         ax.legend()</code></pre>
 </details>

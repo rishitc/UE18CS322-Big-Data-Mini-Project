@@ -28,7 +28,7 @@
 </summary>
 <pre><code class="python">import socket
 from threading import Lock
-from typing import List
+from typing import List, Optional
 
 
 class StateTracker:
@@ -36,9 +36,10 @@ class StateTracker:
         &#34;&#34;&#34;Store the list of the worker dictionaries in a new dictionary
          indexed by the ```worker_id``` key
 
-        :param configObj: Dictionary got from loading in the json
-         data stored in the worker configuration file
-        :type configObj: dict
+        **param** ```configObj```: Dictionary got from loading in the json
+        data stored in the worker configuration file
+
+        **type** ```configObj```: dict
         &#34;&#34;&#34;
         self.workerState = {}
         self.workerIDs: List[int] = []
@@ -61,16 +62,21 @@ class StateTracker:
         &#34;&#34;&#34;Check if the worker whose ```worker_id``` key is equal to
          workerID.
 
-        :param workerID: ```worker_id``` value of the worker node we are
-         checking for free slots
-        :type workerID: int
-        :param demand: Specifies the number of free slots we are looking
-         for in the worker node with ```worker_id``` equal to workerID,
-         defaults to 1
-        :type demand: int, optional
-        :return: Returns True if the number of free slots given by ```demand```
-         are found, else it returns false
-        :rtype: bool
+        **param** ```workerID```: ```worker_id``` value of the worker node
+        we are checking for free slots
+
+        **type** ```workerID```: int
+
+        **param** ```demand```: Specifies the number of free slots we are
+        looking for in the worker node with ```worker_id``` equal to workerID,
+        defaults to 1
+
+        **type** ```demand```: int, optional
+
+        **return**: Returns True if the number of free slots given by
+        ```demand``` are found, else it returns false
+
+        **rtype**: bool
         &#34;&#34;&#34;
         return True if self.workerState[workerID][&#34;free slots&#34;] &gt;= demand \
             else False
@@ -85,12 +91,15 @@ class StateTracker:
         &#34;&#34;&#34;Allocates the task to the worker and decrements the number of
          free slots in that worker
 
-        :param workerID: Specifies the worker to which we are allocating the
-         task to
-        :type workerID: int
-        :param task_count: Specifies the number of tasks being allocated the
-         worker, defaults to 1
-        :type task_count: int, optional
+        **param** ```workerID```: Specifies the worker to which we are
+        allocating the task to
+
+        **type** ```workerID```: int
+
+        **param** ```task_count```: Specifies the number of tasks being
+        allocated the worker, defaults to 1
+
+        **type** ```task_count```: int, optional
         &#34;&#34;&#34;
         assert self.isWorkerFree(workerID, task_count) is True,\
             &#34;Over allocating tasks to worker!&#34;
@@ -98,20 +107,24 @@ class StateTracker:
 
     def freeSlot(self, workerID: int, task_count: int = 1) -&gt; None:
         &#34;&#34;&#34;Updates the state of the worker to indicate task completion
-         by incrementing the number of free slots on that worker
+        by incrementing the number of free slots on that worker
 
-        :param workerID: Specifies the worker which has completed its task
-        :type workerID: int
-        :param task_count: Specifies the number of tasks compelted by the
-         worker, defaults to 1
-        :type task_count: int, optional
+        **param** ```workerID```: Specifies the worker which has completed its
+        task
+
+        **type** ```workerID```: int
+
+        **param** ```task_count```: Specifies the number of tasks compelted by
+        the worker, defaults to 1
+
+        **type** ```task_count```: int, optional
         &#34;&#34;&#34;
         assert self.workerState[workerID][&#34;free slots&#34;] != \
             self.workerState[workerID][&#34;slots&#34;],\
             &#34;There are no slots to free up!&#34;
         self.workerState[workerID][&#34;free slots&#34;] += task_count
 
-    def getLeastLoadedWorkerID(self):
+    def getLeastLoadedWorkerID(self) -&gt; Optional[int]:
         # Variables used to track the least loaded worker
         _least_loaded_workerID = None
         _least_loaded_workerFreeSlots = 0
@@ -151,9 +164,9 @@ class StateTracker:
 <dd>
 <div class="desc"><p>Store the list of the worker dictionaries in a new dictionary
 indexed by the <code>worker_id</code> key</p>
-<p>:param configObj: Dictionary got from loading in the json
-data stored in the worker configuration file
-:type configObj: dict</p></div>
+<p><strong>param</strong> <code>configObj</code>: Dictionary got from loading in the json
+data stored in the worker configuration file</p>
+<p><strong>type</strong> <code>configObj</code>: dict</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -163,9 +176,10 @@ data stored in the worker configuration file
         &#34;&#34;&#34;Store the list of the worker dictionaries in a new dictionary
          indexed by the ```worker_id``` key
 
-        :param configObj: Dictionary got from loading in the json
-         data stored in the worker configuration file
-        :type configObj: dict
+        **param** ```configObj```: Dictionary got from loading in the json
+        data stored in the worker configuration file
+
+        **type** ```configObj```: dict
         &#34;&#34;&#34;
         self.workerState = {}
         self.workerIDs: List[int] = []
@@ -188,16 +202,21 @@ data stored in the worker configuration file
         &#34;&#34;&#34;Check if the worker whose ```worker_id``` key is equal to
          workerID.
 
-        :param workerID: ```worker_id``` value of the worker node we are
-         checking for free slots
-        :type workerID: int
-        :param demand: Specifies the number of free slots we are looking
-         for in the worker node with ```worker_id``` equal to workerID,
-         defaults to 1
-        :type demand: int, optional
-        :return: Returns True if the number of free slots given by ```demand```
-         are found, else it returns false
-        :rtype: bool
+        **param** ```workerID```: ```worker_id``` value of the worker node
+        we are checking for free slots
+
+        **type** ```workerID```: int
+
+        **param** ```demand```: Specifies the number of free slots we are
+        looking for in the worker node with ```worker_id``` equal to workerID,
+        defaults to 1
+
+        **type** ```demand```: int, optional
+
+        **return**: Returns True if the number of free slots given by
+        ```demand``` are found, else it returns false
+
+        **rtype**: bool
         &#34;&#34;&#34;
         return True if self.workerState[workerID][&#34;free slots&#34;] &gt;= demand \
             else False
@@ -212,12 +231,15 @@ data stored in the worker configuration file
         &#34;&#34;&#34;Allocates the task to the worker and decrements the number of
          free slots in that worker
 
-        :param workerID: Specifies the worker to which we are allocating the
-         task to
-        :type workerID: int
-        :param task_count: Specifies the number of tasks being allocated the
-         worker, defaults to 1
-        :type task_count: int, optional
+        **param** ```workerID```: Specifies the worker to which we are
+        allocating the task to
+
+        **type** ```workerID```: int
+
+        **param** ```task_count```: Specifies the number of tasks being
+        allocated the worker, defaults to 1
+
+        **type** ```task_count```: int, optional
         &#34;&#34;&#34;
         assert self.isWorkerFree(workerID, task_count) is True,\
             &#34;Over allocating tasks to worker!&#34;
@@ -225,20 +247,24 @@ data stored in the worker configuration file
 
     def freeSlot(self, workerID: int, task_count: int = 1) -&gt; None:
         &#34;&#34;&#34;Updates the state of the worker to indicate task completion
-         by incrementing the number of free slots on that worker
+        by incrementing the number of free slots on that worker
 
-        :param workerID: Specifies the worker which has completed its task
-        :type workerID: int
-        :param task_count: Specifies the number of tasks compelted by the
-         worker, defaults to 1
-        :type task_count: int, optional
+        **param** ```workerID```: Specifies the worker which has completed its
+        task
+
+        **type** ```workerID```: int
+
+        **param** ```task_count```: Specifies the number of tasks compelted by
+        the worker, defaults to 1
+
+        **type** ```task_count```: int, optional
         &#34;&#34;&#34;
         assert self.workerState[workerID][&#34;free slots&#34;] != \
             self.workerState[workerID][&#34;slots&#34;],\
             &#34;There are no slots to free up!&#34;
         self.workerState[workerID][&#34;free slots&#34;] += task_count
 
-    def getLeastLoadedWorkerID(self):
+    def getLeastLoadedWorkerID(self) -&gt; Optional[int]:
         # Variables used to track the least loaded worker
         _least_loaded_workerID = None
         _least_loaded_workerFreeSlots = 0
@@ -269,12 +295,12 @@ data stored in the worker configuration file
 <dd>
 <div class="desc"><p>Allocates the task to the worker and decrements the number of
 free slots in that worker</p>
-<p>:param workerID: Specifies the worker to which we are allocating the
-task to
-:type workerID: int
-:param task_count: Specifies the number of tasks being allocated the
-worker, defaults to 1
-:type task_count: int, optional</p></div>
+<p><strong>param</strong> <code>workerID</code>: Specifies the worker to which we are
+allocating the task to</p>
+<p><strong>type</strong> <code>workerID</code>: int</p>
+<p><strong>param</strong> <code>task_count</code>: Specifies the number of tasks being
+allocated the worker, defaults to 1</p>
+<p><strong>type</strong> <code>task_count</code>: int, optional</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -283,12 +309,15 @@ worker, defaults to 1
     &#34;&#34;&#34;Allocates the task to the worker and decrements the number of
      free slots in that worker
 
-    :param workerID: Specifies the worker to which we are allocating the
-     task to
-    :type workerID: int
-    :param task_count: Specifies the number of tasks being allocated the
-     worker, defaults to 1
-    :type task_count: int, optional
+    **param** ```workerID```: Specifies the worker to which we are
+    allocating the task to
+
+    **type** ```workerID```: int
+
+    **param** ```task_count```: Specifies the number of tasks being
+    allocated the worker, defaults to 1
+
+    **type** ```task_count```: int, optional
     &#34;&#34;&#34;
     assert self.isWorkerFree(workerID, task_count) is True,\
         &#34;Over allocating tasks to worker!&#34;
@@ -301,24 +330,29 @@ worker, defaults to 1
 <dd>
 <div class="desc"><p>Updates the state of the worker to indicate task completion
 by incrementing the number of free slots on that worker</p>
-<p>:param workerID: Specifies the worker which has completed its task
-:type workerID: int
-:param task_count: Specifies the number of tasks compelted by the
-worker, defaults to 1
-:type task_count: int, optional</p></div>
+<p><strong>param</strong> <code>workerID</code>: Specifies the worker which has completed its
+task</p>
+<p><strong>type</strong> <code>workerID</code>: int</p>
+<p><strong>param</strong> <code>task_count</code>: Specifies the number of tasks compelted by
+the worker, defaults to 1</p>
+<p><strong>type</strong> <code>task_count</code>: int, optional</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def freeSlot(self, workerID: int, task_count: int = 1) -&gt; None:
     &#34;&#34;&#34;Updates the state of the worker to indicate task completion
-     by incrementing the number of free slots on that worker
+    by incrementing the number of free slots on that worker
 
-    :param workerID: Specifies the worker which has completed its task
-    :type workerID: int
-    :param task_count: Specifies the number of tasks compelted by the
-     worker, defaults to 1
-    :type task_count: int, optional
+    **param** ```workerID```: Specifies the worker which has completed its
+    task
+
+    **type** ```workerID```: int
+
+    **param** ```task_count```: Specifies the number of tasks compelted by
+    the worker, defaults to 1
+
+    **type** ```task_count```: int, optional
     &#34;&#34;&#34;
     assert self.workerState[workerID][&#34;free slots&#34;] != \
         self.workerState[workerID][&#34;slots&#34;],\
@@ -327,7 +361,7 @@ worker, defaults to 1
 </details>
 </dd>
 <dt id="src.WorkerUtils.WorkerStateTracker.StateTracker.getLeastLoadedWorkerID"><code class="name flex">
-<span>def <span class="ident">getLeastLoadedWorkerID</span></span>(<span>self)</span>
+<span>def <span class="ident">getLeastLoadedWorkerID</span></span>(<span>self) ‑> Union[int, NoneType]</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -335,7 +369,7 @@ worker, defaults to 1
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def getLeastLoadedWorkerID(self):
+<pre><code class="python">def getLeastLoadedWorkerID(self) -&gt; Optional[int]:
     # Variables used to track the least loaded worker
     _least_loaded_workerID = None
     _least_loaded_workerFreeSlots = 0
@@ -372,16 +406,16 @@ worker, defaults to 1
 <dd>
 <div class="desc"><p>Check if the worker whose <code>worker_id</code> key is equal to
 workerID.</p>
-<p>:param workerID: <code>worker_id</code> value of the worker node we are
-checking for free slots
-:type workerID: int
-:param demand: Specifies the number of free slots we are looking
-for in the worker node with <code>worker_id</code> equal to workerID,
-defaults to 1
-:type demand: int, optional
-:return: Returns True if the number of free slots given by <code>demand</code>
-are found, else it returns false
-:rtype: bool</p></div>
+<p><strong>param</strong> <code>workerID</code>: <code>worker_id</code> value of the worker node
+we are checking for free slots</p>
+<p><strong>type</strong> <code>workerID</code>: int</p>
+<p><strong>param</strong> <code>demand</code>: Specifies the number of free slots we are
+looking for in the worker node with <code>worker_id</code> equal to workerID,
+defaults to 1</p>
+<p><strong>type</strong> <code>demand</code>: int, optional</p>
+<p><strong>return</strong>: Returns True if the number of free slots given by
+<code>demand</code> are found, else it returns false</p>
+<p><strong>rtype</strong>: bool</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -390,16 +424,21 @@ are found, else it returns false
     &#34;&#34;&#34;Check if the worker whose ```worker_id``` key is equal to
      workerID.
 
-    :param workerID: ```worker_id``` value of the worker node we are
-     checking for free slots
-    :type workerID: int
-    :param demand: Specifies the number of free slots we are looking
-     for in the worker node with ```worker_id``` equal to workerID,
-     defaults to 1
-    :type demand: int, optional
-    :return: Returns True if the number of free slots given by ```demand```
-     are found, else it returns false
-    :rtype: bool
+    **param** ```workerID```: ```worker_id``` value of the worker node
+    we are checking for free slots
+
+    **type** ```workerID```: int
+
+    **param** ```demand```: Specifies the number of free slots we are
+    looking for in the worker node with ```worker_id``` equal to workerID,
+    defaults to 1
+
+    **type** ```demand```: int, optional
+
+    **return**: Returns True if the number of free slots given by
+    ```demand``` are found, else it returns false
+
+    **rtype**: bool
     &#34;&#34;&#34;
     return True if self.workerState[workerID][&#34;free slots&#34;] &gt;= demand \
         else False</code></pre>
