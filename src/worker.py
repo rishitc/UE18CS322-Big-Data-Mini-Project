@@ -14,10 +14,19 @@ Some of the important pointers to be implemented in this code are:-
 MESSAGE_BUFFER_SIZE = 4096
 
 
+def getCMDLineArgs():
+    """```getCMDLineArgs``` returns the command line arguments
+    in order of ```port number``` and ```worker ID```
+
+    ```return```: Tuple containing ```port number``` and ```worker ID```
+
+    ```rtype```: Tuple[int, int]
+    """
+    return int(sys.argv[1]), int(sys.argv[2])
+
 if __name__ == "__main__":
     # The CLI to the program will be python worker.py port id
-    port_number = int(sys.argv[1])
-    worker_id = int(sys.argv[2])
+    port_number, worker_id = getCMDLineArgs()
 
     # Creating the socket tuple for the worker where
     # it will listen to task requests from the master
