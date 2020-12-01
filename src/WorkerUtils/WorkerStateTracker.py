@@ -1,5 +1,6 @@
 import socket
 from threading import Lock
+from typing import List
 
 
 class StateTracker:
@@ -12,7 +13,7 @@ class StateTracker:
         :type configObj: dict
         """
         self.workerState = {}
-        self.workerIDs = []
+        self.workerIDs: List[int] = []
         self.LOCK = Lock()
 
         for worker in confObj["workers"]:
