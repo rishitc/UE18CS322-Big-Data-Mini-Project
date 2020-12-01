@@ -71,6 +71,9 @@ if __name__ == "__main__":
     # connection with return value being (new socket object usable to send and
     # recv data, address bound to the socket on the other end of the connection
     # ---
+
+    input("Have all the workers connected??")
+
     _TASK_COMPLETION_RESPONSE_ADDR = (socket.gethostname(), 5001)  # Master
     # port which takes updates on task completion from the worker
     workerToMasterCompletionSocket = \
