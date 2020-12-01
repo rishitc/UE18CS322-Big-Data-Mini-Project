@@ -140,3 +140,6 @@ class Worker:
                 self.updates_q.task_done()
                 # Sending to master
                 reply_socket.sendall(response_msg.encode())
+
+    def __del__(self):
+        self.updates_q.join()
