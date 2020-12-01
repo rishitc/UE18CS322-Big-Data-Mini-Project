@@ -6,6 +6,8 @@ import socket
 
 from Communication.protocol import YACS_Protocol
 
+MESSAGE_BUFFER_SIZE = 4096
+
 class Worker:
     """
     - This Class simulates the worker through following steps:
@@ -69,10 +71,10 @@ class Worker:
             if tasksInExecutionPool_Count != 0:
                 self.LOCK.acquire()
                 for job_id in self.tasks:
-                """Durations (i.e. the value in the dictionary) will be
-                   positive(non-zero) integers."""
+                    """Durations (i.e. the value in the dictionary) will be
+                    positive(non-zero) integers."""
                     for task_id in job_id:
-                    # Reduce the duration of the task by 1
+                        # Reduce the duration of the task by 1
                         self.tasks[job_id][task_id]["task"]["duration"] -= 1
 
                 # Check if the duration has become 0, i.e. the task has
@@ -86,7 +88,7 @@ class Worker:
                                                        self.tasks[job_id][task_id]["task"]["start time"],
                                                        self.tasks[job_id][task_id]["task"]["end time"],
                                                        self.tasks[job_id][task_id]["worker_id"])
-                            self.update_q.put(response_message_to_master)
+                            self.updates_q.put(response_message_to_master)
                             del self.tasks[job_id][task_id] # Remove the task entry from the execution pool
                             if len(self.tasks[job_id]==0):  # Remove the job entry if there are no tasks of that particular job
                                 del self.tasks[job_id]
@@ -109,8 +111,8 @@ class Worker:
         """   
 
         while True:
-            if not self.update_q.empty():
-                response_msg: str = self.update_q.get()
-                self.update_q.task_done()
+            if not self.updates_q.empty():
+                response_msg: str = self.updates_q.get()
+                self.updates_q.task_done()
                 # send it
                 reply_socket.sendall(response_msg.encode())
