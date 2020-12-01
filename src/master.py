@@ -42,11 +42,15 @@ def listenForJobRequests(jobRequestHandler: JobRequestHandler,
     """```listenForJobRequests``` listens for new job requests from the client
     code
 
-    :param jobRequestHandler: Used to track the task dispath status of the job
-    :type jobRequestHandler: JobRequestHandler
-    :param jobUpdateTracker: Used to track the updates from the workers about
-    the tasks assigned belonging to the different jobs
-    :type jobUpdateTracker: JobUpdateTracker
+    **param** ```jobRequestHandler```: Used to track the task dispath status of
+    the job
+
+    **type** ```jobRequestHandler```: JobRequestHandler
+
+    **param** ```jobUpdateTracker```: Used to track the updates from the
+    workers about the tasks assigned belonging to the different jobs
+
+    **type** ```jobUpdateTracker```: JobUpdateTracker
     """
     _JOB_REQUEST_ADDR: Tuple[str, int] = (socket.gethostname(), 5000)
 
@@ -88,18 +92,23 @@ def listenForJobRequests(jobRequestHandler: JobRequestHandler,
 def workerUpdates(workerSocket: socket.socket,
                   workerStateTracker: StateTracker,
                   jobUpdateTracker: JobUpdateTracker):
-    """workerUpdates captures the updates from the worker as and when
+    """```workerUpdates``` captures the updates from the worker as and when
     they complete the tasks assigned to them, and respond back
 
-    :param workerSocket: The socket object for listening to the specific
-    worker's updates
-    :type workerSocket: socket
-    :param workerStateTracker: Tracks the states of the worker nodes as to how
-    many free slots do they have
-    :type workerStateTracker: StateTracker
-    :param jobUpdateTracker: Tracks the jobs assigned to the workers, and
+    **param** ```workerSocket```: The socket object for listening to the
+    specific worker's updates
+
+    **type** ```workerSocket```: socket
+
+    **param** ```workerStateTracker```: Tracks the states of the worker nodes as
+    to how many free slots do they have
+
+    **type** ```workerStateTracker```: StateTracker
+
+    **param** ```jobUpdateTracker```: Tracks the jobs assigned to the workers, and
     their corresponding updates
-    :type jobUpdateTracker: JobUpdateTracker
+
+    **type** ```jobUpdateTracker```: JobUpdateTracker
     """
     while True:
         workerUpdate = workerSocket.recv(BUFFER_SIZE)
