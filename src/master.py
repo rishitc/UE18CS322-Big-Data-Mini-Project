@@ -135,6 +135,13 @@ if __name__ == "__main__":
         print(e)
         sys.exit(MISSING_CMD_LINE_ARGS)
 
+    if TYPE_OF_SCHEDULING not in ["Random", "Round-Robin", "Least-Loaded"]:
+        raise ValueError((f"{TC.attr(1)}TYPE_OF_SCHEDULING{TC.attr(0)} is not "
+                          f"of type: {TC.attr(1)}\"Random\"{TC.attr(0)} or "
+                          f"{TC.attr(1)}\"Round-Robin\"{TC.attr(0)} "
+                          f"or {TC.attr(1)}\"Least-Loaded\"{TC.attr(0)}!")
+                         )
+
     # Making sure that the configuration file can be opened
     try:
         with open(PATH_TO_CONFIG_FILE) as fHandler:
