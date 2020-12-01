@@ -1,3 +1,7 @@
+python3 ./master_run_logs/task_order.py ./master_run_logs/run_2.sh
+
+---
+
 python3 worker.py 4000 1
 python3 worker.py 4001 2
 python3 worker.py 4002 3

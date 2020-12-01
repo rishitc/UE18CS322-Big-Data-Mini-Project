@@ -1,3 +1,5 @@
+No of tasks sent: 39
+---
 Have the 3 workers been started, yet? [y/n] y
 worker["port"]=4000
 worker["port"]=4001
