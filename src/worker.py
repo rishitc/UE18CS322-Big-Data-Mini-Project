@@ -73,7 +73,8 @@ if __name__ == "__main__":
     # ---
     _TASK_COMPLETION_RESPONSE_ADDR = (socket.gethostname(), 5001)  # Master
     # port which takes updates on task completion from the worker
-    workerToMasterCompletionSocket = createMasterSocket(_TASK_COMPLETION_RESPONSE_ADDR)
+    workerToMasterCompletionSocket = \
+        createMasterSocket(_TASK_COMPLETION_RESPONSE_ADDR)
     workerToMasterCompletionSocket.sendall(str(worker_id).encode())
     # Creating all the threads
     json_receive_master = threading.Thread(name="Sending Task To Exec Pool",
