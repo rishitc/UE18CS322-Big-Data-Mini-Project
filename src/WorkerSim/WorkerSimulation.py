@@ -24,37 +24,26 @@ class Worker:
         self.tasks = dict()  # Task ID as key and duration as value
         self.ID = WorkerID
         self.LOCK = Lock()  # Where to use??
-        self.startTime = 0
-        self.endTime = 0
-        self.turnoverTime = 0
 
     def listenForTask(self, json_protcol_message):
         """
         This listens for a JSON message which was created using the
         ***createMessageToWorker()*** method (*i.e. following the set protocol
-        format*) and then sets its initial variables as per this incoming JSON
-        message.
+        format*) and then sets its key for the particular instance of worker as task id
+        and the value is all the related information of the task, i.e the dictionary obtained
+        from **createMessageToWorker()** method.
         """
         # Convert JSON to python dictionary
         python_protocol_message = json.loads(json_protcol_message)
 
-        # The below 2 values are essential for the simulation or worker
-        # computation
-        self.task_in_message = python_protocol_message["task"][0]["task_id"]
-        self.duration_in_message = (python_protocol_message["task"][0]
-                                    ["duration"])
-
-        # The below variables are essential for the createMessageToMaster()
-        # YACS Protocol once the task completes execution
-        self.workerID_in_message = python_protocol_message["worker_id"]
-        self.jobID_in_message = python_protocol_message["job_id"]
-        self.taskfamily_in_message = python_protocol_message["task family"]
-
-        # Key-Value pair (both integers) with task id as key and initial
-        # duration as value
-        self.tasks[self.task_in_message] = self.duration_in_message
-        self.startTime = time.time()  # Store the starting time of the task
-        simulateWorker()
+        # To obtain key for addition to exec poll(i.e tasks)
+        self.task_in_message = python_protocol_message["task"]["task_id"]
+        
+        python_protocol_message["task"]["start time"] = time.time() # Store the starting time of the task
+        python_protocol_message["task"]["end time"] = 0
+        python_protocol_message["task"]["task turnaround time"] = 0
+        self.tasks[self.task_in_message] = python_protocol_message #Value for the tasks dictionary will be all the info
+        # passed from the Master along with the necessary time stamps added above
 
     def simulateWorker(self):
         # While there is a task to execute in the task-pool
@@ -64,11 +53,12 @@ class Worker:
                    positive(non-zero) integers."""
 
                 # Reduce the duration of the task by 1
-                self.tasks[task_id] -= 1
+                self.tasks[task_id]["task"]["duration"] -= 1
 
                 # Check if the duration has become 0, i.e. the task has
                 # finished execution
-                if self.tasks[task_id] == 0:
+                if self.tasks[task_id]["task"]["duration"] == 0:
+                    self.tasks[task_id]["task"]["end time"]=time.time() # Store the end-time of the task
                     return self.taskComplete(self.tasks[task_id])
 
                 # NOTE: Below is the older version of the code,
@@ -96,18 +86,18 @@ class Worker:
         This method is called by ***simulateWorker()*** method when the
         *remaining_duration attribute* of the task **becomes 0**.
         """
-        self.endTime = time.time()  # Store the end-time of the task
-
+        
         # Give by: (waiting_time + cpu_burst_time), i.e. (end - start) in
         # this context
-        self.turnoverTime = self.endTime - self.startTime
+        self.tasks[task_id]["task"]["task turnaround time"]= self.tasks[task_id]["task"]["end time"] - self.[task_id]["task"]["start time"]
 
         # Can also call the YACS Protocol class's createMessageToMaster() for
         # this
 
         # Calling the createMessageToMaster method of YACS_Protocol Class
-        response_message_to_master=YACS_Protocol.createMessageToMaster(self.jobID_in_message,self.taskfamily_in_message,self.task_in_message,self.startTime,
-                                                                       self.endTime,self.workerID_in_message,self.turnoverTime)
+        response_message_to_master=YACS_Protocol.createMessageToMaster(self.tasks[task_id]["job_id"],self.tasks[task_id]["task family"],self.tasks[task_id]["task"]["task_id"],
+                                                                       self.tasks[task_id]["task"]["start time"],self.tasks[task_id]["task"]["end time"],
+                                                                       self.tasks[task_id]["worker_id"],self.tasks[task_id]["task"]["task turnaround time"])
         # Python dictionary for response message in case YACS_Protocol function is not called
         """response_message_to_master = dict()
         response_message_to_master["worker_id"]=self.workerID_in_message
