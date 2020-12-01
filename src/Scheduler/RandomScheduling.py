@@ -1,5 +1,6 @@
 import random
 import time
+from typing import Set
 
 from Communication.protocol import YACS_Protocol
 from Scheduler.JobRequests import JobRequestHandler
@@ -12,10 +13,12 @@ class RandomScheduler:
                       workerStateTracker: StateTracker):
         #  Initialize the random number generator.
         random.seed()
-        workerIDsVisited: set = set()
+        workerIDsVisited: Set = set()
 
         while True:
             jobID_family_task = None
+
+            # Get a pending task, if any
             requestHandler.LOCK.acquire()
             if not requestHandler.isEmpty():
                 jobID_family_task = requestHandler.getWaitingTask()
@@ -23,11 +26,15 @@ class RandomScheduler:
 
             # If there is a Task that needs to be executed
             if jobID_family_task is not None:
+                # Initially we have not visited any worker
+                workerIDsVisited.clear()
+
                 # Initially we have not found a worker with a free slot
                 workerFound = False
 
                 while workerFound is False:  # Until a free worker is not found
                     workerStateTracker.LOCK.acquire()
+
                     # Pick a worker at random
                     _temp = random.choice(workerStateTracker.workerIDs)
                     workerIDsVisited.add(_temp)
@@ -44,6 +51,8 @@ class RandomScheduler:
                                                  ["task_id"]),
                                         duration=(jobID_family_task[2]
                                                   ["duration"]),
+                                        # We only get _temp in the LOCK
+                                        # i.e. critical section
                                         worker_ID=_temp
                                         ))
                         # Once a worker with a free slot is found then
@@ -52,12 +61,20 @@ class RandomScheduler:
                         workerStateTracker.getWorkerSocket(_temp)\
                             .sendall(protocolMsg)
                         workerStateTracker.allocateSlot(_temp)
+
+                        # We have found a worker and hence set this to True
+                        workerFound = True
+
                     workerStateTracker.LOCK.release()
 
                     # In the case where none of the workers have a free slot
-                    # then sleep for a second to allow for the
-                    # workerStateTracker to be updated by the
-                    # thread: workerUpdates
                     if list(workerIDsVisited) == workerStateTracker.workerIDs:
+                        # Sleep for a second to allow for the
+                        # workerStateTracker to be updated by the
+                        # thread: workerUpdates
                         time.sleep(1)
+
+                        # Clear the worker IDs visited set as we are
+                        # restarting our search for a free slot on one of the
+                        # workers
                         workerIDsVisited.clear()
