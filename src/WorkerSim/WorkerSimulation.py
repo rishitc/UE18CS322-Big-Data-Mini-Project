@@ -3,6 +3,7 @@ import os  # Needed to test reference to YACS Protocol for createMessageToMaster
 import json  # For working on JSON data
 import threading
 import socket
+import queue
 
 from Communication.protocol import YACS_Protocol
 
