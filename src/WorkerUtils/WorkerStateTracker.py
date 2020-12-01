@@ -50,6 +50,8 @@ class StateTracker:
 
         **rtype**: bool
         """
+        print(f"{workerID=}")
+        print(f"{workerID in self.workerIDs}")
         return True if self.workerState[workerID]["free slots"] >= demand \
             else False
 
