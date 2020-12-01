@@ -34,8 +34,13 @@ class Tracker:
         fields_worker = ['JobID', 'WorkerID', 'TaskID', 'start_time',
                          'end_time']
 
+        print(f"Program is at location: {os.getcwd()}")
+
+        algorithm = os.path.join(".", "Analytics", algorithm)
+
         # If the folder to store the logs of the application does not exist
         if not os.path.exists(algorithm):
+            print("Creating directory to store results")
             os.mkdir(algorithm)
 
         # Object attributes to hold the file handler, to store the logs
@@ -43,16 +48,25 @@ class Tracker:
         self.f_tasks = open(os.path.join(algorithm, "tasks.csv"), 'w')
         self.f_workers = open(os.path.join(algorithm, "workers.csv"), 'w')
 
-        j_writer = csv.writer(self.f_jobs)
-        t_writer = csv.writer(self.f_tasks)
-        w_writer = csv.writer(self.f_workers)
+        j_writer = csv.writer(self.f_jobs, delimiter=',', quotechar='"',
+                              quoting=csv.QUOTE_MINIMAL)
+        t_writer = csv.writer(self.f_tasks, delimiter=',', quotechar='"',
+                              quoting=csv.QUOTE_MINIMAL)
+        w_writer = csv.writer(self.f_workers, delimiter=',', quotechar='"',
+                              quoting=csv.QUOTE_MINIMAL)
         j_writer.writerow(fields_job)
         t_writer.writerow(fields_task)
         w_writer.writerow(fields_worker)
         self.job_writer = j_writer
         self.task_writer = t_writer
         self.worker_writer = w_writer
+        self.flush()
         print("Job Tracker Initialized")
+
+    def flush(self):
+        self.f_jobs.flush()
+        self.f_tasks.flush()
+        self.f_workers.flush()
 
     def addJobRequest(self, parsed_json_request: dict):  # request_message):
         """
@@ -154,7 +168,7 @@ class Tracker:
             self.jobs_time[job_id][1] = time.time()
             self.writeJobsCSV(job_id)
 
-    def isMapComplete(self, jobID):
+    def isMapComplete(self, jobID) -> bool:
         """
         - Performs a check whether all map tasks in a job are complete
         - This is to maintain *map-reduce dependency*
@@ -165,7 +179,7 @@ class Tracker:
         else:
             return True
 
-    def isReduceComplete(self, jobID):
+    def isReduceComplete(self, jobID) -> bool:
         """
         - Performs a check whether **all reduce tasks in a job are complete**
         - This is to maintain *map-reduce dependency*
@@ -189,7 +203,7 @@ class Tracker:
         row.append(end)
         row.append((end-start))
         self.job_writer.writerow(row)
-
+        self.flush()
         # Once the job has been written into the CSV file then delete
         # its entry from the dictionary
         del self.jobs_time[JobID]
@@ -208,7 +222,7 @@ class Tracker:
         row.append(end)
         row.append((end-start))
         self.task_writer.writerow(row)
-
+        self.flush()
         # Once the task has been written into the CSV file then delete
         # its entry from the dictionary
         del self.tasks_time[JobID][TaskID]
@@ -226,12 +240,14 @@ class Tracker:
         row.append(start)
         row.append(end)
         self.worker_writer.writerow(row)
+        self.flush()
         del self.workers_time[JobID][WorkerID]
 
     def __del__(self):
         """
         The destructor of the class closes all the open log files
         """
+        self.flush()
         self.f_jobs.close()
         self.f_workers.close()
         self.f_tasks.close()
@@ -246,5 +262,5 @@ if __name__ == "__main__":
     # The JSON string is the parsed into a Python dictionary
     x = json.loads(x)
 
-    JB = Tracker("RR")
+    JB = Tracker("Round-Robin")
     JB.addJobRequest(x)
