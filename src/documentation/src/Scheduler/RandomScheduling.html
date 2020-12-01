@@ -36,9 +36,28 @@ from WorkerUtils.WorkerStateTracker import StateTracker
 
 
 class RandomScheduler:
+    &#34;&#34;&#34; The ```RandomScheduler``` class implements the **Random Scheduling**
+    algorithm. In this algorithm the Master chooses a machine at random.
+    It then checks if the machine has free slots available. If yes, it
+    launches the task on the machine. Else, it chooses another machine at
+    random. This process continues until a free slot is found.
+    &#34;&#34;&#34;
     @staticmethod
     def jobDispatcher(requestHandler: JobRequestHandler,
                       workerStateTracker: StateTracker):
+        &#34;&#34;&#34;```jobDispatcher``` implements the **Random Scheduling** algorithm
+
+        **param** ```requestHandler```: This object will track the tasks of
+        incomplete jobs, and provide them for allocation, respecting the
+        *map-reduce* dependency
+
+        **type** ```requestHandler```: JobRequestHandler
+
+        **param** ```workerStateTracker```:  This object will track and update
+        how loaded the workers are, i.e. how many free slots fo they have
+
+        **type** ```workerStateTracker```: StateTracker
+        &#34;&#34;&#34;
         #  Initialize the random number generator.
         random.seed()
         workerIDsVisited: Set = set()
@@ -121,15 +140,38 @@ class RandomScheduler:
 <span>class <span class="ident">RandomScheduler</span></span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>The <code>RandomScheduler</code> class implements the <strong>Random Scheduling</strong>
+algorithm. In this algorithm the Master chooses a machine at random.
+It then checks if the machine has free slots available. If yes, it
+launches the task on the machine. Else, it chooses another machine at
+random. This process continues until a free slot is found.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class RandomScheduler:
+    &#34;&#34;&#34; The ```RandomScheduler``` class implements the **Random Scheduling**
+    algorithm. In this algorithm the Master chooses a machine at random.
+    It then checks if the machine has free slots available. If yes, it
+    launches the task on the machine. Else, it chooses another machine at
+    random. This process continues until a free slot is found.
+    &#34;&#34;&#34;
     @staticmethod
     def jobDispatcher(requestHandler: JobRequestHandler,
                       workerStateTracker: StateTracker):
+        &#34;&#34;&#34;```jobDispatcher``` implements the **Random Scheduling** algorithm
+
+        **param** ```requestHandler```: This object will track the tasks of
+        incomplete jobs, and provide them for allocation, respecting the
+        *map-reduce* dependency
+
+        **type** ```requestHandler```: JobRequestHandler
+
+        **param** ```workerStateTracker```:  This object will track and update
+        how loaded the workers are, i.e. how many free slots fo they have
+
+        **type** ```workerStateTracker```: StateTracker
+        &#34;&#34;&#34;
         #  Initialize the random number generator.
         random.seed()
         workerIDsVisited: Set = set()
@@ -204,7 +246,15 @@ class RandomScheduler:
 <span>def <span class="ident">jobDispatcher</span></span>(<span>requestHandler: Scheduler.JobRequests.JobRequestHandler, workerStateTracker: WorkerUtils.WorkerStateTracker.StateTracker)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p><code>jobDispatcher</code> implements the <strong>Random Scheduling</strong> algorithm</p>
+<p><strong>param</strong> <code>requestHandler</code>: This object will track the tasks of
+incomplete jobs, and provide them for allocation, respecting the
+<em>map-reduce</em> dependency</p>
+<p><strong>type</strong> <code>requestHandler</code>: JobRequestHandler</p>
+<p><strong>param</strong> <code>workerStateTracker</code>:
+This object will track and update
+how loaded the workers are, i.e. how many free slots fo they have</p>
+<p><strong>type</strong> <code>workerStateTracker</code>: StateTracker</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -212,6 +262,19 @@ class RandomScheduler:
 <pre><code class="python">@staticmethod
 def jobDispatcher(requestHandler: JobRequestHandler,
                   workerStateTracker: StateTracker):
+    &#34;&#34;&#34;```jobDispatcher``` implements the **Random Scheduling** algorithm
+
+    **param** ```requestHandler```: This object will track the tasks of
+    incomplete jobs, and provide them for allocation, respecting the
+    *map-reduce* dependency
+
+    **type** ```requestHandler```: JobRequestHandler
+
+    **param** ```workerStateTracker```:  This object will track and update
+    how loaded the workers are, i.e. how many free slots fo they have
+
+    **type** ```workerStateTracker```: StateTracker
+    &#34;&#34;&#34;
     #  Initialize the random number generator.
     random.seed()
     workerIDsVisited: Set = set()

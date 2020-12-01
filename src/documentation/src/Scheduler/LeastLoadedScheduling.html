@@ -35,21 +35,29 @@ from WorkerUtils.WorkerStateTracker import StateTracker
 
 
 class LeastLoadedScheduler:
+    &#34;&#34;&#34; The ```LeastLoadedScheduler``` class implements the **Least-Loaded
+    Scheduling** algorithm. In this algorithm the Master looks at the state
+    of all the machines and checks which machine has most number of free
+    slots. It then launches the task on that machine. If none of the machines
+    have free slots available, the Master waits for 1 second and repeats the
+    process. This process continues until a free slot is found.
+    &#34;&#34;&#34;
     @staticmethod
     def jobDispatcher(requestHandler: JobRequestHandler,
                       workerStateTracker: StateTracker):
-        &#34;&#34;&#34;```jobDispatcher``` The Master looks at the state of all the
-        machines and checks which machine has most number of free slots.
-        It then launches the task on that machine. If none of the machines
-        have free slots available, the Master waits for 1 second and repeats
-        the process. This process continues until a free slot is found.
+        &#34;&#34;&#34;```jobDispatcher``` implements the **Least-Loaded Scheduling**
+        algorithm
 
-        :param requestHandler: This object will track the tasks of incomplete jobs,
-        and provide them for allocation respecting the *map-reduce* dependency
-        :type requestHandler: JobRequestHandler
-        :param workerStateTracker: This object will track and update how
-        loaded the workers are, i.e. how many free slots fo they have
-        :type workerStateTracker: StateTracker
+        **param** ```requestHandler```: This object will track the tasks of
+        incomplete jobs, and provide them for allocation, respecting the
+        *map-reduce* dependency
+
+        **type** ```requestHandler```: JobRequestHandler
+
+        **param** ```workerStateTracker```: This object will track and update
+        how loaded the workers are, i.e. how many free slots fo they have
+
+        **type** ```workerStateTracker```: StateTracker
         &#34;&#34;&#34;
         while True:
             jobID_family_task = None
@@ -120,27 +128,40 @@ class LeastLoadedScheduler:
 <span>class <span class="ident">LeastLoadedScheduler</span></span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>The <code>LeastLoadedScheduler</code> class implements the <strong>Least-Loaded
+Scheduling</strong> algorithm. In this algorithm the Master looks at the state
+of all the machines and checks which machine has most number of free
+slots. It then launches the task on that machine. If none of the machines
+have free slots available, the Master waits for 1 second and repeats the
+process. This process continues until a free slot is found.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class LeastLoadedScheduler:
+    &#34;&#34;&#34; The ```LeastLoadedScheduler``` class implements the **Least-Loaded
+    Scheduling** algorithm. In this algorithm the Master looks at the state
+    of all the machines and checks which machine has most number of free
+    slots. It then launches the task on that machine. If none of the machines
+    have free slots available, the Master waits for 1 second and repeats the
+    process. This process continues until a free slot is found.
+    &#34;&#34;&#34;
     @staticmethod
     def jobDispatcher(requestHandler: JobRequestHandler,
                       workerStateTracker: StateTracker):
-        &#34;&#34;&#34;```jobDispatcher``` The Master looks at the state of all the
-        machines and checks which machine has most number of free slots.
-        It then launches the task on that machine. If none of the machines
-        have free slots available, the Master waits for 1 second and repeats
-        the process. This process continues until a free slot is found.
+        &#34;&#34;&#34;```jobDispatcher``` implements the **Least-Loaded Scheduling**
+        algorithm
 
-        :param requestHandler: This object will track the tasks of incomplete jobs,
-        and provide them for allocation respecting the *map-reduce* dependency
-        :type requestHandler: JobRequestHandler
-        :param workerStateTracker: This object will track and update how
-        loaded the workers are, i.e. how many free slots fo they have
-        :type workerStateTracker: StateTracker
+        **param** ```requestHandler```: This object will track the tasks of
+        incomplete jobs, and provide them for allocation, respecting the
+        *map-reduce* dependency
+
+        **type** ```requestHandler```: JobRequestHandler
+
+        **param** ```workerStateTracker```: This object will track and update
+        how loaded the workers are, i.e. how many free slots fo they have
+
+        **type** ```workerStateTracker```: StateTracker
         &#34;&#34;&#34;
         while True:
             jobID_family_task = None
@@ -203,17 +224,15 @@ class LeastLoadedScheduler:
 <span>def <span class="ident">jobDispatcher</span></span>(<span>requestHandler: Scheduler.JobRequests.JobRequestHandler, workerStateTracker: WorkerUtils.WorkerStateTracker.StateTracker)</span>
 </code></dt>
 <dd>
-<div class="desc"><p><code>jobDispatcher</code> The Master looks at the state of all the
-machines and checks which machine has most number of free slots.
-It then launches the task on that machine. If none of the machines
-have free slots available, the Master waits for 1 second and repeats
-the process. This process continues until a free slot is found.</p>
-<p>:param requestHandler: This object will track the tasks of incomplete jobs,
-and provide them for allocation respecting the <em>map-reduce</em> dependency
-:type requestHandler: JobRequestHandler
-:param workerStateTracker: This object will track and update how
-loaded the workers are, i.e. how many free slots fo they have
-:type workerStateTracker: StateTracker</p></div>
+<div class="desc"><p><code>jobDispatcher</code> implements the <strong>Least-Loaded Scheduling</strong>
+algorithm</p>
+<p><strong>param</strong> <code>requestHandler</code>: This object will track the tasks of
+incomplete jobs, and provide them for allocation, respecting the
+<em>map-reduce</em> dependency</p>
+<p><strong>type</strong> <code>requestHandler</code>: JobRequestHandler</p>
+<p><strong>param</strong> <code>workerStateTracker</code>: This object will track and update
+how loaded the workers are, i.e. how many free slots fo they have</p>
+<p><strong>type</strong> <code>workerStateTracker</code>: StateTracker</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -221,18 +240,19 @@ loaded the workers are, i.e. how many free slots fo they have
 <pre><code class="python">@staticmethod
 def jobDispatcher(requestHandler: JobRequestHandler,
                   workerStateTracker: StateTracker):
-    &#34;&#34;&#34;```jobDispatcher``` The Master looks at the state of all the
-    machines and checks which machine has most number of free slots.
-    It then launches the task on that machine. If none of the machines
-    have free slots available, the Master waits for 1 second and repeats
-    the process. This process continues until a free slot is found.
+    &#34;&#34;&#34;```jobDispatcher``` implements the **Least-Loaded Scheduling**
+    algorithm
 
-    :param requestHandler: This object will track the tasks of incomplete jobs,
-    and provide them for allocation respecting the *map-reduce* dependency
-    :type requestHandler: JobRequestHandler
-    :param workerStateTracker: This object will track and update how
-    loaded the workers are, i.e. how many free slots fo they have
-    :type workerStateTracker: StateTracker
+    **param** ```requestHandler```: This object will track the tasks of
+    incomplete jobs, and provide them for allocation, respecting the
+    *map-reduce* dependency
+
+    **type** ```requestHandler```: JobRequestHandler
+
+    **param** ```workerStateTracker```: This object will track and update
+    how loaded the workers are, i.e. how many free slots fo they have
+
+    **type** ```workerStateTracker```: StateTracker
     &#34;&#34;&#34;
     while True:
         jobID_family_task = None

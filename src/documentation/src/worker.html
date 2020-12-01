@@ -26,16 +26,17 @@
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">import json
-import socket
+<pre><code class="python">import socket
 import sys
 import threading
 from WorkerSim.WorkerSimulation import Worker
 
 &#34;&#34;&#34;
 Some of the important pointers to be implemented in this code are:-
-1) Receiving the worker instance&#39;s port number and ID(in string, need to convert to integer) through CLI and binding socket to that address
-2) Listening for task launch requests from the Master&#39;s port 5001 and then simulating the execution using WorkerSimulation
+1) Receiving the worker instance&#39;s port number and ID(in string, need to
+   convert to integer) through CLI and binding socket to that address
+2) Listening for task launch requests from the Master&#39;s port 5001 and then
+   simulating the execution using WorkerSimulation
 3) Sharing updates with the master
 &#34;&#34;&#34;
 
@@ -52,6 +53,34 @@ def getCMDLineArgs():
     &#34;&#34;&#34;
     return int(sys.argv[1]), int(sys.argv[2])
 
+
+def createWorkerSocket(task_request_addr):
+    &#34;&#34;&#34; ```createWorkerSocket``` returns a socket that will be used
+    to connect worker to its designated port in order to listen for
+    task requests from the master
+
+    ```return```: Socket object
+
+    ```rtype```: socket.socket
+    &#34;&#34;&#34;
+    socket_object = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    socket_object.bind(task_request_addr)
+    return socket_object
+
+
+def createMasterSocket(task_complete_addr):
+    &#34;&#34;&#34; ```createSocket``` returns a socket that will be used
+    to connect to the master
+
+    ```return```: Socket object
+
+    ```rtype```: socket.socket
+    &#34;&#34;&#34;
+    socket_object = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    socket_object.connect(task_complete_addr)
+    return socket_object
+
+
 if __name__ == &#34;__main__&#34;:
     # The CLI to the program will be python worker.py port id
     port_number, worker_id = getCMDLineArgs()
@@ -59,49 +88,51 @@ if __name__ == &#34;__main__&#34;:
     # Creating the socket tuple for the worker where
     # it will listen to task requests from the master
     _TASK_REQUEST_ADDR = (socket.gethostname(), port_number)
-    worker_instance = Worker(worker_id)  # Instantiating instance of Worker 
-                                            #  class
-    workerPortConnSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    workerPortConnSocket.bind(_TASK_REQUEST_ADDR) # Binding the socket to the socket tuple created above
-    workerPortConnSocket.listen()  # Listens for any connections
-    masterConn, masterAddr = workerPortConnSocket.accept()  # Accepts the connection with return value being (new socket object usable to send and recv data, address bound
-                                                            #  to the socket on the other end of the connection)
-    
+    worker_instance = Worker(worker_id)  # Instance of Worker class
+    workerPortConnSocket = createWorkerSocket(_TASK_REQUEST_ADDR)
+    workerPortConnSocket.listen()
+    # workerPortConnSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    # workerPortConnSocket.bind(_TASK_REQUEST_ADDR) # Binding the socket
+    # to the socket tuple created above
+    # workerPortConnSocket.listen()  # Listens for any connections
+    masterConn, masterAddr = workerPortConnSocket.accept()  # Accepts the
+    # connection with return value being (new socket object usable to send and
+    # recv data, address bound to the socket on the other end of the connection
     # ---
-    _TASK_COMPLETION_RESPONSE_ADDR = (socket.gethostname(), 5001) # Master port which takes updates on task completion from the worker
-    workerToMasterCompletionSocket = socket.socket(socket.AF_INET,
-                                                   socket.SOCK_STREAM)
-    workerToMasterCompletionSocket.connect(_TASK_COMPLETION_RESPONSE_ADDR)
+    _TASK_COMPLETION_RESPONSE_ADDR = (socket.gethostname(), 5001)  # Master
+    # port which takes updates on task completion from the worker
+    workerToMasterCompletionSocket = createMasterSocket(_TASK_COMPLETION_RESPONSE_ADDR)
     workerToMasterCompletionSocket.sendall(str(worker_id).encode())
-    # ---
-    
-    #threading.Thread(name=&#34;Received Task Request And Now Adding To Execution Pool Of Worker&#34;, target=Worker.listenForTask(worker_instance,taskRequest),args=masterConn)
-    json_receive_master: threading.Thread = threading.Thread(name=&#34;Sending Task To Exec Pool&#34;, target=worker_instance.listenForTaskRequest, args=(masterConn,))
+    # Creating all the threads
+    json_receive_master = threading.Thread(name=&#34;Sending Task To Exec Pool&#34;,
+                                           target=worker_instance.
+                                           listenForTaskRequest,
+                                           args=(masterConn,))
     json_receive_master.daemon = True
     json_receive_master.start()
 
-    json_simulate_task: threading.Thread = threading\
+    json_simulate_task = threading\
         .Thread(name=&#34;Worker Instance Simulation&#34;,
                 target=worker_instance.simulateWorker)
     json_simulate_task.daemon = True
     json_simulate_task.start()
 
-    json_reply_master: threading.Thread = threading\
+    json_reply_master = threading\
         .Thread(name=(&#34;Sending Task Completion &#34;
                       &#34;From Worker To Master&#34;),
                 target=worker_instance.taskComplete,
                 args=(workerToMasterCompletionSocket,))
     json_reply_master.daemon = True
     json_reply_master.start()
-    # At the end
-    
+
+    # Joining the threads
     json_receive_master.join()
     json_simulate_task.join()
     json_reply_master.join()
 
+    # Closing the sockets
     workerPortConnSocket.close()
-    workerToMasterCompletionSocket.close()
-    </code></pre>
+    workerToMasterCompletionSocket.close()</code></pre>
 </details>
 </section>
 <section>
@@ -111,6 +142,58 @@ if __name__ == &#34;__main__&#34;:
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
+<dt id="src.worker.createMasterSocket"><code class="name flex">
+<span>def <span class="ident">createMasterSocket</span></span>(<span>task_complete_addr)</span>
+</code></dt>
+<dd>
+<div class="desc"><p><code>createSocket</code> returns a socket that will be used
+to connect to the master</p>
+<p><code>return</code>: Socket object</p>
+<p><code>rtype</code>: socket.socket</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def createMasterSocket(task_complete_addr):
+    &#34;&#34;&#34; ```createSocket``` returns a socket that will be used
+    to connect to the master
+
+    ```return```: Socket object
+
+    ```rtype```: socket.socket
+    &#34;&#34;&#34;
+    socket_object = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    socket_object.connect(task_complete_addr)
+    return socket_object</code></pre>
+</details>
+</dd>
+<dt id="src.worker.createWorkerSocket"><code class="name flex">
+<span>def <span class="ident">createWorkerSocket</span></span>(<span>task_request_addr)</span>
+</code></dt>
+<dd>
+<div class="desc"><p><code>createWorkerSocket</code> returns a socket that will be used
+to connect worker to its designated port in order to listen for
+task requests from the master</p>
+<p><code>return</code>: Socket object</p>
+<p><code>rtype</code>: socket.socket</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def createWorkerSocket(task_request_addr):
+    &#34;&#34;&#34; ```createWorkerSocket``` returns a socket that will be used
+    to connect worker to its designated port in order to listen for
+    task requests from the master
+
+    ```return```: Socket object
+
+    ```rtype```: socket.socket
+    &#34;&#34;&#34;
+    socket_object = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    socket_object.bind(task_request_addr)
+    return socket_object</code></pre>
+</details>
+</dd>
 <dt id="src.worker.getCMDLineArgs"><code class="name flex">
 <span>def <span class="ident">getCMDLineArgs</span></span>(<span>)</span>
 </code></dt>
@@ -152,6 +235,8 @@ in order of <code>port number</code> and <code>worker ID</code></p>
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
+<li><code><a title="src.worker.createMasterSocket" href="#src.worker.createMasterSocket">createMasterSocket</a></code></li>
+<li><code><a title="src.worker.createWorkerSocket" href="#src.worker.createWorkerSocket">createWorkerSocket</a></code></li>
 <li><code><a title="src.worker.getCMDLineArgs" href="#src.worker.getCMDLineArgs">getCMDLineArgs</a></code></li>
 </ul>
 </li>
