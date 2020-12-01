@@ -58,12 +58,13 @@ class RoundRobinScheduler:
                 workerFound: bool = False
 
                 while workerFound is False:  # Until a free worker is not found
-                    workerIDsVisited.add(_temp)
+                    workerIDsVisited.add(workerStateTracker.workerIDs[_temp])
 
                     workerStateTracker.LOCK.acquire()
 
                     # If the worker has a free slot
-                    if workerStateTracker.isWorkerFree(_temp):
+                    if workerStateTracker \
+                            .isWorkerFree(workerStateTracker.workerIDs[_temp]):
                         # Create the JSON protocol message
                         protocolMsg = (YACS_Protocol
                                        .createMessageToWorker
@@ -74,14 +75,17 @@ class RoundRobinScheduler:
                                                  ["task_id"]),
                                         duration=(jobID_family_task[2]
                                                   ["duration"]),
-                                        worker_ID=_temp
+                                        worker_ID=workerStateTracker
+                                            .workerIDs[_temp]
                                        ))
                         # Once a worker with a free slot is found then
                         # 1. We dispatch the job to the worker
                         # 2. Update its state
-                        workerStateTracker.getWorkerSocket(_temp)\
+                        workerStateTracker.getWorkerSocket(workerStateTracker.
+                                                           workerIDs[_temp])\
                             .sendall(protocolMsg)
-                        workerStateTracker.allocateSlot(_temp)
+                        workerStateTracker.allocateSlot(workerStateTracker
+                                                        .workerIDs[_temp])
 
                         # We have found a worker and hence set this to True
                         workerFound = True
