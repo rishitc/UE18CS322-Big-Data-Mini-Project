@@ -2,13 +2,18 @@ import random
 import time
 
 from Communication.protocol import YACS_Protocol
+from Scheduler.JobRequests import JobRequestHandler
+from WorkerUtils.WorkerStateTracker import StateTracker
 
 
 class RandomScheduler:
     @staticmethod
-    def jobDispatcher(requestHandler, workerStateTracker):
+    def jobDispatcher(requestHandler: JobRequestHandler,
+                      workerStateTracker: StateTracker):
         #  Initialize the random number generator.
         random.seed()
+        workerIDsVisited: set = set()
+
         while True:
             jobID_family_task = None
             requestHandler.LOCK.acquire()
@@ -25,6 +30,7 @@ class RandomScheduler:
                     workerStateTracker.LOCK.acquire()
                     # Pick a worker at random
                     _temp = random.choice(workerStateTracker.workerIDs)
+                    workerIDsVisited.add(_temp)
 
                     # If the worker has a free slot
                     if workerStateTracker.isWorkerFree(_temp):
@@ -48,6 +54,10 @@ class RandomScheduler:
                         workerStateTracker.allocateSlot(_temp)
                     workerStateTracker.LOCK.release()
 
-                    # Sleep for a second to allow for the workerStateTracker
-                    # to be updated by the thread: workerUpdates
-                    time.sleep(1)
+                    # In the case where none of the workers have a free slot
+                    # then sleep for a second to allow for the
+                    # workerStateTracker to be updated by the
+                    # thread: workerUpdates
+                    if list(workerIDsVisited) == workerStateTracker.workerIDs:
+                        time.sleep(1)
+                        workerIDsVisited.clear()
