@@ -8,9 +8,28 @@ from WorkerUtils.WorkerStateTracker import StateTracker
 
 
 class RandomScheduler:
+    """ The ```RandomScheduler``` class implements the **Random Scheduling**
+    algorithm. In this algorithm the Master chooses a machine at random.
+    It then checks if the machine has free slots available. If yes, it
+    launches the task on the machine. Else, it chooses another machine at
+    random. This process continues until a free slot is found.
+    """
     @staticmethod
     def jobDispatcher(requestHandler: JobRequestHandler,
                       workerStateTracker: StateTracker):
+        """```jobDispatcher``` implements the **Random Scheduling** algorithm
+
+        **param** ```requestHandler```: This object will track the tasks of
+        incomplete jobs, and provide them for allocation, respecting the
+        *map-reduce* dependency
+
+        **type** ```requestHandler```: JobRequestHandler
+
+        **param** ```workerStateTracker```:  This object will track and update
+        how loaded the workers are, i.e. how many free slots fo they have
+
+        **type** ```workerStateTracker```: StateTracker
+        """
         #  Initialize the random number generator.
         random.seed()
         workerIDsVisited: Set = set()
@@ -30,7 +49,7 @@ class RandomScheduler:
                 workerIDsVisited.clear()
 
                 # Initially we have not found a worker with a free slot
-                workerFound = False
+                workerFound: bool = False
 
                 while workerFound is False:  # Until a free worker is not found
                     workerStateTracker.LOCK.acquire()
