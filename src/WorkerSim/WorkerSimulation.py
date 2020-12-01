@@ -2,7 +2,8 @@ import time  # For timestamps
 import os  # Needed to test reference to YACS Protocol for createMessageToMaster()
 import json  # For working on JSON data
 import threading
-from threading import Lock
+import socket
+
 from Communication.protocol import YACS_Protocol
 
 class Worker:
@@ -21,11 +22,12 @@ class Worker:
             using YACS Protocol Message (***createMessageToMaster()***)
     """
     def __init__(self, WorkerID):  # Still need to add depending on specs
-        self.tasks = dict()  # Task ID as key and duration as value
+        self.tasks = dict()  
         self.ID = WorkerID
-        self.LOCK = Lock() 
+        self.LOCK = threading.Lock()
+        self.updates_q = queue.Queue()
 
-    def listenForTask(worker_instance,json_protcol_message):
+    def listenForTaskRequest(self, taskRequestSocket: socket.socket):
         """
         This listens for a JSON message which was created using the
         ***createMessageToWorker()*** method (*i.e. following the set protocol
@@ -33,80 +35,82 @@ class Worker:
         and the value is all the related information of the task, i.e the dictionary obtained
         from **createMessageToWorker()** method.
         """
-        # Convert JSON to python dictionary
-        python_protocol_message = json.loads(json_protcol_message)
+        while True:
+            # To extract the message sent
+            taskRequest = taskRequestSocket.recv(MESSAGE_BUFFER_SIZE).decode()
+            if not taskRequest:
+                taskRequestSocket.close()
+                break
+            
+            # Convert JSON to python dictionary
+            python_protocol_message = json.loads(taskRequest)
 
-        # To obtain key for addition to exec poll(i.e tasks)
-        worker_instance.job_in_message = python_protocol_message["job_id"]
-        worker_instance.task_in_message = python_protocol_message["task"]["task_id"]
-        
-        python_protocol_message["task"]["start time"] = time.time() # Store the starting time of the task
-        python_protocol_message["task"]["end time"] = 0
-        python_protocol_message["task"]["task turnaround time"] = 0
-        worker_instance.tasks[worker_instance.job_in_message][worker_instance.task_in_message] = python_protocol_message #Value for the tasks dictionary will be all the info
+            # To obtain key for addition to exec poll(i.e tasks)
+            job_in_message = python_protocol_message["job_id"]
+            task_in_message = python_protocol_message["task"]["task_id"]
+
+            python_protocol_message["task"]["start time"] = time.time() # Store the starting time of the task
+            python_protocol_message["task"]["end time"] = 0
+
+            self.LOCK.acquire()
+            self.tasks[job_in_message][task_in_message] = python_protocol_message #Value for the tasks dictionary will be all the info
+            self.LOCK.release()
         # passed from the Master along with the necessary time stamps added above
 
-    def simulateWorker(worker_instance):
+    def simulateWorker(self):
         # While there is a task to execute in the task-pool
-        while len(worker_instance.tasks) != 0:
-            for job_id in worker_instance.tasks:
+        while True:
+            # Get the number of tasks in the Task pool
+            self.LOCK.acquire()
+            tasksInExecutionPool_Count = len(self.tasks)
+            self.LOCK.release()
+
+            # If there are tasks to execute in the task pool
+            if tasksInExecutionPool_Count != 0:
+                self.LOCK.acquire()
+                for job_id in self.tasks:
                 """Durations (i.e. the value in the dictionary) will be
                    positive(non-zero) integers."""
-                for task_id in job_id:
+                    for task_id in job_id:
                     # Reduce the duration of the task by 1
-                    worker_instance.tasks[job_id][task_id]["task"]["duration"] -= 1
+                        self.tasks[job_id][task_id]["task"]["duration"] -= 1
 
                 # Check if the duration has become 0, i.e. the task has
                 # finished execution
-                    if worker_instance.tasks[job_id][task_id]["task"]["duration"] == 0:
-                        worker_instance.tasks[job_id][task_id]["task"]["end time"] = time.time() # Store the end-time of the task
-                    return taskComplete(worker_instance,job_id,task_id)
-
+                        if self.tasks[job_id][task_id]["task"]["duration"] == 0:
+                            self.tasks[job_id][task_id]["task"]["end time"] = time.time() # Store the end-time of the task
+                            response_message_to_master=YACS_Protocol\
+                                .createMessageToMaster(self.tasks[job_id][task_id]["job_id"],
+                                                       self.tasks[job_id][task_id]["task family"],
+                                                       self.tasks[job_id][task_id]["task"]["task_id"],
+                                                       self.tasks[job_id][task_id]["task"]["start time"],
+                                                       self.tasks[job_id][task_id]["task"]["end time"],
+                                                       self.tasks[job_id][task_id]["worker_id"])
+                            self.update_q.put(response_message_to_master)
+                            del self.tasks[job_id][task_id] # Remove the task entry from the execution pool
+                            if len(self.tasks[job_id]==0):  # Remove the job entry if there are no tasks of that particular job
+                                del self.tasks[job_id]
                 # Sleeps for 1 second until next check on the values
-                time.sleep(1)
+                    self.LOCK.release()
+                    time.sleep(1)
         # NOTE: Need to add the portion wherein the worker needs to listen
         # for messages if dict is empty
         # NOTE: Need to first establish communication between master and
         # worker for that
         # UPDATE: Acknowledged. Working on that right now. 
 
-    def taskComplete(worker_instance,job_id,task_id):
+    def taskComplete(self, reply_socket: socket.socket):
         """
         This method creates and returns returns the **JSON string**
         of format createMessageToMaster() of YACS Protocol.
 
         This method is called by ***simulateWorker()*** method when the
         *remaining_duration attribute* of the task **becomes 0**.
-        """
-        
-        # Give by: (waiting_time + cpu_burst_time), i.e. (end - start) in
-        # this context
-        worker_instance.tasks[job_id][task_id]["task"]["task turnaround time"]= worker_instance.tasks[job_id][task_id]["task"]["end time"] - worker_instance.[job_id][task_id]["task"]["start time"]
+        """   
 
-        # Can also call the YACS Protocol class's createMessageToMaster() for
-        # this
-
-        # Calling the createMessageToMaster method of YACS_Protocol Class
-        response_message_to_master=YACS_Protocol.createMessageToMaster(worker_instance.tasks[job_id][task_id]["job_id"],worker_instance.tasks[job_id][task_id]["task family"],
-                                                                       worker_instance.tasks[job_id][task_id]["task"]["task_id"],worker_instance.tasks[job_id][task_id]["task"]["start time"],
-                                                                       worker_instance.tasks[job_id][task_id]["task"]["end time"],worker_instance.tasks[job_id][task_id]["worker_id"],
-                                                                       worker_instance.tasks[job_id][task_id]["task"]["task turnaround time"])
-        # Python dictionary for response message in case YACS_Protocol function is not called
-        """response_message_to_master = dict()
-        response_message_to_master["worker_id"]=self.workerID_in_message
-        response_message_to_master["job_id"]=self.jobID_in_message
-        response_message_to_master["task family"]=self.taskfamily_in_message
-        response_message_to_master["task"]={}
-        response_message_to_master["task"]["task_id"]=self.task_in_message
-        response_message_to_master["task"]["start time"]=self.startTime
-        response_message_to_master["task"]["end time"]=self.endTime
-        response_message_to_master["task"]["task turnaround time"]=self.turnoverTime
-        response_message_to_master["task"]["duration"]=self.duration_in_message"""
-
-        # Remove the task entry from the execution pool
-        del worker_instance.tasks[job_id][task_id]
-        # Remove the job entry if there are no tasks of that particular job
-        if len(worker_instance.tasks[job_id]==0):
-            del worker_instance.tasks[job_id]
-        # Return the JSON string to the master
-        return json.dumps(response_message_to_master)
+        while True:
+            if not self.update_q.empty():
+                response_msg: str = self.update_q.get()
+                self.update_q.task_done()
+                # send it
+                reply_socket.sendall(response_msg.encode())
