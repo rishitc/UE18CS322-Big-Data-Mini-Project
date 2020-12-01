@@ -2,11 +2,41 @@ import time
 from typing import Set
 
 from Communication.protocol import YACS_Protocol
+from Scheduler.JobRequests import JobRequestHandler
+from WorkerUtils.WorkerStateTracker import StateTracker
 
 
 class RoundRobinScheduler:
+    """ The ```RoundRobinScheduler``` class implements the **Round-Robin
+    Scheduling** algorithm. In this algorithm the Master chooses a
+    machine at random. It then checks if the machine has free slots
+    available. If yes, it launches the task on the machine. Else,
+    it chooses another machine at random. This process continues
+    until a free slot is found.
+    """
     @staticmethod
-    def jobDispatcher(requestHandler, workerStateTracker, WORKER_COUNT: int):
+    def jobDispatcher(requestHandler: JobRequestHandler,
+                      workerStateTracker: StateTracker,
+                      WORKER_COUNT: int):
+        """```jobDispatcher``` implements the **Round-Robin
+        Scheduling** algorithm
+
+        **param** ```requestHandler```: This object will track the tasks of
+        incomplete jobs, and provide them for allocation, respecting the
+        *map-reduce* dependency
+
+        **type** ```requestHandler```: JobRequestHandler
+
+        **param** ```workerStateTracker```: This object will track and update
+        how loaded the workers are, i.e. how many free slots fo they have
+
+        **type** ```workerStateTracker```: StateTracker
+
+        **param** ```WORKER_COUNT```: Contains the count for the number of
+        workers
+
+        **type** ```WORKER_COUNT```: int
+        """
         workerIDsVisited: Set = set()
         _temp: int = 0  # Initially we begin at the first worker
 
