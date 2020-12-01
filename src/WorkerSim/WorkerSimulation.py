@@ -25,7 +25,7 @@ class Worker:
         self.ID = WorkerID
         self.LOCK = Lock() 
 
-    def listenForTask(self,worker_instance,json_protcol_message):
+    def listenForTask(worker_instance,json_protcol_message):
         """
         This listens for a JSON message which was created using the
         ***createMessageToWorker()*** method (*i.e. following the set protocol
@@ -37,13 +37,13 @@ class Worker:
         python_protocol_message = json.loads(json_protcol_message)
 
         # To obtain key for addition to exec poll(i.e tasks)
-        self.job_in_message = python_protocol_message["job_id"]
-        self.task_in_message = python_protocol_message["task"]["task_id"]
+        worker_instance.job_in_message = python_protocol_message["job_id"]
+        worker_instance.task_in_message = python_protocol_message["task"]["task_id"]
         
         python_protocol_message["task"]["start time"] = time.time() # Store the starting time of the task
         python_protocol_message["task"]["end time"] = 0
         python_protocol_message["task"]["task turnaround time"] = 0
-        self.tasks[self.job_in_message][self.task_in_message] = python_protocol_message #Value for the tasks dictionary will be all the info
+        worker_instance.tasks[worker_instance.job_in_message][worker_instance.task_in_message] = python_protocol_message #Value for the tasks dictionary will be all the info
         # passed from the Master along with the necessary time stamps added above
 
     def simulateWorker(self):
