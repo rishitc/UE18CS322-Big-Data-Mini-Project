@@ -16,10 +16,6 @@ MESSAGE_BUFFER_SIZE=4096
 
 
 
-_TASK_COMPLETION_RESPONSE_ADDR=(socket.gethostname(), 5001) #Master port which takes updates on task completion from the worker
-workerToMasterCompletionSocket=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-workerToMasterCompletionSocket.bind(_TASK_COMPLETION_RESPONSE_ADDR)
-workerToMasterCompletionSocket.send(task_completition_msg.encode())
 
 if __name__ == "__main__":
     # The CLI to the program will be python worker.py port id
@@ -38,4 +34,11 @@ if __name__ == "__main__":
     taskRequest=masterConn.recv(MESSAGE_BUFFER_SIZE) #To extract the message sent
     if not taskRequest:
         masterConn.close()
-    threading.Thread(name="Received Task Request From Master", target=Worker.listenForTask(worker_instance,taskRequest),args=masterConn)
+    threading.Thread(name="Received Task Request And Now Adding To Execution Pool Of Worker", target=Worker.listenForTask(worker_instance,taskRequest),args=masterConn)
+
+    json_reply_master=threading.Thread(name="Worker Instance Simulation", target=Worker.simulateWorker(worker_instance),args=masterConn))
+
+    _TASK_COMPLETION_RESPONSE_ADDR=(socket.gethostname(), 5001) #Master port which takes updates on task completion from the worker
+    workerToMasterCompletionSocket=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+    workerToMasterCompletionSocket.bind(_TASK_COMPLETION_RESPONSE_ADDR)
+    workerToMasterCompletionSocket.send(json_reply_master.encode())

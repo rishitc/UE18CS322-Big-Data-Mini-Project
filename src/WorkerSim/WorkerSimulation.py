@@ -46,21 +46,21 @@ class Worker:
         worker_instance.tasks[worker_instance.job_in_message][worker_instance.task_in_message] = python_protocol_message #Value for the tasks dictionary will be all the info
         # passed from the Master along with the necessary time stamps added above
 
-    def simulateWorker(self):
+    def simulateWorker(worker_instance):
         # While there is a task to execute in the task-pool
-        while len(self.tasks) != 0:
-            for job_id in self.tasks:
+        while len(worker_instance.tasks) != 0:
+            for job_id in worker_instance.tasks:
                 """Durations (i.e. the value in the dictionary) will be
                    positive(non-zero) integers."""
                 for task_id in job_id:
                     # Reduce the duration of the task by 1
-                    self.tasks[job_id][task_id]["task"]["duration"] -= 1
+                    worker_instance.tasks[job_id][task_id]["task"]["duration"] -= 1
 
                 # Check if the duration has become 0, i.e. the task has
                 # finished execution
-                    if self.tasks[job_id][task_id]["task"]["duration"] == 0:
-                        self.tasks[job_id][task_id]["task"]["end time"] = time.time() # Store the end-time of the task
-                    return self.taskComplete(job_id,task_id)
+                    if worker_instance.tasks[job_id][task_id]["task"]["duration"] == 0:
+                        worker_instance.tasks[job_id][task_id]["task"]["end time"] = time.time() # Store the end-time of the task
+                    return taskComplete(worker_instance,job_id,task_id)
 
                 # Sleeps for 1 second until next check on the values
                 time.sleep(1)
@@ -70,7 +70,7 @@ class Worker:
         # worker for that
         # UPDATE: Acknowledged. Working on that right now. 
 
-    def taskComplete(self,job_id,task_id):
+    def taskComplete(worker_instance,job_id,task_id):
         """
         This method creates and returns returns the **JSON string**
         of format createMessageToMaster() of YACS Protocol.
@@ -81,16 +81,16 @@ class Worker:
         
         # Give by: (waiting_time + cpu_burst_time), i.e. (end - start) in
         # this context
-        self.tasks[job_id][task_id]["task"]["task turnaround time"]= self.tasks[job_id][task_id]["task"]["end time"] - self.[job_id][task_id]["task"]["start time"]
+        worker_instance.tasks[job_id][task_id]["task"]["task turnaround time"]= worker_instance.tasks[job_id][task_id]["task"]["end time"] - worker_instance.[job_id][task_id]["task"]["start time"]
 
         # Can also call the YACS Protocol class's createMessageToMaster() for
         # this
 
         # Calling the createMessageToMaster method of YACS_Protocol Class
-        response_message_to_master=YACS_Protocol.createMessageToMaster(self.tasks[job_id][task_id]["job_id"],self.tasks[job_id][task_id]["task family"],
-                                                                       self.tasks[job_id][task_id]["task"]["task_id"],self.tasks[job_id][task_id]["task"]["start time"],
-                                                                       self.tasks[job_id][task_id]["task"]["end time"],self.tasks[job_id][task_id]["worker_id"],
-                                                                       self.tasks[job_id][task_id]["task"]["task turnaround time"])
+        response_message_to_master=YACS_Protocol.createMessageToMaster(worker_instance.tasks[job_id][task_id]["job_id"],worker_instance.tasks[job_id][task_id]["task family"],
+                                                                       worker_instance.tasks[job_id][task_id]["task"]["task_id"],worker_instance.tasks[job_id][task_id]["task"]["start time"],
+                                                                       worker_instance.tasks[job_id][task_id]["task"]["end time"],worker_instance.tasks[job_id][task_id]["worker_id"],
+                                                                       worker_instance.tasks[job_id][task_id]["task"]["task turnaround time"])
         # Python dictionary for response message in case YACS_Protocol function is not called
         """response_message_to_master = dict()
         response_message_to_master["worker_id"]=self.workerID_in_message
@@ -104,7 +104,9 @@ class Worker:
         response_message_to_master["task"]["duration"]=self.duration_in_message"""
 
         # Remove the task entry from the execution pool
-        del self.tasks[job_id][task_id]
-
+        del worker_instance.tasks[job_id][task_id]
+        # Remove the job entry if there are no tasks of that particular job
+        if len(worker_instance.tasks[job_id]==0):
+            del worker_instance.tasks[job_id]
         # Return the JSON string to the master
         return json.dumps(response_message_to_master)
