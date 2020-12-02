@@ -20,7 +20,7 @@ class LeastLoadedScheduler:
     def jobDispatcher(requestHandler: JobRequestHandler,
                       workerStateTracker: StateTracker):
         """```jobDispatcher``` implements the **Least-Loaded Scheduling**
-        algorithm
+        algorithm.
 
         **param** ```requestHandler```: This object will track the tasks of
         incomplete jobs, and provide them for allocation, respecting the
