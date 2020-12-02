@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
-<meta name="generator" content="pdoc 0.9.2" />
+<meta name="generator" content="pdoc 0.9.1" />
 <title>src.master API documentation</title>
 <meta name="description" content="" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
@@ -82,19 +82,29 @@ def listenForJobRequests(jobRequestHandler: JobRequestHandler,
     &#34;&#34;&#34;
     _JOB_REQUEST_ADDR: Tuple[str, int] = (socket.gethostname(), 5000)
 
+    PRINT_LOCK.acquire()
+    print(&#34;Inside listenForJobRequests&#34;)
+    PRINT_LOCK.release()
+
     # Setup the master socket to listen for job requests
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as jobReqSocket:
+        jobReqSocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         jobReqSocket.bind(_JOB_REQUEST_ADDR)
-        jobReqSocket.listen()
-        clientConn, clientAddr = jobReqSocket.accept()
-
-        PRINT_LOCK.acquire()
-        print(info_text(&#34;Connected to client at address:&#34;))
-        print(f&#34;IP Address: {clientAddr[0]}&#34;)
-        print(f&#34;Socket: {clientAddr[1]}&#34;)
-        PRINT_LOCK.release()
-
         while True:
+            jobReqSocket.listen()
+            clientConn, clientAddr = jobReqSocket.accept()
+
+            PRINT_LOCK.acquire()
+            print(f&#34;Something connected to me!! {clientAddr}&#34;)
+            PRINT_LOCK.release()
+
+            PRINT_LOCK.acquire()
+            print(info_text(&#34;Connected to client at address:&#34;))
+            print(f&#34;IP Address: {clientAddr[0]}&#34;)
+            print(f&#34;Socket: {clientAddr[1]}&#34;)
+            PRINT_LOCK.release()
+
+            # while True:
             jobRequest = clientConn.recv(BUFFER_SIZE)
             if not jobRequest:
                 clientConn.close()
@@ -116,6 +126,12 @@ def listenForJobRequests(jobRequestHandler: JobRequestHandler,
             jobUpdateTracker.addJobRequest(parsedJSON_Msg)
             jobUpdateTracker.LOCK.release()
 
+            PRINT_LOCK.acquire()
+            print(f&#34;{jobRequestHandler.jobRequests=}&#34;)
+            PRINT_LOCK.release()
+
+            clientConn.close()
+
 
 def workerUpdates(workerSocket: socket.socket,
                   workerStateTracker: StateTracker,
@@ -128,21 +144,25 @@ def workerUpdates(workerSocket: socket.socket,
 
     **type** ```workerSocket```: socket
 
-    **param** ```workerStateTracker```: Tracks the states of the worker nodes as
-    to how many free slots do they have
+    **param** ```workerStateTracker```: Tracks the states of the worker nodes
+    as to how many free slots do they have
 
     **type** ```workerStateTracker```: StateTracker
 
-    **param** ```jobUpdateTracker```: Tracks the jobs assigned to the workers, and
-    their corresponding updates
+    **param** ```jobUpdateTracker```: Tracks the jobs assigned to the workers,
+    and their corresponding updates
 
     **type** ```jobUpdateTracker```: JobUpdateTracker
     &#34;&#34;&#34;
     while True:
-        workerUpdate = workerSocket.recv(BUFFER_SIZE)
+        workerUpdate = workerSocket.recv(BUFFER_SIZE).decode()
         if not workerUpdate:
             workerSocket.close()
             break
+
+        PRINT_LOCK.acquire()
+        print(f&#34;Received worker update at master: {workerUpdate}&#34;)
+        PRINT_LOCK.release()
 
         parsedJSON_Msg = json.loads(workerUpdate)
 
@@ -153,6 +173,11 @@ def workerUpdates(workerSocket: socket.socket,
         workerStateTracker.LOCK.acquire()
         workerStateTracker.freeSlot(parsedJSON_Msg[&#34;worker_id&#34;])
         workerStateTracker.LOCK.release()
+
+        # PRINT_LOCK.acquire()
+        # workerStateTracker.showWorkerStates()
+
+        # PRINT_LOCK.release()
 
 
 if __name__ == &#34;__main__&#34;:
@@ -172,11 +197,11 @@ if __name__ == &#34;__main__&#34;:
         print(e)
         sys.exit(MISSING_CMD_LINE_ARGS)
 
-    if TYPE_OF_SCHEDULING not in [&#34;Random&#34;, &#34;Round-Robin&#34;, &#34;Least-Loaded&#34;]:
+    if TYPE_OF_SCHEDULING not in [&#34;LL&#34;, &#34;RR&#34;, &#34;RANDOM&#34;]:
         raise ValueError((f&#34;{TC.attr(1)}TYPE_OF_SCHEDULING{TC.attr(0)} is not &#34;
-                          f&#34;of type: {TC.attr(1)}\&#34;Random\&#34;{TC.attr(0)} or &#34;
-                          f&#34;{TC.attr(1)}\&#34;Round-Robin\&#34;{TC.attr(0)} &#34;
-                          f&#34;or {TC.attr(1)}\&#34;Least-Loaded\&#34;{TC.attr(0)}!&#34;)
+                          f&#34;of type: {TC.attr(1)}\&#34;RANDOM\&#34;{TC.attr(0)} or &#34;
+                          f&#34;{TC.attr(1)}\&#34;RR\&#34;{TC.attr(0)} &#34;
+                          f&#34;or {TC.attr(1)}\&#34;LL\&#34;{TC.attr(0)}!&#34;)
                          )
 
     # Making sure that the configuration file can be opened
@@ -194,19 +219,26 @@ if __name__ == &#34;__main__&#34;:
 
     _ans = &#39;n&#39;
     while str.lower(_ans) in [&#39;n&#39;, &#39;no&#39;]:
-        _ans = input((f&#34;{&#39;Have&#39; if WORKER_COUNT &gt; 1 else &#39;Has&#39;} the&#34;
+        _ans = input((f&#34;{&#39;Have&#39; if WORKER_COUNT &gt; 1 else &#39;Has&#39;} the &#34;
                       f&#34;{WORKER_COUNT} &#34;
                       f&#34;{GE.plural_noun(&#39;worker&#39;, WORKER_COUNT)}&#34;
-                      &#34; been started, yet? [y/n]&#34;)).strip().lower()
+                      &#34; been started, yet? [y/n] &#34;)).strip().lower()
 
     &#34;&#34;&#34; Creating the thread-shared objects
     &#34;&#34;&#34;
     # Worker State Tracker Object
     obj_workerStateTracker: StateTracker = StateTracker(workerConf)
 
+    _converter = {
+        &#34;RR&#34;: &#34;Round-Robin&#34;,
+        &#34;LL&#34;: &#34;Least-Loaded&#34;,
+        &#34;RANDOM&#34;: &#34;Random&#34;
+    }
+
     # Worker updates handler object
+    print(&#34;JobUpdateTracker Initialized&#34;)
     obj_jobUpdatesTracker: JobUpdateTracker = \
-        JobUpdateTracker(TYPE_OF_SCHEDULING)
+        JobUpdateTracker(_converter[TYPE_OF_SCHEDULING])
 
     # Job Request Handler Object
     obj_jobRequestHandler: JobRequestHandler = \
@@ -272,6 +304,8 @@ if __name__ == &#34;__main__&#34;:
 
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as \
          worker_updates_socket:
+        worker_updates_socket.setsockopt(socket.SOL_SOCKET,
+                                         socket.SO_REUSEADDR, 1)
         # Bind the socket to the address tuple
         worker_updates_socket.bind(WORKER_UPDATES_ADDR)
 
@@ -316,6 +350,9 @@ if __name__ == &#34;__main__&#34;:
             workerUpdateThreads.append(_temp)
 
         print(f&#34;{workerUpdateThreads=}&#34;)
+
+    print(&#34;You have reached the bottom of the &#39;__main__&#39;&#34;)
+    print(threading.enumerate())
 
     &#34;&#34;&#34; Wait for all the threads to finish
     &#34;&#34;&#34;
@@ -396,19 +433,29 @@ workers about the tasks assigned belonging to the different jobs</p>
     &#34;&#34;&#34;
     _JOB_REQUEST_ADDR: Tuple[str, int] = (socket.gethostname(), 5000)
 
+    PRINT_LOCK.acquire()
+    print(&#34;Inside listenForJobRequests&#34;)
+    PRINT_LOCK.release()
+
     # Setup the master socket to listen for job requests
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as jobReqSocket:
+        jobReqSocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         jobReqSocket.bind(_JOB_REQUEST_ADDR)
-        jobReqSocket.listen()
-        clientConn, clientAddr = jobReqSocket.accept()
-
-        PRINT_LOCK.acquire()
-        print(info_text(&#34;Connected to client at address:&#34;))
-        print(f&#34;IP Address: {clientAddr[0]}&#34;)
-        print(f&#34;Socket: {clientAddr[1]}&#34;)
-        PRINT_LOCK.release()
-
         while True:
+            jobReqSocket.listen()
+            clientConn, clientAddr = jobReqSocket.accept()
+
+            PRINT_LOCK.acquire()
+            print(f&#34;Something connected to me!! {clientAddr}&#34;)
+            PRINT_LOCK.release()
+
+            PRINT_LOCK.acquire()
+            print(info_text(&#34;Connected to client at address:&#34;))
+            print(f&#34;IP Address: {clientAddr[0]}&#34;)
+            print(f&#34;Socket: {clientAddr[1]}&#34;)
+            PRINT_LOCK.release()
+
+            # while True:
             jobRequest = clientConn.recv(BUFFER_SIZE)
             if not jobRequest:
                 clientConn.close()
@@ -428,7 +475,13 @@ workers about the tasks assigned belonging to the different jobs</p>
             # workers
             jobUpdateTracker.LOCK.acquire()
             jobUpdateTracker.addJobRequest(parsedJSON_Msg)
-            jobUpdateTracker.LOCK.release()</code></pre>
+            jobUpdateTracker.LOCK.release()
+
+            PRINT_LOCK.acquire()
+            print(f&#34;{jobRequestHandler.jobRequests=}&#34;)
+            PRINT_LOCK.release()
+
+            clientConn.close()</code></pre>
 </details>
 </dd>
 <dt id="src.master.workerUpdates"><code class="name flex">
@@ -440,11 +493,11 @@ they complete the tasks assigned to them, and respond back</p>
 <p><strong>param</strong> <code>workerSocket</code>: The socket object for listening to the
 specific worker's updates</p>
 <p><strong>type</strong> <code>workerSocket</code>: socket</p>
-<p><strong>param</strong> <code>workerStateTracker</code>: Tracks the states of the worker nodes as
-to how many free slots do they have</p>
+<p><strong>param</strong> <code>workerStateTracker</code>: Tracks the states of the worker nodes
+as to how many free slots do they have</p>
 <p><strong>type</strong> <code>workerStateTracker</code>: StateTracker</p>
-<p><strong>param</strong> <code>jobUpdateTracker</code>: Tracks the jobs assigned to the workers, and
-their corresponding updates</p>
+<p><strong>param</strong> <code>jobUpdateTracker</code>: Tracks the jobs assigned to the workers,
+and their corresponding updates</p>
 <p><strong>type</strong> <code>jobUpdateTracker</code>: JobUpdateTracker</p></div>
 <details class="source">
 <summary>
@@ -461,21 +514,25 @@ their corresponding updates</p>
 
     **type** ```workerSocket```: socket
 
-    **param** ```workerStateTracker```: Tracks the states of the worker nodes as
-    to how many free slots do they have
+    **param** ```workerStateTracker```: Tracks the states of the worker nodes
+    as to how many free slots do they have
 
     **type** ```workerStateTracker```: StateTracker
 
-    **param** ```jobUpdateTracker```: Tracks the jobs assigned to the workers, and
-    their corresponding updates
+    **param** ```jobUpdateTracker```: Tracks the jobs assigned to the workers,
+    and their corresponding updates
 
     **type** ```jobUpdateTracker```: JobUpdateTracker
     &#34;&#34;&#34;
     while True:
-        workerUpdate = workerSocket.recv(BUFFER_SIZE)
+        workerUpdate = workerSocket.recv(BUFFER_SIZE).decode()
         if not workerUpdate:
             workerSocket.close()
             break
+
+        PRINT_LOCK.acquire()
+        print(f&#34;Received worker update at master: {workerUpdate}&#34;)
+        PRINT_LOCK.release()
 
         parsedJSON_Msg = json.loads(workerUpdate)
 
@@ -516,7 +573,7 @@ their corresponding updates</p>
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.1</a>.</p>
 </footer>
 </body>
 </html>

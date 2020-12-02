@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
-<meta name="generator" content="pdoc 0.9.2" />
+<meta name="generator" content="pdoc 0.9.1" />
 <title>src.UpdateTracker.JobUpdateTracker API documentation</title>
 <meta name="description" content="" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
@@ -62,8 +62,13 @@ class Tracker:
         fields_worker = [&#39;JobID&#39;, &#39;WorkerID&#39;, &#39;TaskID&#39;, &#39;start_time&#39;,
                          &#39;end_time&#39;]
 
+        print(f&#34;Program is at location: {os.getcwd()}&#34;)
+
+        algorithm = os.path.join(&#34;.&#34;, &#34;Analytics&#34;, algorithm)
+
         # If the folder to store the logs of the application does not exist
         if not os.path.exists(algorithm):
+            print(&#34;Creating directory to store results&#34;)
             os.mkdir(algorithm)
 
         # Object attributes to hold the file handler, to store the logs
@@ -71,15 +76,25 @@ class Tracker:
         self.f_tasks = open(os.path.join(algorithm, &#34;tasks.csv&#34;), &#39;w&#39;)
         self.f_workers = open(os.path.join(algorithm, &#34;workers.csv&#34;), &#39;w&#39;)
 
-        j_writer = csv.writer(self.f_jobs)
-        t_writer = csv.writer(self.f_tasks)
-        w_writer = csv.writer(self.f_workers)
+        j_writer = csv.writer(self.f_jobs, delimiter=&#39;,&#39;, quotechar=&#39;&#34;&#39;,
+                              quoting=csv.QUOTE_MINIMAL)
+        t_writer = csv.writer(self.f_tasks, delimiter=&#39;,&#39;, quotechar=&#39;&#34;&#39;,
+                              quoting=csv.QUOTE_MINIMAL)
+        w_writer = csv.writer(self.f_workers, delimiter=&#39;,&#39;, quotechar=&#39;&#34;&#39;,
+                              quoting=csv.QUOTE_MINIMAL)
         j_writer.writerow(fields_job)
         t_writer.writerow(fields_task)
         w_writer.writerow(fields_worker)
         self.job_writer = j_writer
         self.task_writer = t_writer
         self.worker_writer = w_writer
+        self.flush()
+        print(&#34;Job Tracker Initialized&#34;)
+
+    def flush(self):
+        self.f_jobs.flush()
+        self.f_tasks.flush()
+        self.f_workers.flush()
 
     def addJobRequest(self, parsed_json_request: dict):  # request_message):
         &#34;&#34;&#34;
@@ -162,17 +177,18 @@ class Tracker:
 
         # If the task is a mapper task then update map_tracker else
         # update reduce tracker
-        if task_fam == &#34;map tasks&#34;:
+        if task_fam == &#34;map&#34;:
             self.map_tracker[job_id][task_id] = 1
         else:
             self.reduce_tracker[job_id][task_id] = 1
         &#39;&#39;&#39;
         Check if all tasks that compose a job are finished
         This is checked using a flag. If flag remains 1, then all tasks
-        in a job are completed and the job end time is written to the jobs_time dictionary
+        in a job are completed and the job end time is written to the
+        jobs_time dictionary
         &#39;&#39;&#39;
         flag = 1
-        for key in self.jobs[job_id].keys:
+        for key in self.jobs[job_id].keys():
             if self.jobs[job_id][key] is None:
                 flag = 0
                 break
@@ -180,27 +196,27 @@ class Tracker:
             self.jobs_time[job_id][1] = time.time()
             self.writeJobsCSV(job_id)
 
-    def isMapComplete(self, jobID):
+    def isMapComplete(self, jobID) -&gt; bool:
         &#34;&#34;&#34;
         - Performs a check whether all map tasks in a job are complete
         - This is to maintain *map-reduce dependency*
         &#34;&#34;&#34;
         status = self.map_tracker[jobID].values()
         if 0 in status:
-            return 0
+            return False
         else:
-            return 1
+            return True
 
-    def isReduceComplete(self, jobID):
+    def isReduceComplete(self, jobID) -&gt; bool:
         &#34;&#34;&#34;
         - Performs a check whether **all reduce tasks in a job are complete**
         - This is to maintain *map-reduce dependency*
         &#34;&#34;&#34;
         status = self.reduce_tracker[jobID].values()
         if 0 in status:
-            return 0
+            return False
         else:
-            return 1
+            return True
 
     def writeJobsCSV(self, JobID):
         &#34;&#34;&#34;
@@ -215,7 +231,7 @@ class Tracker:
         row.append(end)
         row.append((end-start))
         self.job_writer.writerow(row)
-
+        self.flush()
         # Once the job has been written into the CSV file then delete
         # its entry from the dictionary
         del self.jobs_time[JobID]
@@ -234,7 +250,7 @@ class Tracker:
         row.append(end)
         row.append((end-start))
         self.task_writer.writerow(row)
-
+        self.flush()
         # Once the task has been written into the CSV file then delete
         # its entry from the dictionary
         del self.tasks_time[JobID][TaskID]
@@ -252,12 +268,14 @@ class Tracker:
         row.append(start)
         row.append(end)
         self.worker_writer.writerow(row)
+        self.flush()
         del self.workers_time[JobID][WorkerID]
 
     def __del__(self):
         &#34;&#34;&#34;
         The destructor of the class closes all the open log files
         &#34;&#34;&#34;
+        self.flush()
         self.f_jobs.close()
         self.f_workers.close()
         self.f_tasks.close()
@@ -272,7 +290,7 @@ if __name__ == &#34;__main__&#34;:
     # The JSON string is the parsed into a Python dictionary
     x = json.loads(x)
 
-    JB = Tracker(&#34;RR&#34;)
+    JB = Tracker(&#34;Round-Robin&#34;)
     JB.addJobRequest(x)</code></pre>
 </details>
 </section>
@@ -354,8 +372,13 @@ if __name__ == &#34;__main__&#34;:
         fields_worker = [&#39;JobID&#39;, &#39;WorkerID&#39;, &#39;TaskID&#39;, &#39;start_time&#39;,
                          &#39;end_time&#39;]
 
+        print(f&#34;Program is at location: {os.getcwd()}&#34;)
+
+        algorithm = os.path.join(&#34;.&#34;, &#34;Analytics&#34;, algorithm)
+
         # If the folder to store the logs of the application does not exist
         if not os.path.exists(algorithm):
+            print(&#34;Creating directory to store results&#34;)
             os.mkdir(algorithm)
 
         # Object attributes to hold the file handler, to store the logs
@@ -363,15 +386,25 @@ if __name__ == &#34;__main__&#34;:
         self.f_tasks = open(os.path.join(algorithm, &#34;tasks.csv&#34;), &#39;w&#39;)
         self.f_workers = open(os.path.join(algorithm, &#34;workers.csv&#34;), &#39;w&#39;)
 
-        j_writer = csv.writer(self.f_jobs)
-        t_writer = csv.writer(self.f_tasks)
-        w_writer = csv.writer(self.f_workers)
+        j_writer = csv.writer(self.f_jobs, delimiter=&#39;,&#39;, quotechar=&#39;&#34;&#39;,
+                              quoting=csv.QUOTE_MINIMAL)
+        t_writer = csv.writer(self.f_tasks, delimiter=&#39;,&#39;, quotechar=&#39;&#34;&#39;,
+                              quoting=csv.QUOTE_MINIMAL)
+        w_writer = csv.writer(self.f_workers, delimiter=&#39;,&#39;, quotechar=&#39;&#34;&#39;,
+                              quoting=csv.QUOTE_MINIMAL)
         j_writer.writerow(fields_job)
         t_writer.writerow(fields_task)
         w_writer.writerow(fields_worker)
         self.job_writer = j_writer
         self.task_writer = t_writer
         self.worker_writer = w_writer
+        self.flush()
+        print(&#34;Job Tracker Initialized&#34;)
+
+    def flush(self):
+        self.f_jobs.flush()
+        self.f_tasks.flush()
+        self.f_workers.flush()
 
     def addJobRequest(self, parsed_json_request: dict):  # request_message):
         &#34;&#34;&#34;
@@ -454,17 +487,18 @@ if __name__ == &#34;__main__&#34;:
 
         # If the task is a mapper task then update map_tracker else
         # update reduce tracker
-        if task_fam == &#34;map tasks&#34;:
+        if task_fam == &#34;map&#34;:
             self.map_tracker[job_id][task_id] = 1
         else:
             self.reduce_tracker[job_id][task_id] = 1
         &#39;&#39;&#39;
         Check if all tasks that compose a job are finished
         This is checked using a flag. If flag remains 1, then all tasks
-        in a job are completed and the job end time is written to the jobs_time dictionary
+        in a job are completed and the job end time is written to the
+        jobs_time dictionary
         &#39;&#39;&#39;
         flag = 1
-        for key in self.jobs[job_id].keys:
+        for key in self.jobs[job_id].keys():
             if self.jobs[job_id][key] is None:
                 flag = 0
                 break
@@ -472,27 +506,27 @@ if __name__ == &#34;__main__&#34;:
             self.jobs_time[job_id][1] = time.time()
             self.writeJobsCSV(job_id)
 
-    def isMapComplete(self, jobID):
+    def isMapComplete(self, jobID) -&gt; bool:
         &#34;&#34;&#34;
         - Performs a check whether all map tasks in a job are complete
         - This is to maintain *map-reduce dependency*
         &#34;&#34;&#34;
         status = self.map_tracker[jobID].values()
         if 0 in status:
-            return 0
+            return False
         else:
-            return 1
+            return True
 
-    def isReduceComplete(self, jobID):
+    def isReduceComplete(self, jobID) -&gt; bool:
         &#34;&#34;&#34;
         - Performs a check whether **all reduce tasks in a job are complete**
         - This is to maintain *map-reduce dependency*
         &#34;&#34;&#34;
         status = self.reduce_tracker[jobID].values()
         if 0 in status:
-            return 0
+            return False
         else:
-            return 1
+            return True
 
     def writeJobsCSV(self, JobID):
         &#34;&#34;&#34;
@@ -507,7 +541,7 @@ if __name__ == &#34;__main__&#34;:
         row.append(end)
         row.append((end-start))
         self.job_writer.writerow(row)
-
+        self.flush()
         # Once the job has been written into the CSV file then delete
         # its entry from the dictionary
         del self.jobs_time[JobID]
@@ -526,7 +560,7 @@ if __name__ == &#34;__main__&#34;:
         row.append(end)
         row.append((end-start))
         self.task_writer.writerow(row)
-
+        self.flush()
         # Once the task has been written into the CSV file then delete
         # its entry from the dictionary
         del self.tasks_time[JobID][TaskID]
@@ -544,12 +578,14 @@ if __name__ == &#34;__main__&#34;:
         row.append(start)
         row.append(end)
         self.worker_writer.writerow(row)
+        self.flush()
         del self.workers_time[JobID][WorkerID]
 
     def __del__(self):
         &#34;&#34;&#34;
         The destructor of the class closes all the open log files
         &#34;&#34;&#34;
+        self.flush()
         self.f_jobs.close()
         self.f_workers.close()
         self.f_tasks.close()</code></pre>
@@ -620,8 +656,23 @@ response message</li>
         self.reduce_tracker[job_id][reduce_task[&#34;task_id&#34;]] = 0</code></pre>
 </details>
 </dd>
+<dt id="src.UpdateTracker.JobUpdateTracker.Tracker.flush"><code class="name flex">
+<span>def <span class="ident">flush</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def flush(self):
+    self.f_jobs.flush()
+    self.f_tasks.flush()
+    self.f_workers.flush()</code></pre>
+</details>
+</dd>
 <dt id="src.UpdateTracker.JobUpdateTracker.Tracker.isMapComplete"><code class="name flex">
-<span>def <span class="ident">isMapComplete</span></span>(<span>self, jobID)</span>
+<span>def <span class="ident">isMapComplete</span></span>(<span>self, jobID) ‑> bool</span>
 </code></dt>
 <dd>
 <div class="desc"><ul>
@@ -632,20 +683,20 @@ response message</li>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def isMapComplete(self, jobID):
+<pre><code class="python">def isMapComplete(self, jobID) -&gt; bool:
     &#34;&#34;&#34;
     - Performs a check whether all map tasks in a job are complete
     - This is to maintain *map-reduce dependency*
     &#34;&#34;&#34;
     status = self.map_tracker[jobID].values()
     if 0 in status:
-        return 0
+        return False
     else:
-        return 1</code></pre>
+        return True</code></pre>
 </details>
 </dd>
 <dt id="src.UpdateTracker.JobUpdateTracker.Tracker.isReduceComplete"><code class="name flex">
-<span>def <span class="ident">isReduceComplete</span></span>(<span>self, jobID)</span>
+<span>def <span class="ident">isReduceComplete</span></span>(<span>self, jobID) ‑> bool</span>
 </code></dt>
 <dd>
 <div class="desc"><ul>
@@ -656,16 +707,16 @@ response message</li>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def isReduceComplete(self, jobID):
+<pre><code class="python">def isReduceComplete(self, jobID) -&gt; bool:
     &#34;&#34;&#34;
     - Performs a check whether **all reduce tasks in a job are complete**
     - This is to maintain *map-reduce dependency*
     &#34;&#34;&#34;
     status = self.reduce_tracker[jobID].values()
     if 0 in status:
-        return 0
+        return False
     else:
-        return 1</code></pre>
+        return True</code></pre>
 </details>
 </dd>
 <dt id="src.UpdateTracker.JobUpdateTracker.Tracker.updateJob"><code class="name flex">
@@ -723,17 +774,18 @@ tasks:</p>
 
     # If the task is a mapper task then update map_tracker else
     # update reduce tracker
-    if task_fam == &#34;map tasks&#34;:
+    if task_fam == &#34;map&#34;:
         self.map_tracker[job_id][task_id] = 1
     else:
         self.reduce_tracker[job_id][task_id] = 1
     &#39;&#39;&#39;
     Check if all tasks that compose a job are finished
     This is checked using a flag. If flag remains 1, then all tasks
-    in a job are completed and the job end time is written to the jobs_time dictionary
+    in a job are completed and the job end time is written to the
+    jobs_time dictionary
     &#39;&#39;&#39;
     flag = 1
-    for key in self.jobs[job_id].keys:
+    for key in self.jobs[job_id].keys():
         if self.jobs[job_id][key] is None:
             flag = 0
             break
@@ -765,7 +817,7 @@ the stats of that particular job to a log file.</p></div>
     row.append(end)
     row.append((end-start))
     self.job_writer.writerow(row)
-
+    self.flush()
     # Once the job has been written into the CSV file then delete
     # its entry from the dictionary
     del self.jobs_time[JobID]</code></pre>
@@ -795,7 +847,7 @@ stats of that particular task to a log file.</p></div>
     row.append(end)
     row.append((end-start))
     self.task_writer.writerow(row)
-
+    self.flush()
     # Once the task has been written into the CSV file then delete
     # its entry from the dictionary
     del self.tasks_time[JobID][TaskID]</code></pre>
@@ -823,6 +875,7 @@ stats of that particular task to a log file.</p></div>
     row.append(start)
     row.append(end)
     self.worker_writer.writerow(row)
+    self.flush()
     del self.workers_time[JobID][WorkerID]</code></pre>
 </details>
 </dd>
@@ -848,6 +901,7 @@ stats of that particular task to a log file.</p></div>
 <h4><code><a title="src.UpdateTracker.JobUpdateTracker.Tracker" href="#src.UpdateTracker.JobUpdateTracker.Tracker">Tracker</a></code></h4>
 <ul class="two-column">
 <li><code><a title="src.UpdateTracker.JobUpdateTracker.Tracker.addJobRequest" href="#src.UpdateTracker.JobUpdateTracker.Tracker.addJobRequest">addJobRequest</a></code></li>
+<li><code><a title="src.UpdateTracker.JobUpdateTracker.Tracker.flush" href="#src.UpdateTracker.JobUpdateTracker.Tracker.flush">flush</a></code></li>
 <li><code><a title="src.UpdateTracker.JobUpdateTracker.Tracker.isMapComplete" href="#src.UpdateTracker.JobUpdateTracker.Tracker.isMapComplete">isMapComplete</a></code></li>
 <li><code><a title="src.UpdateTracker.JobUpdateTracker.Tracker.isReduceComplete" href="#src.UpdateTracker.JobUpdateTracker.Tracker.isReduceComplete">isReduceComplete</a></code></li>
 <li><code><a title="src.UpdateTracker.JobUpdateTracker.Tracker.updateJob" href="#src.UpdateTracker.JobUpdateTracker.Tracker.updateJob">updateJob</a></code></li>
@@ -862,7 +916,7 @@ stats of that particular task to a log file.</p></div>
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.1</a>.</p>
 </footer>
 </body>
 </html>

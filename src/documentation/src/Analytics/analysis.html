@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
-<meta name="generator" content="pdoc 0.9.2" />
+<meta name="generator" content="pdoc 0.9.1" />
 <title>src.Analytics.analysis API documentation</title>
 <meta name="description" content="" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
@@ -33,10 +33,23 @@ import numpy as np
 
 
 def graph_plot(df, ax, title):
+    &#34;&#34;&#34;
+    * This function takes in the *workers.csv* for each algorithm separately
+    and groups by worker id.
+    * For each worker, the number of tasks running at each second in a time
+    interval are calculated.
+    * There are 3 plots displayed in a window, with a plot each for a
+    scheduling algorithm. The X axis has the number of tasks and the Y axis
+    has the time in seconds.
+    * For a given scheduling algorithm, each worker is represented with a line
+    of a different colour.
+    &#34;&#34;&#34;
     splits1 = list(df.groupby(&#34;WorkerID&#34;))
     for i in range(len(splits1)):
         time = dict()
-        a = pd.DataFrame(splits1[i][1], columns=[&#39;JobId&#39;, &#39;WorkerID&#39;, &#39;TaskId&#39;, &#39;start_time&#39;, &#39;end_time&#39;, &#39;duration&#39;])
+        a = pd.DataFrame(splits1[i][1],
+                         columns=[&#39;JobId&#39;, &#39;WorkerID&#39;, &#39;TaskId&#39;,
+                                  &#39;start_time&#39;, &#39;end_time&#39;, &#39;duration&#39;])
         end_time = a[&#34;end_time&#34;].iloc[-1]
         for m in range(0, end_time):
             count = 0
@@ -57,6 +70,18 @@ def graph_plot(df, ax, title):
 
 
 def get_analytics():
+    &#34;&#34;&#34;
+    * This function reads all the log files generated for each scheduling
+    algorithm.
+    * The objective of this function is to calculate the mean task completion
+    time, mean job completion time, median task completion time, median job
+    completion time for each of the scheduling algorithms separately.
+    * Various bar plots are plotted comparing the mean and median times of the
+    various scheduling algorithms.
+    * This function also calls the graph_plot function for each of the
+    scheduling algorithms that plots the number of tasks scheduled on each
+    worker at each instance of time.
+    &#34;&#34;&#34;
     fig, (ax1, ax2, ax3) = plt.subplots(3, figsize=(15, 25))
     fig.tight_layout(pad=10.0)
     mean_salgo1_task = 0
@@ -65,7 +90,17 @@ def get_analytics():
     mean_salgo1_job = 0
     mean_salgo2_job = 0
     mean_salgo3_job = 0
-
+    median_salgo1_task = 0 
+    median_salgo2_task = 0
+    median_salgo3_task = 0 
+    median_salgo1_job = 0
+    median_salgo2_job = 0
+    median_salgo3_job = 0
+    &#39;&#39;&#39;
+    Checking if the log files for Round Robin Algorithm exist.
+    If they exist perform the necessary statistical computation and plot
+    the graphs to draw inferences.
+    &#39;&#39;&#39;
     if os.path.exists(&#39;Round-Robin&#39;):
         algo = &#39;Round-Robin&#39;
         job1 = pd.read_csv(os.path.join(algo, &#39;jobs.csv&#39;))
@@ -86,6 +121,10 @@ def get_analytics():
     else:
         pass
 
+    &#39;&#39;&#39;
+    Checking if the log files for Least Loaded Algorithm exist.
+    If they exist perform the necessary statistical computation and plot the graphs to draw inferences.
+    &#39;&#39;&#39;
     if os.path.exists(&#39;Least-Loaded&#39;):
         algo = &#39;Least-Loaded&#39;
         job2 = pd.read_csv(os.path.join(algo, &#39;jobs.csv&#39;))
@@ -106,6 +145,10 @@ def get_analytics():
     else:
         pass
 
+    &#39;&#39;&#39;
+    Checking if the log files for Random Algorithm exist.
+    If they exist perform the necessary statistical computation and plot the graphs to draw inferences.
+    &#39;&#39;&#39;
     if os.path.exists(&#39;Random&#39;):
         algo = &#39;Random&#39;
         job3 = pd.read_csv(os.path.join(algo, &#39;jobs.csv&#39;))
@@ -126,6 +169,11 @@ def get_analytics():
     else:
         pass
 
+    &#39;&#39;&#39;
+    The 3 blocks of code given below display the computed mean and median
+    values for each algorithm(if that algorithm was used) in a neat readable 
+    format which can be used to easily read the data plotted in a graph format.
+    &#39;&#39;&#39;
     if os.path.exists(&#39;Round-Robin&#39;):
         print(&#34;\nRound-Robin Scheduling Algorithm&#34;)
         print(f&#34;Mean of task completion time : {mean_salgo1_task}&#34;)
@@ -198,8 +246,8 @@ def get_analytics():
     x1.append(&#39;Least Loaded Scheduling&#39;)
     x1.append(&#39;Random Scheduling&#39;)
 
-    br1 = np.arange(len(x1)) 
-    br2 = [x + barWidth for x in br1] 
+    br1 = np.arange(len(x1))
+    br2 = [x + barWidth for x in br1]
     plt.bar(br1, y1, color=&#39;r&#39;, width=barWidth, edgecolor=&#39;grey&#39;, label=&#39;Tasks&#39;) 
     plt.bar(br2, y2, color=&#39;g&#39;, width=barWidth, edgecolor=&#39;grey&#39;, label=&#39;Jobs&#39;) 
     plt.xlabel(&#39;Scheduling algorithms&#39;)
@@ -227,12 +275,35 @@ if __name__ == &#39;__main__&#39;:
 <span>def <span class="ident">get_analytics</span></span>(<span>)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><ul>
+<li>This function reads all the log files generated for each scheduling
+algorithm.</li>
+<li>The objective of this function is to calculate the mean task completion
+time, mean job completion time, median task completion time, median job
+completion time for each of the scheduling algorithms separately.</li>
+<li>Various bar plots are plotted comparing the mean and median times of the
+various scheduling algorithms.</li>
+<li>This function also calls the graph_plot function for each of the
+scheduling algorithms that plots the number of tasks scheduled on each
+worker at each instance of time.</li>
+</ul></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def get_analytics():
+    &#34;&#34;&#34;
+    * This function reads all the log files generated for each scheduling
+    algorithm.
+    * The objective of this function is to calculate the mean task completion
+    time, mean job completion time, median task completion time, median job
+    completion time for each of the scheduling algorithms separately.
+    * Various bar plots are plotted comparing the mean and median times of the
+    various scheduling algorithms.
+    * This function also calls the graph_plot function for each of the
+    scheduling algorithms that plots the number of tasks scheduled on each
+    worker at each instance of time.
+    &#34;&#34;&#34;
     fig, (ax1, ax2, ax3) = plt.subplots(3, figsize=(15, 25))
     fig.tight_layout(pad=10.0)
     mean_salgo1_task = 0
@@ -241,7 +312,17 @@ if __name__ == &#39;__main__&#39;:
     mean_salgo1_job = 0
     mean_salgo2_job = 0
     mean_salgo3_job = 0
-
+    median_salgo1_task = 0 
+    median_salgo2_task = 0
+    median_salgo3_task = 0 
+    median_salgo1_job = 0
+    median_salgo2_job = 0
+    median_salgo3_job = 0
+    &#39;&#39;&#39;
+    Checking if the log files for Round Robin Algorithm exist.
+    If they exist perform the necessary statistical computation and plot
+    the graphs to draw inferences.
+    &#39;&#39;&#39;
     if os.path.exists(&#39;Round-Robin&#39;):
         algo = &#39;Round-Robin&#39;
         job1 = pd.read_csv(os.path.join(algo, &#39;jobs.csv&#39;))
@@ -262,6 +343,10 @@ if __name__ == &#39;__main__&#39;:
     else:
         pass
 
+    &#39;&#39;&#39;
+    Checking if the log files for Least Loaded Algorithm exist.
+    If they exist perform the necessary statistical computation and plot the graphs to draw inferences.
+    &#39;&#39;&#39;
     if os.path.exists(&#39;Least-Loaded&#39;):
         algo = &#39;Least-Loaded&#39;
         job2 = pd.read_csv(os.path.join(algo, &#39;jobs.csv&#39;))
@@ -282,6 +367,10 @@ if __name__ == &#39;__main__&#39;:
     else:
         pass
 
+    &#39;&#39;&#39;
+    Checking if the log files for Random Algorithm exist.
+    If they exist perform the necessary statistical computation and plot the graphs to draw inferences.
+    &#39;&#39;&#39;
     if os.path.exists(&#39;Random&#39;):
         algo = &#39;Random&#39;
         job3 = pd.read_csv(os.path.join(algo, &#39;jobs.csv&#39;))
@@ -302,6 +391,11 @@ if __name__ == &#39;__main__&#39;:
     else:
         pass
 
+    &#39;&#39;&#39;
+    The 3 blocks of code given below display the computed mean and median
+    values for each algorithm(if that algorithm was used) in a neat readable 
+    format which can be used to easily read the data plotted in a graph format.
+    &#39;&#39;&#39;
     if os.path.exists(&#39;Round-Robin&#39;):
         print(&#34;\nRound-Robin Scheduling Algorithm&#34;)
         print(f&#34;Mean of task completion time : {mean_salgo1_task}&#34;)
@@ -374,8 +468,8 @@ if __name__ == &#39;__main__&#39;:
     x1.append(&#39;Least Loaded Scheduling&#39;)
     x1.append(&#39;Random Scheduling&#39;)
 
-    br1 = np.arange(len(x1)) 
-    br2 = [x + barWidth for x in br1] 
+    br1 = np.arange(len(x1))
+    br2 = [x + barWidth for x in br1]
     plt.bar(br1, y1, color=&#39;r&#39;, width=barWidth, edgecolor=&#39;grey&#39;, label=&#39;Tasks&#39;) 
     plt.bar(br2, y2, color=&#39;g&#39;, width=barWidth, edgecolor=&#39;grey&#39;, label=&#39;Jobs&#39;) 
     plt.xlabel(&#39;Scheduling algorithms&#39;)
@@ -388,16 +482,39 @@ if __name__ == &#39;__main__&#39;:
 <span>def <span class="ident">graph_plot</span></span>(<span>df, ax, title)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><ul>
+<li>This function takes in the <em>workers.csv</em> for each algorithm separately
+and groups by worker id.</li>
+<li>For each worker, the number of tasks running at each second in a time
+interval are calculated.</li>
+<li>There are 3 plots displayed in a window, with a plot each for a
+scheduling algorithm. The X axis has the number of tasks and the Y axis
+has the time in seconds.</li>
+<li>For a given scheduling algorithm, each worker is represented with a line
+of a different colour.</li>
+</ul></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def graph_plot(df, ax, title):
+    &#34;&#34;&#34;
+    * This function takes in the *workers.csv* for each algorithm separately
+    and groups by worker id.
+    * For each worker, the number of tasks running at each second in a time
+    interval are calculated.
+    * There are 3 plots displayed in a window, with a plot each for a
+    scheduling algorithm. The X axis has the number of tasks and the Y axis
+    has the time in seconds.
+    * For a given scheduling algorithm, each worker is represented with a line
+    of a different colour.
+    &#34;&#34;&#34;
     splits1 = list(df.groupby(&#34;WorkerID&#34;))
     for i in range(len(splits1)):
         time = dict()
-        a = pd.DataFrame(splits1[i][1], columns=[&#39;JobId&#39;, &#39;WorkerID&#39;, &#39;TaskId&#39;, &#39;start_time&#39;, &#39;end_time&#39;, &#39;duration&#39;])
+        a = pd.DataFrame(splits1[i][1],
+                         columns=[&#39;JobId&#39;, &#39;WorkerID&#39;, &#39;TaskId&#39;,
+                                  &#39;start_time&#39;, &#39;end_time&#39;, &#39;duration&#39;])
         end_time = a[&#34;end_time&#34;].iloc[-1]
         for m in range(0, end_time):
             count = 0
@@ -457,7 +574,7 @@ if __name__ == &#39;__main__&#39;:
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.1</a>.</p>
 </footer>
 </body>
 </html>

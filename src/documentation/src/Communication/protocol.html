@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
-<meta name="generator" content="pdoc 0.9.2" />
+<meta name="generator" content="pdoc 0.9.1" />
 <title>src.Communication.protocol API documentation</title>
 <meta name="description" content="" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
@@ -33,6 +33,9 @@ class YACS_Protocol:
     @staticmethod
     def createMessageToWorker(job_ID, task_family, task_ID, duration,
                               worker_ID):
+        assert task_family in [&#34;map&#34;, &#34;reduce&#34;], (&#34;Task family name &#34;
+                                                  f&#34;{task_family} is &#34;
+                                                  &#34;incorrect!&#34;)
         &#34;&#34;&#34;
         The final JSON string will be as follows:
 
@@ -40,7 +43,7 @@ class YACS_Protocol:
         {
             &#34;worker_id&#34;: &lt;worker_id&gt;,
             &#34;job_id&#34;: &lt;job_id&gt;,
-            &#34;task family&#34;: &lt;(&#34;map_tasks&#34;|&#34;reduce_tasks&#34;)&gt;,
+            &#34;task family&#34;: &lt;(&#34;map&#34;|&#34;reduce&#34;)&gt;,
             &#34;task&#34;: {
                         &#34;task_id&#34;: &#34;&lt;task_id&gt;&#34;,
                         &#34;duration&#34;: &lt;in seconds&gt;
@@ -62,6 +65,9 @@ class YACS_Protocol:
     @staticmethod
     def createMessageToMaster(job_ID, task_family, task_ID, start_time,
                               end_time, worker_ID):
+        assert task_family in [&#34;map&#34;, &#34;reduce&#34;], (&#34;Task family name &#34;
+                                                  f&#34;{task_family} is &#34;
+                                                  &#34;incorrect!&#34;)
         &#34;&#34;&#34;
         The final JSON string will be as follows:
 
@@ -69,7 +75,7 @@ class YACS_Protocol:
         {
             &#34;worker_id&#34;:&lt;worker_id&gt;,
             &#34;job_id&#34;:&lt;job_id&gt;,
-            &#34;task family&#34;: &lt;(&#34;map_tasks&#34;|&#34;reduce_tasks&#34;)&gt;,
+            &#34;task family&#34;: &lt;(&#34;map&#34;|&#34;reduce&#34;)&gt;,
             &#34;task&#34;: {
                         &#34;task_id&#34;: &#34;&lt;task_id&gt;&#34;,
                         &#34;start time&#34;: &lt;arrival_time_of_task_at_Worker&gt;,
@@ -94,6 +100,9 @@ class YACS_Protocol:
     @staticmethod
     def prettyPrintMessageToWorker(job_ID, task_family, task_ID, duration,
                                    worker_ID):
+        assert task_family in [&#34;map&#34;, &#34;reduce&#34;], (&#34;Task family name &#34;
+                                                  f&#34;{task_family} is &#34;
+                                                  &#34;incorrect!&#34;)
         &#34;&#34;&#34;
         The final JSON string will be as follows:
 
@@ -101,7 +110,7 @@ class YACS_Protocol:
         {
             &#34;worker_id&#34;: &lt;worker_id&gt;,
             &#34;job_id&#34;: &lt;job_id&gt;,
-            &#34;task family&#34;: &lt;(&#34;map_tasks&#34;|&#34;reduce_tasks&#34;)&gt;,
+            &#34;task family&#34;: &lt;(&#34;map&#34;|&#34;reduce&#34;)&gt;,
             &#34;task&#34;: {
                         &#34;task_id&#34;: &#34;&lt;task_id&gt;&#34;,
                         &#34;duration&#34;: &lt;in seconds&gt;
@@ -124,6 +133,9 @@ class YACS_Protocol:
     @staticmethod
     def prettyPrintMessageToMaster(job_ID, task_family, task_ID, start_time,
                                    end_time, worker_ID):
+        assert task_family in [&#34;map&#34;, &#34;reduce&#34;], (&#34;Task family name &#34;
+                                                  f&#34;{task_family} is &#34;
+                                                  &#34;incorrect!&#34;)
         &#34;&#34;&#34;
         The final JSON string will be as follows:
 
@@ -131,7 +143,7 @@ class YACS_Protocol:
         {
             &#34;worker_id&#34;:&lt;worker_id&gt;,
             &#34;job_id&#34;:&lt;job_id&gt;,
-            &#34;task family&#34;: &lt;(&#34;map_tasks&#34;|&#34;reduce_tasks&#34;)&gt;,
+            &#34;task family&#34;: &lt;(&#34;map&#34;|&#34;reduce&#34;)&gt;,
             &#34;task&#34;: {
                         &#34;task_id&#34;: &#34;&lt;task_id&gt;&#34;,
                         &#34;start time&#34;: &lt;arrival_time_of_task_at_Worker&gt;,
@@ -176,6 +188,9 @@ class YACS_Protocol:
     @staticmethod
     def createMessageToWorker(job_ID, task_family, task_ID, duration,
                               worker_ID):
+        assert task_family in [&#34;map&#34;, &#34;reduce&#34;], (&#34;Task family name &#34;
+                                                  f&#34;{task_family} is &#34;
+                                                  &#34;incorrect!&#34;)
         &#34;&#34;&#34;
         The final JSON string will be as follows:
 
@@ -183,7 +198,7 @@ class YACS_Protocol:
         {
             &#34;worker_id&#34;: &lt;worker_id&gt;,
             &#34;job_id&#34;: &lt;job_id&gt;,
-            &#34;task family&#34;: &lt;(&#34;map_tasks&#34;|&#34;reduce_tasks&#34;)&gt;,
+            &#34;task family&#34;: &lt;(&#34;map&#34;|&#34;reduce&#34;)&gt;,
             &#34;task&#34;: {
                         &#34;task_id&#34;: &#34;&lt;task_id&gt;&#34;,
                         &#34;duration&#34;: &lt;in seconds&gt;
@@ -205,6 +220,9 @@ class YACS_Protocol:
     @staticmethod
     def createMessageToMaster(job_ID, task_family, task_ID, start_time,
                               end_time, worker_ID):
+        assert task_family in [&#34;map&#34;, &#34;reduce&#34;], (&#34;Task family name &#34;
+                                                  f&#34;{task_family} is &#34;
+                                                  &#34;incorrect!&#34;)
         &#34;&#34;&#34;
         The final JSON string will be as follows:
 
@@ -212,7 +230,7 @@ class YACS_Protocol:
         {
             &#34;worker_id&#34;:&lt;worker_id&gt;,
             &#34;job_id&#34;:&lt;job_id&gt;,
-            &#34;task family&#34;: &lt;(&#34;map_tasks&#34;|&#34;reduce_tasks&#34;)&gt;,
+            &#34;task family&#34;: &lt;(&#34;map&#34;|&#34;reduce&#34;)&gt;,
             &#34;task&#34;: {
                         &#34;task_id&#34;: &#34;&lt;task_id&gt;&#34;,
                         &#34;start time&#34;: &lt;arrival_time_of_task_at_Worker&gt;,
@@ -237,6 +255,9 @@ class YACS_Protocol:
     @staticmethod
     def prettyPrintMessageToWorker(job_ID, task_family, task_ID, duration,
                                    worker_ID):
+        assert task_family in [&#34;map&#34;, &#34;reduce&#34;], (&#34;Task family name &#34;
+                                                  f&#34;{task_family} is &#34;
+                                                  &#34;incorrect!&#34;)
         &#34;&#34;&#34;
         The final JSON string will be as follows:
 
@@ -244,7 +265,7 @@ class YACS_Protocol:
         {
             &#34;worker_id&#34;: &lt;worker_id&gt;,
             &#34;job_id&#34;: &lt;job_id&gt;,
-            &#34;task family&#34;: &lt;(&#34;map_tasks&#34;|&#34;reduce_tasks&#34;)&gt;,
+            &#34;task family&#34;: &lt;(&#34;map&#34;|&#34;reduce&#34;)&gt;,
             &#34;task&#34;: {
                         &#34;task_id&#34;: &#34;&lt;task_id&gt;&#34;,
                         &#34;duration&#34;: &lt;in seconds&gt;
@@ -267,6 +288,9 @@ class YACS_Protocol:
     @staticmethod
     def prettyPrintMessageToMaster(job_ID, task_family, task_ID, start_time,
                                    end_time, worker_ID):
+        assert task_family in [&#34;map&#34;, &#34;reduce&#34;], (&#34;Task family name &#34;
+                                                  f&#34;{task_family} is &#34;
+                                                  &#34;incorrect!&#34;)
         &#34;&#34;&#34;
         The final JSON string will be as follows:
 
@@ -274,7 +298,7 @@ class YACS_Protocol:
         {
             &#34;worker_id&#34;:&lt;worker_id&gt;,
             &#34;job_id&#34;:&lt;job_id&gt;,
-            &#34;task family&#34;: &lt;(&#34;map_tasks&#34;|&#34;reduce_tasks&#34;)&gt;,
+            &#34;task family&#34;: &lt;(&#34;map&#34;|&#34;reduce&#34;)&gt;,
             &#34;task&#34;: {
                         &#34;task_id&#34;: &#34;&lt;task_id&gt;&#34;,
                         &#34;start time&#34;: &lt;arrival_time_of_task_at_Worker&gt;,
@@ -302,18 +326,7 @@ class YACS_Protocol:
 <span>def <span class="ident">createMessageToMaster</span></span>(<span>job_ID, task_family, task_ID, start_time, end_time, worker_ID)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>The final JSON string will be as follows:</p>
-<pre><code class="language-json">{
-    &quot;worker_id&quot;:&lt;worker_id&gt;,
-    &quot;job_id&quot;:&lt;job_id&gt;,
-    &quot;task family&quot;: &lt;(&quot;map_tasks&quot;|&quot;reduce_tasks&quot;)&gt;,
-    &quot;task&quot;: {
-                &quot;task_id&quot;: &quot;&lt;task_id&gt;&quot;,
-                &quot;start time&quot;: &lt;arrival_time_of_task_at_Worker&gt;,
-                &quot;end time&quot;: &lt;end_time_of_task_in_Worker&gt;,
-            }
-}
-</code></pre></div>
+<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -321,6 +334,9 @@ class YACS_Protocol:
 <pre><code class="python">@staticmethod
 def createMessageToMaster(job_ID, task_family, task_ID, start_time,
                           end_time, worker_ID):
+    assert task_family in [&#34;map&#34;, &#34;reduce&#34;], (&#34;Task family name &#34;
+                                              f&#34;{task_family} is &#34;
+                                              &#34;incorrect!&#34;)
     &#34;&#34;&#34;
     The final JSON string will be as follows:
 
@@ -328,7 +344,7 @@ def createMessageToMaster(job_ID, task_family, task_ID, start_time,
     {
         &#34;worker_id&#34;:&lt;worker_id&gt;,
         &#34;job_id&#34;:&lt;job_id&gt;,
-        &#34;task family&#34;: &lt;(&#34;map_tasks&#34;|&#34;reduce_tasks&#34;)&gt;,
+        &#34;task family&#34;: &lt;(&#34;map&#34;|&#34;reduce&#34;)&gt;,
         &#34;task&#34;: {
                     &#34;task_id&#34;: &#34;&lt;task_id&gt;&#34;,
                     &#34;start time&#34;: &lt;arrival_time_of_task_at_Worker&gt;,
@@ -355,17 +371,7 @@ def createMessageToMaster(job_ID, task_family, task_ID, start_time,
 <span>def <span class="ident">createMessageToWorker</span></span>(<span>job_ID, task_family, task_ID, duration, worker_ID)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>The final JSON string will be as follows:</p>
-<pre><code class="language-json">{
-    &quot;worker_id&quot;: &lt;worker_id&gt;,
-    &quot;job_id&quot;: &lt;job_id&gt;,
-    &quot;task family&quot;: &lt;(&quot;map_tasks&quot;|&quot;reduce_tasks&quot;)&gt;,
-    &quot;task&quot;: {
-                &quot;task_id&quot;: &quot;&lt;task_id&gt;&quot;,
-                &quot;duration&quot;: &lt;in seconds&gt;
-            }
-}
-</code></pre></div>
+<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -373,6 +379,9 @@ def createMessageToMaster(job_ID, task_family, task_ID, start_time,
 <pre><code class="python">@staticmethod
 def createMessageToWorker(job_ID, task_family, task_ID, duration,
                           worker_ID):
+    assert task_family in [&#34;map&#34;, &#34;reduce&#34;], (&#34;Task family name &#34;
+                                              f&#34;{task_family} is &#34;
+                                              &#34;incorrect!&#34;)
     &#34;&#34;&#34;
     The final JSON string will be as follows:
 
@@ -380,7 +389,7 @@ def createMessageToWorker(job_ID, task_family, task_ID, duration,
     {
         &#34;worker_id&#34;: &lt;worker_id&gt;,
         &#34;job_id&#34;: &lt;job_id&gt;,
-        &#34;task family&#34;: &lt;(&#34;map_tasks&#34;|&#34;reduce_tasks&#34;)&gt;,
+        &#34;task family&#34;: &lt;(&#34;map&#34;|&#34;reduce&#34;)&gt;,
         &#34;task&#34;: {
                     &#34;task_id&#34;: &#34;&lt;task_id&gt;&#34;,
                     &#34;duration&#34;: &lt;in seconds&gt;
@@ -404,18 +413,7 @@ def createMessageToWorker(job_ID, task_family, task_ID, duration,
 <span>def <span class="ident">prettyPrintMessageToMaster</span></span>(<span>job_ID, task_family, task_ID, start_time, end_time, worker_ID)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>The final JSON string will be as follows:</p>
-<pre><code class="language-json">{
-    &quot;worker_id&quot;:&lt;worker_id&gt;,
-    &quot;job_id&quot;:&lt;job_id&gt;,
-    &quot;task family&quot;: &lt;(&quot;map_tasks&quot;|&quot;reduce_tasks&quot;)&gt;,
-    &quot;task&quot;: {
-                &quot;task_id&quot;: &quot;&lt;task_id&gt;&quot;,
-                &quot;start time&quot;: &lt;arrival_time_of_task_at_Worker&gt;,
-                &quot;end time&quot;: &lt;end_time_of_task_in_Worker&gt;
-            }
-}
-</code></pre></div>
+<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -423,6 +421,9 @@ def createMessageToWorker(job_ID, task_family, task_ID, duration,
 <pre><code class="python">@staticmethod
 def prettyPrintMessageToMaster(job_ID, task_family, task_ID, start_time,
                                end_time, worker_ID):
+    assert task_family in [&#34;map&#34;, &#34;reduce&#34;], (&#34;Task family name &#34;
+                                              f&#34;{task_family} is &#34;
+                                              &#34;incorrect!&#34;)
     &#34;&#34;&#34;
     The final JSON string will be as follows:
 
@@ -430,7 +431,7 @@ def prettyPrintMessageToMaster(job_ID, task_family, task_ID, start_time,
     {
         &#34;worker_id&#34;:&lt;worker_id&gt;,
         &#34;job_id&#34;:&lt;job_id&gt;,
-        &#34;task family&#34;: &lt;(&#34;map_tasks&#34;|&#34;reduce_tasks&#34;)&gt;,
+        &#34;task family&#34;: &lt;(&#34;map&#34;|&#34;reduce&#34;)&gt;,
         &#34;task&#34;: {
                     &#34;task_id&#34;: &#34;&lt;task_id&gt;&#34;,
                     &#34;start time&#34;: &lt;arrival_time_of_task_at_Worker&gt;,
@@ -457,17 +458,7 @@ def prettyPrintMessageToMaster(job_ID, task_family, task_ID, start_time,
 <span>def <span class="ident">prettyPrintMessageToWorker</span></span>(<span>job_ID, task_family, task_ID, duration, worker_ID)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>The final JSON string will be as follows:</p>
-<pre><code class="language-json">{
-    &quot;worker_id&quot;: &lt;worker_id&gt;,
-    &quot;job_id&quot;: &lt;job_id&gt;,
-    &quot;task family&quot;: &lt;(&quot;map_tasks&quot;|&quot;reduce_tasks&quot;)&gt;,
-    &quot;task&quot;: {
-                &quot;task_id&quot;: &quot;&lt;task_id&gt;&quot;,
-                &quot;duration&quot;: &lt;in seconds&gt;
-            }
-}
-</code></pre></div>
+<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -475,6 +466,9 @@ def prettyPrintMessageToMaster(job_ID, task_family, task_ID, start_time,
 <pre><code class="python">@staticmethod
 def prettyPrintMessageToWorker(job_ID, task_family, task_ID, duration,
                                worker_ID):
+    assert task_family in [&#34;map&#34;, &#34;reduce&#34;], (&#34;Task family name &#34;
+                                              f&#34;{task_family} is &#34;
+                                              &#34;incorrect!&#34;)
     &#34;&#34;&#34;
     The final JSON string will be as follows:
 
@@ -482,7 +476,7 @@ def prettyPrintMessageToWorker(job_ID, task_family, task_ID, duration,
     {
         &#34;worker_id&#34;: &lt;worker_id&gt;,
         &#34;job_id&#34;: &lt;job_id&gt;,
-        &#34;task family&#34;: &lt;(&#34;map_tasks&#34;|&#34;reduce_tasks&#34;)&gt;,
+        &#34;task family&#34;: &lt;(&#34;map&#34;|&#34;reduce&#34;)&gt;,
         &#34;task&#34;: {
                     &#34;task_id&#34;: &#34;&lt;task_id&gt;&#34;,
                     &#34;duration&#34;: &lt;in seconds&gt;
@@ -536,7 +530,7 @@ def prettyPrintMessageToWorker(job_ID, task_family, task_ID, duration,
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.1</a>.</p>
 </footer>
 </body>
 </html>
