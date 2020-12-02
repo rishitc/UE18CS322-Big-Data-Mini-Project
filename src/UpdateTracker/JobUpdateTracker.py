@@ -34,7 +34,7 @@ class Tracker:
         fields_worker = ['JobID', 'WorkerID', 'TaskID', 'start_time',
                          'end_time']
 
-        print(f"Program is at location: {os.getcwd()}")
+        # print(f"Program is at location: {os.getcwd()}")
 
         algorithm = os.path.join(".", "Analytics", algorithm)
 
