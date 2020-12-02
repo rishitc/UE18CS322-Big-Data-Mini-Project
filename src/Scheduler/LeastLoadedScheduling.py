@@ -1,6 +1,7 @@
 import time
 from typing import Optional
 
+import master
 from Communication.protocol import YACS_Protocol
 from Scheduler.JobRequests import JobRequestHandler
 from WorkerUtils.WorkerStateTracker import StateTracker
@@ -54,7 +55,8 @@ class LeastLoadedScheduler:
 
                     # If a least loaded worker is found
                     if _temp is not None:
-                        workerFound = True  # We have found a worker
+                        # We have found a worker and hence set this to True
+                        workerFound = True
 
                         # Create the JSON protocol message
                         protocolMsg = (YACS_Protocol
@@ -73,7 +75,19 @@ class LeastLoadedScheduler:
                         # 2. Update its state
                         workerStateTracker.getWorkerSocket(_temp)\
                             .sendall(protocolMsg.encode())
+
+                        master.PRINT_LOCK.acquire()
+                        print(f"Sending task to worker: {protocolMsg}")
+                        master.PRINT_LOCK.release()
                         workerStateTracker.allocateSlot(_temp)
+
+                        master.PRINT_LOCK.acquire()
+                        workerStateTracker.showWorkerStates()
+                        master.PRINT_LOCK.release()
+
+                        master.PRINT_LOCK.acquire()
+                        print(f"{requestHandler.jobRequests=}")
+                        master.PRINT_LOCK.release()
 
                     workerStateTracker.LOCK.release()
 
