@@ -1,5 +1,8 @@
 import json
 
+# This lock is used to get access to print onto the standard output
+from Locks.MasterPrintLock import (master, worker)
+
 
 class YACS_Protocol:
     @staticmethod
@@ -100,7 +103,11 @@ class YACS_Protocol:
                                 "duration": duration
                             }
 
+        master.PRINT_LOCK.acquire()
+        worker.PRINT_LOCK.acquire()
         print(json.dumps(msg_dict, indent=4))
+        worker.PRINT_LOCK.release()
+        master.PRINT_LOCK.release()
 
     @staticmethod
     def prettyPrintMessageToMaster(job_ID, task_family, task_ID, start_time,
@@ -135,4 +142,8 @@ class YACS_Protocol:
                                 "end time": end_time,
                             }
 
+        master.PRINT_LOCK.acquire()
+        worker.PRINT_LOCK.acquire()
         print(json.dumps(msg_dict, indent=4))
+        worker.PRINT_LOCK.release()
+        master.PRINT_LOCK.release()
