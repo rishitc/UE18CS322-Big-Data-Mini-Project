@@ -23,7 +23,7 @@ class StateTracker:
                                              socket.SOCK_STREAM)
             workerConnSocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR,
                                         1)
-            print(f'{worker["port"]=}')
+            # print(f'{worker["port"]=}')
             workerConnSocket.connect((socket.gethostname(), worker["port"]))
             self.workerState[worker["worker_id"]] = {
                 "slots": worker["slots"],
