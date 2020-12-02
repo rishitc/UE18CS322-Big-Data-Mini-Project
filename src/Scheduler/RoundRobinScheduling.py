@@ -2,12 +2,13 @@ import threading
 import time
 from typing import Set
 
+import master
 from Communication.protocol import YACS_Protocol
 from Scheduler.JobRequests import JobRequestHandler
 from WorkerUtils.WorkerStateTracker import StateTracker
 
 
-PRINT_LOCK = threading.Lock()
+# PRINT_LOCK = threading.Lock()
 
 
 class RoundRobinScheduler:
@@ -84,7 +85,7 @@ class RoundRobinScheduler:
                                         duration=(jobID_family_task[2]
                                                   ["duration"]),
                                         worker_ID=workerStateTracker
-                                                        .workerIDs[_temp]
+                                        .workerIDs[_temp]
                                        ))
                         # Once a worker with a free slot is found then
                         # 1. We dispatch the job to the worker
@@ -93,18 +94,18 @@ class RoundRobinScheduler:
                                                            workerIDs[_temp])\
                             .sendall(protocolMsg.encode())
 
-                        PRINT_LOCK.acquire()
+                        master.PRINT_LOCK.acquire()
                         print(f"Sending task to worker: {protocolMsg}")
-                        PRINT_LOCK.release()
+                        master.PRINT_LOCK.release()
                         workerStateTracker.allocateSlot(workerStateTracker
                                                         .workerIDs[_temp])
-                        PRINT_LOCK.acquire()
+                        master.PRINT_LOCK.acquire()
                         workerStateTracker.showWorkerStates()
-                        PRINT_LOCK.release()
+                        master.PRINT_LOCK.release()
 
-                        PRINT_LOCK.acquire()
+                        master.PRINT_LOCK.acquire()
                         print(f"{requestHandler.jobRequests=}")
-                        PRINT_LOCK.release()
+                        master.PRINT_LOCK.release()
 
                         # We have found a worker and hence set this to True
                         workerFound = True
@@ -126,4 +127,7 @@ class RoundRobinScheduler:
                         # workers
                         workerIDsVisited.clear()
 
+                # After sending a task to the worker, sleep for 0.01 seconds before
+                # sending the next task. This done so that the worker buffer only has
+                # at most 1 task in its socket's buffer
                 time.sleep(0.01)

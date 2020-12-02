@@ -81,7 +81,13 @@ class LeastLoadedScheduler:
                     # then the Master waits for 1 second and repeats the
                     # process
                     if workerFound is False:
-                        # Sleep for a second to allow for the
+                        # Sleep for 1 second to allow for the
                         # workerStateTracker to be updated by
                         # the thread: workerUpdates
                         time.sleep(1)
+                    else:
+                        # After sending a task to the worker, sleep for 0.01s
+                        # seconds before sending the next task. This done so
+                        # that the worker buffer only has at most 1 task in
+                        # its socket's buffer
+                        time.sleep(0.01)

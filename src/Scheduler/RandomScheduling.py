@@ -2,6 +2,7 @@ import random
 import time
 from typing import Set
 
+import master
 from Communication.protocol import YACS_Protocol
 from Scheduler.JobRequests import JobRequestHandler
 from WorkerUtils.WorkerStateTracker import StateTracker
@@ -79,7 +80,20 @@ class RandomScheduler:
                         # 2. Update its state
                         workerStateTracker.getWorkerSocket(_temp)\
                             .sendall(protocolMsg.encode())
+
+                        master.PRINT_LOCK.acquire()
+                        print(f"Sending task to worker: {protocolMsg}")
+                        master.PRINT_LOCK.release()
+
                         workerStateTracker.allocateSlot(_temp)
+
+                        master.PRINT_LOCK.acquire()
+                        workerStateTracker.showWorkerStates()
+                        master.PRINT_LOCK.release()
+
+                        master.PRINT_LOCK.acquire()
+                        print(f"{requestHandler.jobRequests=}")
+                        master.PRINT_LOCK.release()
 
                         # We have found a worker and hence set this to True
                         workerFound = True
@@ -97,3 +111,8 @@ class RandomScheduler:
                         # restarting our search for a free slot on one of the
                         # workers
                         workerIDsVisited.clear()
+
+                # After sending a task to the worker, sleep for 0.01 seconds
+                # before sending the next task. This done so that the worker
+                # buffer only has at most 1 task in its socket's buffer
+                time.sleep(0.01)
