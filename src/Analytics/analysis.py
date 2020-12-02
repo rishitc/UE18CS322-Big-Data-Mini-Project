@@ -22,9 +22,9 @@ def get_heatmap(df, ax, title):
     df["start_time"] -= s_time
     df["end_time"] -= s_time
     splits1 = list(df.groupby("WorkerID"))
-    c = []
-    s = []
-    w = []
+    task_count = []
+    seconds = []
+    wid = []
     for i in range(len(splits1)):
         a = pd.DataFrame(splits1[i][1],
                          columns=['JobId', 'WorkerID', 'TaskId',
@@ -37,13 +37,13 @@ def get_heatmap(df, ax, title):
                     count = count + 1
                 else:
                     pass
-            c.append(count)
-            s.append(m)
-            w.append(splits1[i][0])
+            task_count.append(count)
+            seconds.append(m)
+            wid.append(splits1[i][0])
 
-    df1['WorkerID'] = w
-    df1['seconds'] = s
-    df1['task_count'] = c
+    df1['WorkerID'] = wid
+    df1['seconds'] = seconds
+    df1['task_count'] = task_count
     df1 = df1.pivot(index='WorkerID', columns='seconds', values='task_count')
     sns.heatmap(df1, annot=True, ax=ax)
     ax.set_title(title)
