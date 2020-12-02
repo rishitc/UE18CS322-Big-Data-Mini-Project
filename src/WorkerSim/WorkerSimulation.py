@@ -59,6 +59,9 @@ class Worker:
             # Convert JSON to python dictionary
             python_protocol_message = json.loads(taskRequest)
 
+            # Acquiring lock as shared object is accessed
+            self.LOCK.acquire()
+
             # request: messageToWorkerType
             for request in python_protocol_message:
                 # To obtain key for addition to task exec pool
@@ -72,8 +75,6 @@ class Worker:
                 worker.PRINT_LOCK.acquire()
                 print(request)
                 worker.PRINT_LOCK.release()
-                # Acquiring lock as shared object is accessed
-                self.LOCK.acquire()
                 if self.tasks.get(job_in_message) is None:
                     self.tasks[job_in_message] = dict()
 
