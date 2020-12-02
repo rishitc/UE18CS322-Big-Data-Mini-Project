@@ -4,14 +4,12 @@ import threading  # For locks
 import socket  # For function parameters
 import queue  # For storing the completed tasks
 
+from Locks.WorkerPrintLock import worker
 from Communication.protocol import YACS_Protocol
 # from master import PRINT_LOCK
 #  For sending message back to master
 
 MESSAGE_BUFFER_SIZE = 4096  # Socket receiving length
-
-
-PRINT_LOCK = threading.Lock()
 
 
 class Worker:
@@ -49,9 +47,9 @@ class Worker:
                 taskRequestSocket.close()
                 break
 
-            PRINT_LOCK.acquire()
+            worker.PRINT_LOCK.acquire()
             print(f"Task received at worker: {taskRequest}")
-            PRINT_LOCK.release()
+            worker.PRINT_LOCK.release()
 
             # Convert JSON to python dictionary
             python_protocol_message = json.loads(taskRequest)
@@ -64,9 +62,9 @@ class Worker:
             python_protocol_message["task"]["end time"] = 0
             # Adding components that are there in reply message to the master
             # but not in the received message
-            PRINT_LOCK.acquire()
+            worker.PRINT_LOCK.acquire()
             print(python_protocol_message)
-            PRINT_LOCK.release()
+            worker.PRINT_LOCK.release()
             self.LOCK.acquire()  # Acquiring lock as shared object is accessed
             if self.tasks.get(job_in_message) is None:
                 self.tasks[job_in_message] = dict()
@@ -77,9 +75,9 @@ class Worker:
             #  Value for the tasks dictionary will be all the info
             self.LOCK.release()  # Release lock as CS code is complete
 
-            PRINT_LOCK.acquire()
+            worker.PRINT_LOCK.acquire()
             print(self.tasks)
-            PRINT_LOCK.release()
+            worker.PRINT_LOCK.release()
 
     def simulateWorker(self):
         # While there is a task to execute in the task exec pool
@@ -99,11 +97,11 @@ class Worker:
                     _temp_2 = list(self.tasks[job_id])
                     for task_id in _temp_2:
                         # Reduce the duration of the task by 1
-                        PRINT_LOCK.acquire()
+                        worker.PRINT_LOCK.acquire()
                         print(type(self.tasks[job_id][task_id]["task"]
                                    ["duration"]))
                         print(self.tasks[job_id][task_id]["task"]["duration"])
-                        PRINT_LOCK.release()
+                        worker.PRINT_LOCK.release()
                         self.tasks[job_id][task_id]["task"]["duration"] -= 1
 
                         # Check if the duration has become 0, i.e. the task has
@@ -166,9 +164,9 @@ class Worker:
                 self.updates_q.task_done()
                 # Sending to master
                 reply_socket.sendall(response_msg.encode())
-                PRINT_LOCK.acquire()
+                worker.PRINT_LOCK.acquire()
                 print(f"Task sent: {response_msg}!")
-                PRINT_LOCK.release()
+                worker.PRINT_LOCK.release()
                 time.sleep(0.01)
 
     def __del__(self):
