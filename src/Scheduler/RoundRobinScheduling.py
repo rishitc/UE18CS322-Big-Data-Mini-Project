@@ -2,7 +2,8 @@
 import time
 from typing import Set
 
-import master
+# This lock is used to get access to print onto the standard output
+from Locks.MasterPrintLock import master
 from Communication.protocol import YACS_Protocol
 from Scheduler.JobRequests import JobRequestHandler
 from WorkerUtils.WorkerStateTracker import StateTracker
