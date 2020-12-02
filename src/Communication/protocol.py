@@ -1,7 +1,8 @@
 import json
 
 # This lock is used to get access to print onto the standard output
-from Locks.MasterPrintLock import (master, worker)
+from Locks.MasterPrintLock import master
+from Locks.WorkerPrintLock import worker
 
 
 class YACS_Protocol:
