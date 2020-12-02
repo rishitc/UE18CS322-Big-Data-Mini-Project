@@ -40,7 +40,7 @@ def error_text(text):
 def listenForJobRequests(jobRequestHandler: JobRequestHandler,
                          jobUpdateTracker: JobUpdateTracker):
     """```listenForJobRequests``` listens for new job requests from the client
-    code
+    code.
 
     **param** ```jobRequestHandler```: Used to track the task dispath status of
     the job
@@ -105,7 +105,7 @@ def workerUpdates(workerSocket: socket.socket,
                   workerStateTracker: StateTracker,
                   jobUpdateTracker: JobUpdateTracker):
     """```workerUpdates``` captures the updates from the worker as and when
-    they complete the tasks assigned to them, and respond back
+    they complete the tasks assigned to them, and respond back.
 
     **param** ```workerSocket```: The socket object for listening to the
     specific worker's updates
@@ -326,7 +326,7 @@ if __name__ == "__main__":
     print("You have reached the bottom of the '__main__'")
     print(threading.enumerate())
 
-    """ Wait for all the threads to finish
+    """ Wait for all the threads to finish.
     """
     # Wait for the thread listening for incoming job requests to finish
     jobRequestThread.join()

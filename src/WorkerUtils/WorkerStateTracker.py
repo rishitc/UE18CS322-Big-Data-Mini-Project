@@ -6,7 +6,7 @@ from typing import List, Optional
 class StateTracker:
     def __init__(self, confObj: dict) -> None:
         """Store the list of the worker dictionaries in a new dictionary
-         indexed by the ```worker_id``` key
+         indexed by the ```worker_id``` key.
 
         **param** ```configObj```: Dictionary got from loading in the json
         data stored in the worker configuration file
@@ -67,7 +67,7 @@ class StateTracker:
 
     def allocateSlot(self, workerID: int, task_count: int = 1) -> None:
         """Allocates the task to the worker and decrements the number of
-         free slots in that worker
+         free slots in that worker.
 
         **param** ```workerID```: Specifies the worker to which we are
         allocating the task to
@@ -85,7 +85,7 @@ class StateTracker:
 
     def freeSlot(self, workerID: int, task_count: int = 1) -> None:
         """Updates the state of the worker to indicate task completion
-        by incrementing the number of free slots on that worker
+        by incrementing the number of free slots on that worker.
 
         **param** ```workerID```: Specifies the worker which has completed its
         task
@@ -120,7 +120,7 @@ class StateTracker:
         return _least_loaded_workerID
 
     def __del__(self):
-        """```__del__``` Closes all task dispatch sockets to the workers
+        """```__del__``` Closes all task dispatch sockets to the workers.
         """
         for workerID in self.workerIDs:
             self.workerState[workerID]["socket"].close()

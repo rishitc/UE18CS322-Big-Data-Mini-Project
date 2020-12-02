@@ -25,7 +25,7 @@ class RoundRobinScheduler:
                       workerStateTracker: StateTracker,
                       WORKER_COUNT: int):
         """```jobDispatcher``` implements the **Round-Robin
-        Scheduling** algorithm
+        Scheduling** algorithm.
 
         **param** ```requestHandler```: This object will track the tasks of
         incomplete jobs, and provide them for allocation, respecting the
