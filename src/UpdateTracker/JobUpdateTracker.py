@@ -34,7 +34,7 @@ class Tracker:
         fields_worker = ['JobID', 'WorkerID', 'TaskID', 'start_time',
                          'end_time']
 
-        print(f"Program is at location: {os.getcwd()}")
+        # print(f"Program is at location: {os.getcwd()}")
 
         algorithm = os.path.join(".", "Analytics", algorithm)
 
@@ -136,8 +136,8 @@ class Tracker:
         task_fam = parsed_json_request["task family"]
 
         # Get task start and end time on worker
-        task_stats = [parsed_json_request["task"]["start time"],
-                      parsed_json_request["task"]["end time"]]
+        task_stats = [parsed_json_request["task"]["start_time"],
+                      parsed_json_request["task"]["end_time"]]
         self.jobs[job_id][task_id] = response_message
         # Stores start time and end time for a task
         self.tasks_time[job_id][task_id] = task_stats

@@ -134,8 +134,8 @@ Format for how the worker responds to the completion of the task (i.e. a single 
     "task family": <("map_tasks"|"reduce_tasks")>,
     "task": {
                 "task_id": "<task_id>",
-                "start time": <arrival_time_of_task_at_Worker>,
-                "end time": <end_time_of_task_in_Worker>
+                "start_time": <arrival_time_of_task_at_Worker>,
+                "end_time": <end_time_of_task_in_Worker>
              }
 }
 ```

@@ -3,10 +3,9 @@ import json  # For JSON to python conversion and vice-versa
 import threading  # For locks
 import socket  # For function parameters
 import queue  # For storing the completed tasks
-from typing import List
 
 from Locks.WorkerPrintLock import worker
-from Communication.protocol import (YACS_Protocol, messageToWorkerType)
+from Communication.protocol import YACS_Protocol
 # from master import PRINT_LOCK
 #  For sending message back to master
 
@@ -58,24 +57,24 @@ class Worker:
             worker.PRINT_LOCK.release()
 
             # Convert JSON to python dictionary
-            python_protocol_message: List[messageToWorkerType] = \
-                json.loads(taskRequest)
+            python_protocol_message = json.loads(taskRequest)
 
-            request: messageToWorkerType
+            # Acquiring lock as shared object is accessed
+            self.LOCK.acquire()
+
+            # request: messageToWorkerType
             for request in python_protocol_message:
                 # To obtain key for addition to task exec pool
                 job_in_message = request["job_id"]
                 task_in_message = request["task"]["task_id"]
                 # Initialise the starting time of the task
-                request["task"]["start time"] = time.time()
-                request["task"]["end time"] = 0
+                request["task"]["start_time"] = time.time()
+                request["task"]["end_time"] = 0
                 # Adding components that are there in reply message to the
                 # master but not in the received message
                 worker.PRINT_LOCK.acquire()
                 print(request)
                 worker.PRINT_LOCK.release()
-                # Acquiring lock as shared object is accessed
-                self.LOCK.acquire()
                 if self.tasks.get(job_in_message) is None:
                     self.tasks[job_in_message] = dict()
 
@@ -117,7 +116,7 @@ class Worker:
                         # finished execution
                         if (self.tasks[job_id][task_id]["task"]["duration"]
                                 == 0):
-                            self.tasks[job_id][task_id]["task"]["end time"] = \
+                            self.tasks[job_id][task_id]["task"]["end_time"] = \
                                 time.time()
                             # Store the end-time of the task
                             response_message_to_master = YACS_Protocol\
@@ -131,10 +130,10 @@ class Worker:
                                                         ["task_id"]),
                                                        (self.tasks[job_id]
                                                         [task_id]["task"]
-                                                        ["start time"]),
+                                                        ["start_time"]),
                                                        (self.tasks[job_id]
                                                         [task_id]["task"]
-                                                        ["end time"]),
+                                                        ["end_time"]),
                                                        (self.tasks[job_id]
                                                         [task_id]
                                                         ["worker_id"]))
@@ -176,7 +175,7 @@ class Worker:
                 worker.PRINT_LOCK.acquire()
                 print(f"Task sent: {response_msg}!")
                 worker.PRINT_LOCK.release()
-                time.sleep(0.01)
+                # time.sleep(0.01)
 
     def __del__(self):
         self.updates_q.join()

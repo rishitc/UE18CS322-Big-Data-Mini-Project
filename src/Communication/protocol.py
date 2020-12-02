@@ -53,8 +53,8 @@ class YACS_Protocol:
             "task family": <("map"|"reduce")>,
             "task": {
                         "task_id": "<task_id>",
-                        "start time": <arrival_time_of_task_at_Worker>,
-                        "end time": <end_time_of_task_in_Worker>,
+                        "start_time": <arrival_time_of_task_at_Worker>,
+                        "end_time": <end_time_of_task_in_Worker>,
                     }
         }
         ```
@@ -70,8 +70,8 @@ class YACS_Protocol:
         msg_dict["task family"] = task_family
         msg_dict["task"] = {
                                 "task_id": task_ID,
-                                "start time": start_time,
-                                "end time": end_time,
+                                "start_time": start_time,
+                                "end_time": end_time,
                             }
 
         return json.dumps(msg_dict)
@@ -127,8 +127,8 @@ class YACS_Protocol:
             "task family": <("map"|"reduce")>,
             "task": {
                         "task_id": "<task_id>",
-                        "start time": <arrival_time_of_task_at_Worker>,
-                        "end time": <end_time_of_task_in_Worker>
+                        "start_time": <arrival_time_of_task_at_Worker>,
+                        "end_time": <end_time_of_task_in_Worker>
                     }
         }
         ```
@@ -144,8 +144,8 @@ class YACS_Protocol:
         msg_dict["task family"] = task_family
         msg_dict["task"] = {
                                 "task_id": task_ID,
-                                "start time": start_time,
-                                "end time": end_time,
+                                "start_time": start_time,
+                                "end_time": end_time,
                             }
 
         master.PRINT_LOCK.acquire()
