@@ -58,6 +58,6 @@ if __name__ == '__main__':
 		last_request_time=time.time()
 		request_number+=1
 
-	print(f"Total number of tasks sent are: {TOTAL_NO_OF_TASKS}")
+	print(f"Total number of tasks sent by client are: {TOTAL_NO_OF_TASKS}")
 
 

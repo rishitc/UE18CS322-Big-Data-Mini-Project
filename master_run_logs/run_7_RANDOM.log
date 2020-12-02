@@ -1,4 +1,4 @@
-Total number of tasks sent are: 42
+Total number of tasks sent by client are: 42
 ---------
 Have the 3 workers been started, yet? [y/n] y
 JobUpdateTracker Initialized
