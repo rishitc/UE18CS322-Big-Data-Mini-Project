@@ -2,6 +2,8 @@ import socket
 from threading import Lock
 from typing import List, Optional
 
+from Communication.protocol import YACS_Protocol
+
 
 class StateTracker:
     def __init__(self, confObj: dict) -> None:
@@ -121,6 +123,16 @@ class StateTracker:
                 _least_loaded_workerFreeSlots = _free_slot_count
 
         return _least_loaded_workerID
+
+    def connectBackRequest(self, public_key):
+        back_off_time = 0.5
+        for workerID in self.workerIDs:
+            message = YACS_Protocol \
+                .connectBackMessage(back_off_time=back_off_time,
+                                    public_key=public_key)
+            self.workerState[workerID]["socket"].sendall(message.encode())
+
+            back_off_time += 0.5
 
     def __del__(self):
         """```__del__``` Closes all task dispatch sockets to the workers.

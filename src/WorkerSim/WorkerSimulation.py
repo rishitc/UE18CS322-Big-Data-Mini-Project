@@ -3,6 +3,7 @@ import json  # For JSON to python conversion and vice-versa
 import threading  # For locks
 import socket  # For function parameters
 import queue  # For storing the completed tasks
+from cryptography.fernet import Fernet
 
 from Locks.WorkerPrintLock import worker
 from Communication.protocol import YACS_Protocol
@@ -32,7 +33,8 @@ class Worker:
         self.LOCK = threading.Lock()
         self.updates_q = queue.Queue()  # For completed tasks
 
-    def listenForTaskRequest(self, taskRequestSocket: socket.socket):
+    def listenForTaskRequest(self, taskRequestSocket: socket.socket,
+                             WORKER_KEY):
         """
         This listens for a JSON message which was created using the
         ***createMessageToWorker()*** method (*i.e. following the set protocol
@@ -40,12 +42,18 @@ class Worker:
         as task id and the value is all the related information of the task,
         i.e the dictionary obtained from **createMessageToWorker()** method.
         """
+        dec_obj = Fernet(WORKER_KEY)
         while True:
             # To extract the message sent from master
             taskRequest = taskRequestSocket.recv(MESSAGE_BUFFER_SIZE).decode()
             if not taskRequest:
                 taskRequestSocket.close()
                 break
+
+            _temp: str = ''
+            for i in taskRequest.split('==')[:-1]:
+                _temp += dec_obj.decrypt((i + '==').encode()).decode()
+            taskRequest = _temp
 
             # Preprocess the received JSON data. This helps prevent
             # JSON parsing errors when more then one message has been
@@ -157,7 +165,7 @@ class Worker:
         # UPDATE 1: Acknowledged. Working on that right now.
         # UPDATE 2: The same has been implemented
 
-    def taskComplete(self, reply_socket: socket.socket):
+    def taskComplete(self, reply_socket: socket.socket, WORKER_KEY):
         """
         This method creates and returns returns the **JSON string**
         of format createMessageToMaster() of YACS Protocol.
@@ -165,13 +173,13 @@ class Worker:
         This method is called by ***simulateWorker()*** method when the
         *remaining_duration attribute* of the task **becomes 0**.
         """
-
+        enc_obj = Fernet(WORKER_KEY)
         while True:
             if not self.updates_q.empty():
                 response_msg: str = self.updates_q.get()
                 self.updates_q.task_done()
                 # Sending to master
-                reply_socket.sendall(response_msg.encode())
+                reply_socket.sendall(enc_obj.encrypt(response_msg.encode()))
                 worker.PRINT_LOCK.acquire()
                 print(f"Task sent: {response_msg}!")
                 worker.PRINT_LOCK.release()

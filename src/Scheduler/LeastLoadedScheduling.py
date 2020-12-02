@@ -1,5 +1,7 @@
 import time
 from typing import Optional
+from cryptography.fernet import Fernet
+
 
 # This lock is used to get access to print onto the standard output
 from Locks.MasterPrintLock import master
@@ -74,8 +76,10 @@ class LeastLoadedScheduler:
                         # Once a worker with a free slot is found then
                         # 1. We dispatch the job to the worker
                         # 2. Update its state
+                        enc_obj = Fernet(workerStateTracker
+                                         .workerState[_temp]["pri_key"])
                         workerStateTracker.getWorkerSocket(_temp)\
-                            .sendall(protocolMsg.encode())
+                            .sendall(enc_obj.encrypt(protocolMsg.encode()))
 
                         master.PRINT_LOCK.acquire()
                         print(f"Sending task to worker: {protocolMsg}")

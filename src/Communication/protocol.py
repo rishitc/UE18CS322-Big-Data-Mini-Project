@@ -154,6 +154,20 @@ class YACS_Protocol:
         worker.PRINT_LOCK.release()
         master.PRINT_LOCK.release()
 
+    @staticmethod
+    def connectBackMessage(back_off_time, public_key):
+        msg_dict = {}
+        msg_dict["back_off_time"] = back_off_time
+        msg_dict["public_key"] = public_key.decode()
+        return json.dumps(msg_dict)
+
+    @staticmethod
+    def connectBackResponse(worker_id, enc_pri_key):
+        msg_dict = {}
+        msg_dict["worker_id"] = worker_id
+        msg_dict["enc_pri_key"] = enc_pri_key.decode()
+        return json.dumps(msg_dict)
+
 
 class messageToWorkerTaskType(TypedDict):
     task_id: str

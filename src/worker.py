@@ -2,6 +2,11 @@ import socket
 import sys
 import threading
 from WorkerSim.WorkerSimulation import Worker
+import json
+from cryptography.fernet import Fernet
+import time
+from Communication.protocol import YACS_Protocol
+
 
 """
 Some of the important pointers to be implemented in this code are:
@@ -74,18 +79,29 @@ if __name__ == "__main__":
     # recv data, address bound to the socket on the other end of the connection
     # ---
 
-    input("Have all the workers connected??")
+    connBackDetails = json.loads(masterConn.recv(MESSAGE_BUFFER_SIZE).decode())
+    connBackDetails["public_key"] = connBackDetails["public_key"].encode()
+    # Generate the worker's private key
+    WORKER_KEY = Fernet.generate_key()
+    print(f"{worker_id} generated the key {WORKER_KEY}")
+    print(f"Sleeping for {connBackDetails['back_off_time']}s")
+    time.sleep(connBackDetails["back_off_time"])
 
     _TASK_COMPLETION_RESPONSE_ADDR = (socket.gethostname(), 5001)  # Master
     # port which takes updates on task completion from the worker
     workerToMasterCompletionSocket = \
         createMasterSocket(_TASK_COMPLETION_RESPONSE_ADDR)
-    workerToMasterCompletionSocket.sendall(str(worker_id).encode())
+    # workerToMasterCompletionSocket.sendall(str(worker_id).encode())
+    workerToMasterCompletionSocket.sendall(YACS_Protocol.connectBackResponse(
+        str(worker_id), Fernet(connBackDetails["public_key"])
+        .encrypt(WORKER_KEY))
+        .encode())
+
     # Creating all the threads
     json_receive_master = threading.Thread(name="Sending Task To Exec Pool",
                                            target=worker_instance.
                                            listenForTaskRequest,
-                                           args=(masterConn,))
+                                           args=(masterConn, WORKER_KEY))
     json_receive_master.daemon = True
     json_receive_master.start()
 
@@ -99,7 +115,7 @@ if __name__ == "__main__":
         .Thread(name=("Sending Task Completion "
                       "From Worker To Master"),
                 target=worker_instance.taskComplete,
-                args=(workerToMasterCompletionSocket,))
+                args=(workerToMasterCompletionSocket, WORKER_KEY))
     json_reply_master.daemon = True
     json_reply_master.start()
 

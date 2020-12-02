@@ -6,6 +6,7 @@ from typing import List, Optional, Tuple
 import colored as TC
 from colored.colored import attr
 import inflect
+from cryptography.fernet import Fernet
 
 # This lock is used to get access to print onto the standard output
 from Locks.MasterPrintLock import master
@@ -107,7 +108,8 @@ def listenForJobRequests(jobRequestHandler: JobRequestHandler,
 
 def workerUpdates(workerSocket: socket.socket,
                   workerStateTracker: StateTracker,
-                  jobUpdateTracker: JobUpdateTracker):
+                  jobUpdateTracker: JobUpdateTracker,
+                  WORKER_KEY):
     """```workerUpdates``` captures the updates from the worker as and when
     they complete the tasks assigned to them, and respond back.
 
@@ -126,11 +128,17 @@ def workerUpdates(workerSocket: socket.socket,
 
     **type** ```jobUpdateTracker```: JobUpdateTracker
     """
+    dec_obj = Fernet(WORKER_KEY)
     while True:
         workerUpdate: str = workerSocket.recv(BUFFER_SIZE).decode()
         if not workerUpdate:
             workerSocket.close()
             break
+
+        _temp: str = ''
+        for i in workerUpdate.split('==')[:-1]:
+            _temp += dec_obj.decrypt((i + '==').encode()).decode()
+        workerUpdate = _temp
 
         # Preprocess the received JSON data. This helps prevent
         # JSON parsing errors when more then one message has been
@@ -282,6 +290,14 @@ if __name__ == "__main__":
     taskDispatchThread.daemon = True
     taskDispatchThread.start()
 
+    # Worker connect back mechanism
+    PUBLIC_KEY = Fernet.generate_key()
+    PUBLIC_KEY_OBJ = Fernet(PUBLIC_KEY)
+
+    obj_workerStateTracker.LOCK.acquire()
+    obj_workerStateTracker.connectBackRequest(PUBLIC_KEY)
+    obj_workerStateTracker.LOCK.release()
+
     WORKER_UPDATES_PORT: int = 5001
     WORKER_UPDATES_ADDR: Tuple[str, int] = \
         (socket.gethostname(), WORKER_UPDATES_PORT)
@@ -309,7 +325,15 @@ if __name__ == "__main__":
             workerSocket, workerAddress = worker_updates_socket.accept()
 
             # Get the worker number from the newly connected worker
-            WORKER_ID: str = workerSocket.recv(BUFFER_SIZE).decode()
+            response_msg = json.loads(workerSocket.recv(BUFFER_SIZE).decode())
+            response_msg["enc_pri_key"] = response_msg["enc_pri_key"].encode()
+            WORKER_ID: str = response_msg["worker_id"]
+            _worker_key = PUBLIC_KEY_OBJ.decrypt(response_msg["enc_pri_key"])
+
+            obj_workerStateTracker.LOCK.acquire()
+            obj_workerStateTracker.workerState[int(WORKER_ID)]["pri_key"] = \
+                _worker_key
+            obj_workerStateTracker.LOCK.release()
 
             # Printing connection updates
             master.PRINT_LOCK.acquire()
@@ -318,6 +342,7 @@ if __name__ == "__main__":
                   )
             print(f"IP Address: {workerAddress[0]}")
             print(f"Socket: {workerAddress[1]}")
+            print(f"Private Key: {_worker_key}")
             master.PRINT_LOCK.release()
 
             # Start a new thread and return its thread object
@@ -326,7 +351,8 @@ if __name__ == "__main__":
                                            "Listener"),
                                      args=(workerSocket,
                                            obj_workerStateTracker,
-                                           obj_jobUpdatesTracker))
+                                           obj_jobUpdatesTracker,
+                                           _worker_key))
             _temp.daemon = True
             _temp.start()
 

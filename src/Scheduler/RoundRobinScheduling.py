@@ -1,6 +1,8 @@
 # import threading
 import time
 from typing import Set
+from cryptography.fernet import Fernet
+
 
 # This lock is used to get access to print onto the standard output
 from Locks.MasterPrintLock import master
@@ -91,9 +93,12 @@ class RoundRobinScheduler:
                         # Once a worker with a free slot is found then
                         # 1. We dispatch the job to the worker
                         # 2. Update its state
+                        enc_obj = Fernet(workerStateTracker
+                                         .workerState[workerStateTracker
+                                         .workerIDs[_temp]]["pri_key"])
                         workerStateTracker.getWorkerSocket(workerStateTracker.
                                                            workerIDs[_temp])\
-                            .sendall(protocolMsg.encode())
+                            .sendall(enc_obj.encrypt(protocolMsg.encode()))
 
                         master.PRINT_LOCK.acquire()
                         print(f"Sending task to worker: {protocolMsg}")
