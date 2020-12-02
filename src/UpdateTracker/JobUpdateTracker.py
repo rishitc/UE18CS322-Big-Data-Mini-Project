@@ -136,8 +136,8 @@ class Tracker:
         task_fam = parsed_json_request["task family"]
 
         # Get task start and end time on worker
-        task_stats = [parsed_json_request["task"]["start time"],
-                      parsed_json_request["task"]["end time"]]
+        task_stats = [parsed_json_request["task"]["start_time"],
+                      parsed_json_request["task"]["end_time"]]
         self.jobs[job_id][task_id] = response_message
         # Stores start time and end time for a task
         self.tasks_time[job_id][task_id] = task_stats

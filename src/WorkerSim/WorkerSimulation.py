@@ -58,17 +58,16 @@ class Worker:
             worker.PRINT_LOCK.release()
 
             # Convert JSON to python dictionary
-            python_protocol_message: List[messageToWorkerType] = \
-                json.loads(taskRequest)
+            python_protocol_message = json.loads(taskRequest)
 
-            request: messageToWorkerType
+            # request: messageToWorkerType
             for request in python_protocol_message:
                 # To obtain key for addition to task exec pool
                 job_in_message = request["job_id"]
                 task_in_message = request["task"]["task_id"]
                 # Initialise the starting time of the task
-                request["task"]["start time"] = time.time()
-                request["task"]["end time"] = 0
+                request["task"]["start_time"] = time.time()
+                request["task"]["end_time"] = 0
                 # Adding components that are there in reply message to the
                 # master but not in the received message
                 worker.PRINT_LOCK.acquire()
@@ -117,7 +116,7 @@ class Worker:
                         # finished execution
                         if (self.tasks[job_id][task_id]["task"]["duration"]
                                 == 0):
-                            self.tasks[job_id][task_id]["task"]["end time"] = \
+                            self.tasks[job_id][task_id]["task"]["end_time"] = \
                                 time.time()
                             # Store the end-time of the task
                             response_message_to_master = YACS_Protocol\
@@ -131,10 +130,10 @@ class Worker:
                                                         ["task_id"]),
                                                        (self.tasks[job_id]
                                                         [task_id]["task"]
-                                                        ["start time"]),
+                                                        ["start_time"]),
                                                        (self.tasks[job_id]
                                                         [task_id]["task"]
-                                                        ["end time"]),
+                                                        ["end_time"]),
                                                        (self.tasks[job_id]
                                                         [task_id]
                                                         ["worker_id"]))
