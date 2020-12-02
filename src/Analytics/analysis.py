@@ -45,7 +45,8 @@ def get_heatmap(df, ax, title):
     df1['seconds'] = seconds
     df1['task_count'] = task_count
     df1 = df1.pivot(index='WorkerID', columns='seconds', values='task_count')
-    sns.heatmap(df1, annot=True, ax=ax)
+    sns.color_palette("viridis")
+    sns.heatmap(df1, annot=False, ax=ax, cmap="Reds")
     ax.set_title(title)
 
 
