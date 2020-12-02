@@ -52,7 +52,8 @@ def listenForJobRequests(jobRequestHandler: JobRequestHandler,
 
     **type** ```jobUpdateTracker```: JobUpdateTracker
     """
-    _JOB_REQUEST_ADDR: Tuple[str, int] = (socket.gethostname(), 5000)
+    _JOB_REQUEST_ADDR: Tuple[str, int] = ("localhost", 5000)
+    # Older version of address tuple used: (socket.gethostname(), 5000)
 
     master.PRINT_LOCK.acquire()
     print("Inside listenForJobRequests")
