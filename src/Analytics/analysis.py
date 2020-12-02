@@ -19,7 +19,9 @@ def graph_plot(df, ax, title):
     splits1 = list(df.groupby("WorkerID"))
     for i in range(len(splits1)):
         time = dict()
-        a = pd.DataFrame(splits1[i][1], columns=['JobId', 'WorkerID', 'TaskId', 'start_time', 'end_time', 'duration'])
+        a = pd.DataFrame(splits1[i][1],
+                         columns=['JobId', 'WorkerID', 'TaskId',
+                                  'start_time', 'end_time', 'duration'])
         end_time = a["end_time"].iloc[-1]
         for m in range(0, end_time):
             count = 0
@@ -90,7 +92,7 @@ def get_analytics():
 
     else:
         pass
-    
+
     '''
     Checking if the log files for Least Loaded Algorithm exist.
     If they exist perform the necessary statistical computation and plot the graphs to draw inferences.
@@ -216,8 +218,8 @@ def get_analytics():
     x1.append('Least Loaded Scheduling')
     x1.append('Random Scheduling')
 
-    br1 = np.arange(len(x1)) 
-    br2 = [x + barWidth for x in br1] 
+    br1 = np.arange(len(x1))
+    br2 = [x + barWidth for x in br1]
     plt.bar(br1, y1, color='r', width=barWidth, edgecolor='grey', label='Tasks') 
     plt.bar(br2, y2, color='g', width=barWidth, edgecolor='grey', label='Jobs') 
     plt.xlabel('Scheduling algorithms')
