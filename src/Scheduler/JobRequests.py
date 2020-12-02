@@ -22,7 +22,7 @@ class JobRequestHandler:
     def addJobRequest(self, requestSpecs):
         """
         ```addJobRequest``` adds the job request's specification to
-        the handler object's ```jobRequests``` dictionary
+        the handler object's ```jobRequests``` dictionary.
 
         :param requestSpecs: Dictionary got after converting the incoming
         JSON request string into a dictionary
@@ -39,7 +39,7 @@ class JobRequestHandler:
                                                Optional[str],
                                                Optional[dict]]]:
         """```getWaitingTask``` returns a task to be allocated to one of the
-        workers for execution as well as the task's related meta-data
+        workers for execution as well as the task's related meta-data.
 
         ## Algorithm:
         ```
@@ -113,7 +113,7 @@ class JobRequestHandler:
 
     def isEmpty(self) -> bool:
         """```isEmpty``` checks if the ```jobRequests``` dictionary is
-        of the handler is empty
+        of the handler is empty.
 
         :return: Return True if the ```jobRequests``` dictionary is
         empty else it returns False

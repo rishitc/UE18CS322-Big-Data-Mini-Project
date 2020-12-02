@@ -15,7 +15,7 @@ def get_heatmap(df, ax, title):
     * There are 3 heatmap plots displayed in a window, with a plot each for a
     scheduling algorithm. The X axis has the time in seconds and the Y axis
     has the worker_id.
-    * In the plot ,each block represents number of tasks
+    * In the plot, each block represents number of tasks.
     """
     s_time = min(df["start_time"])
     df1 = pd.DataFrame()

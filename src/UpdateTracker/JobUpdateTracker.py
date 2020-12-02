@@ -77,9 +77,9 @@ class Tracker:
         Starting time is initialized when request message is sent
         Ending time is updated when all tasks in a job are complete and a
         response message is sent tasks_time keeps track of start time and
-        end time of a task
+        end time of a task.
         The start time and end time of a particular task are received in the
-        response message
+        response message.
         """
         # json_string = json.loads(request_message)
 
@@ -116,11 +116,11 @@ class Tracker:
         This method takes in the response message and performs the following
         tasks:
 
-        - Updates task end time
-        - If all tasks composing a job are done, updates job end time
-        - Updates task stats of a worker
-        - Writes out the stats of job, task, worker to a csv file
-        - Format of task_stats is [start_time, end_time]
+        - Updates task end time.
+        - If all tasks composing a job are done, updates job end time.
+        - Updates task stats of a worker.
+        - Writes out the stats of job, task, worker to a csv file.
+        - Format of task_stats is ```[start_time, end_time]```.
         """
         # json_string = json.loads(response_message)
 
@@ -157,7 +157,7 @@ class Tracker:
         Check if all tasks that compose a job are finished
         This is checked using a flag. If flag remains 1, then all tasks
         in a job are completed and the job end time is written to the
-        jobs_time dictionary
+        jobs_time dictionary.
         '''
         flag = 1
         for key in self.jobs[job_id].keys():
@@ -170,8 +170,8 @@ class Tracker:
 
     def isMapComplete(self, jobID) -> bool:
         """
-        - Performs a check whether all map tasks in a job are complete
-        - This is to maintain *map-reduce dependency*
+        - Performs a check whether all map tasks in a job are complete.
+        - This is to maintain *map-reduce dependency*.
         """
         status = self.map_tracker[jobID].values()
         if 0 in status:
@@ -181,8 +181,8 @@ class Tracker:
 
     def isReduceComplete(self, jobID) -> bool:
         """
-        - Performs a check whether **all reduce tasks in a job are complete**
-        - This is to maintain *map-reduce dependency*
+        - Performs a check whether **all reduce tasks in a job are complete**.
+        - This is to maintain *map-reduce dependency*.
         """
         status = self.reduce_tracker[jobID].values()
         if 0 in status:
@@ -229,7 +229,7 @@ class Tracker:
 
     def writeWorkersCSV(self, JobID, WorkerID, TaskID):
         """
-        Writes worker stats to a log (here CSV) file
+        Writes worker stats to a log (here CSV) file.
         """
         row = []
         row.append(JobID)
@@ -245,7 +245,7 @@ class Tracker:
 
     def __del__(self):
         """
-        The destructor of the class closes all the open log files
+        The destructor of the class closes all the open log files.
         """
         self.flush()
         self.f_jobs.close()

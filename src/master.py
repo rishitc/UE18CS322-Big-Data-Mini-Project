@@ -192,7 +192,7 @@ if __name__ == "__main__":
                       f"{GE.plural_noun('worker', WORKER_COUNT)}"
                       " been started, yet? [y/n] ")).strip().lower()
 
-    """ Creating the thread-shared objects
+    """ Creating the thread-shared objects.
     """
     # Worker State Tracker Object
     obj_workerStateTracker: StateTracker = StateTracker(workerConf)

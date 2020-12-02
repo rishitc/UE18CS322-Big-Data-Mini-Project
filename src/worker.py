@@ -4,12 +4,12 @@ import threading
 from WorkerSim.WorkerSimulation import Worker
 
 """
-Some of the important pointers to be implemented in this code are:-
+Some of the important pointers to be implemented in this code are:
 1) Receiving the worker instance's port number and ID(in string, need to
-   convert to integer) through CLI and binding socket to that address
+   convert to integer) through CLI and binding socket to that address.
 2) Listening for task launch requests from the Master's port 5001 and then
-   simulating the execution using WorkerSimulation
-3) Sharing updates with the master
+   simulating the execution using WorkerSimulation.
+3) Sharing updates with the master.
 """
 
 MESSAGE_BUFFER_SIZE = 4096
@@ -29,7 +29,7 @@ def getCMDLineArgs():
 def createWorkerSocket(task_request_addr):
     """ ```createWorkerSocket``` returns a socket that will be used
     to connect worker to its designated port in order to listen for
-    task requests from the master
+    task requests from the master.
 
     ```return```: Socket object
 
@@ -43,7 +43,7 @@ def createWorkerSocket(task_request_addr):
 
 def createMasterSocket(task_complete_addr):
     """ ```createSocket``` returns a socket that will be used
-    to connect to the master
+    to connect to the master.
 
     ```return```: Socket object
 

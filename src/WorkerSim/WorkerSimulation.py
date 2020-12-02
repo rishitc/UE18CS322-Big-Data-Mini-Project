@@ -16,15 +16,15 @@ class Worker:
     """
     - This Class simulates the worker through following steps:
         1. It gets YACS Protocol Message (created using the
-            ***createMessageToWorker()***) from the Master
+            ***createMessageToWorker()***) from the Master.
         1. It adds the particular task to its execution pool.
             - The worker will not be handed any task when its execution pool is
-            full
+            full.
         1. Run (i.e. simulate) the tasks by decrementing the *remaining_time*
-            value each second
+            value each second.
         1. Once a particular task finishes execution, the worker removes it
             from the execution pool and sends a message back to the Master
-            using YACS Protocol Message (***createMessageToMaster()***)
+            using YACS Protocol Message (***createMessageToMaster()***).
     """
     def __init__(self, WorkerID):
         self.tasks = dict()  # Task Execution Pool
