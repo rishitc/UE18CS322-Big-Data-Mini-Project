@@ -6,3 +6,4 @@ class MasterPrintLock:
 
 
 master = MasterPrintLock()
+worker = MasterPrintLock()
