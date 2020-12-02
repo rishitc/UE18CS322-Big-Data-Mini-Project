@@ -32,12 +32,12 @@ import threading
 from WorkerSim.WorkerSimulation import Worker
 
 &#34;&#34;&#34;
-Some of the important pointers to be implemented in this code are:-
+Some of the important pointers to be implemented in this code are:
 1) Receiving the worker instance&#39;s port number and ID(in string, need to
-   convert to integer) through CLI and binding socket to that address
+   convert to integer) through CLI and binding socket to that address.
 2) Listening for task launch requests from the Master&#39;s port 5001 and then
-   simulating the execution using WorkerSimulation
-3) Sharing updates with the master
+   simulating the execution using WorkerSimulation.
+3) Sharing updates with the master.
 &#34;&#34;&#34;
 
 MESSAGE_BUFFER_SIZE = 4096
@@ -57,7 +57,7 @@ def getCMDLineArgs():
 def createWorkerSocket(task_request_addr):
     &#34;&#34;&#34; ```createWorkerSocket``` returns a socket that will be used
     to connect worker to its designated port in order to listen for
-    task requests from the master
+    task requests from the master.
 
     ```return```: Socket object
 
@@ -71,7 +71,7 @@ def createWorkerSocket(task_request_addr):
 
 def createMasterSocket(task_complete_addr):
     &#34;&#34;&#34; ```createSocket``` returns a socket that will be used
-    to connect to the master
+    to connect to the master.
 
     ```return```: Socket object
 
@@ -153,7 +153,7 @@ if __name__ == &#34;__main__&#34;:
 </code></dt>
 <dd>
 <div class="desc"><p><code>createSocket</code> returns a socket that will be used
-to connect to the master</p>
+to connect to the master.</p>
 <p><code>return</code>: Socket object</p>
 <p><code>rtype</code>: socket.socket</p></div>
 <details class="source">
@@ -162,7 +162,7 @@ to connect to the master</p>
 </summary>
 <pre><code class="python">def createMasterSocket(task_complete_addr):
     &#34;&#34;&#34; ```createSocket``` returns a socket that will be used
-    to connect to the master
+    to connect to the master.
 
     ```return```: Socket object
 
@@ -180,7 +180,7 @@ to connect to the master</p>
 <dd>
 <div class="desc"><p><code>createWorkerSocket</code> returns a socket that will be used
 to connect worker to its designated port in order to listen for
-task requests from the master</p>
+task requests from the master.</p>
 <p><code>return</code>: Socket object</p>
 <p><code>rtype</code>: socket.socket</p></div>
 <details class="source">
@@ -190,7 +190,7 @@ task requests from the master</p>
 <pre><code class="python">def createWorkerSocket(task_request_addr):
     &#34;&#34;&#34; ```createWorkerSocket``` returns a socket that will be used
     to connect worker to its designated port in order to listen for
-    task requests from the master
+    task requests from the master.
 
     ```return```: Socket object
 
