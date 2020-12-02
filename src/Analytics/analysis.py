@@ -2,7 +2,7 @@ import os
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
-
+import math
 
 def graph_plot(df, ax, title):
     """
@@ -16,14 +16,18 @@ def graph_plot(df, ax, title):
     * For a given scheduling algorithm, each worker is represented with a line
     of a different colour.
     """
+    s_time=min(df["start_time"])
+    df["start_time"]-=s_time
+    df["end_time"]-=s_time
     splits1 = list(df.groupby("WorkerID"))
+    
     for i in range(len(splits1)):
         time = dict()
         a = pd.DataFrame(splits1[i][1],
                          columns=['JobId', 'WorkerID', 'TaskId',
                                   'start_time', 'end_time', 'duration'])
         end_time = a["end_time"].iloc[-1]
-        for m in range(0, end_time):
+        for m in range(0, math.ceil(float(end_time))):
             count = 0
             for n in range(len(a["TaskId"])):
                 if m >= a["start_time"].iloc[n] and m <= a["end_time"].iloc[n]:
