@@ -2,7 +2,52 @@ import os
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
+import seaborn as sns
 import math
+
+
+def get_heatmap(df, ax, title):
+    """
+    * This function takes in the *workers.csv* for each algorithm separately
+    and groups by worker id.
+    * For each worker, the number of tasks running at each second in a time
+    interval are calculated.
+    * There are 3 heatmap plots displayed in a window, with a plot each for a
+    scheduling algorithm. The X axis has the time in seconds and the Y axis
+    has the worker_id.
+    * In the plot ,each block represents number of tasks
+    """
+    s_time = min(df["start_time"])
+    df1 = pd.DataFrame()
+    df["start_time"] -= s_time
+    df["end_time"] -= s_time
+    splits1 = list(df.groupby("WorkerID"))
+    c = []
+    s = []
+    w = []
+    for i in range(len(splits1)):
+        a = pd.DataFrame(splits1[i][1],
+                         columns=['JobId', 'WorkerID', 'TaskId',
+                                  'start_time', 'end_time'])
+        end_time = a["end_time"].iloc[-1]
+        for m in range(1, math.ceil(float(end_time))):
+            count = 0
+            for n in range(len(a["TaskId"])):
+                if m >= a["start_time"].iloc[n] and m <= a["end_time"].iloc[n]:
+                    count = count + 1
+                else:
+                    pass
+            c.append(count)
+            s.append(m)
+            w.append(splits1[i][0])
+
+    df1['WorkerID'] = w
+    df1['seconds'] = s
+    df1['task_count'] = c
+    df1 = df1.pivot(index='WorkerID', columns='seconds', values='task_count')
+    sns.heatmap(df1, annot=True, ax=ax)
+    ax.set_title(title)
+
 
 def graph_plot(df, ax, title):
     """
@@ -11,16 +56,16 @@ def graph_plot(df, ax, title):
     * For each worker, the number of tasks running at each second in a time
     interval are calculated.
     * There are 3 plots displayed in a window, with a plot each for a
-    scheduling algorithm. The X axis has the number of tasks and the Y axis
-    has the time in seconds.
+    scheduling algorithm. The X axis has the time in seconds and the Y axis
+    has the number of tasks.
     * For a given scheduling algorithm, each worker is represented with a line
     of a different colour.
     """
-    s_time=min(df["start_time"])
-    df["start_time"]-=s_time
-    df["end_time"]-=s_time
+    s_time = min(df["start_time"])
+    df["start_time"] -= s_time
+    df["end_time"] -= s_time
     splits1 = list(df.groupby("WorkerID"))
-    
+
     for i in range(len(splits1)):
         time = dict()
         a = pd.DataFrame(splits1[i][1],
@@ -58,17 +103,19 @@ def get_analytics():
     scheduling algorithms that plots the number of tasks scheduled on each
     worker at each instance of time.
     """
-    fig, (ax1, ax2, ax3) = plt.subplots(3, figsize=(15, 25))
-    fig.tight_layout(pad=10.0)
+    fig1, (ax1, ax2, ax3) = plt.subplots(3, figsize=(15, 25))
+    fig1.tight_layout(pad=10.0)
+    fig2, (ax4, ax5, ax6) = plt.subplots(3, figsize=(15, 25))
+    fig2.tight_layout(pad=10.0)
     mean_salgo1_task = 0
     mean_salgo2_task = 0
     mean_salgo3_task = 0
     mean_salgo1_job = 0
     mean_salgo2_job = 0
     mean_salgo3_job = 0
-    median_salgo1_task = 0 
+    median_salgo1_task = 0
     median_salgo2_task = 0
-    median_salgo3_task = 0 
+    median_salgo3_task = 0
     median_salgo1_job = 0
     median_salgo2_job = 0
     median_salgo3_job = 0
@@ -92,14 +139,15 @@ def get_analytics():
         median_salgo1_task = df1_t1["duration"].median()
         median_salgo1_job = df1_j1["duration"].median()
 
-        graph_plot(df1_w1, ax1, 'Round Robin Scheduling')
-
+        graph_plot(df1_w1, ax4, 'Round Robin Scheduling')
+        get_heatmap(df1_w1, ax1, 'Round Robin Scheduling')
     else:
         pass
 
     '''
     Checking if the log files for Least Loaded Algorithm exist.
-    If they exist perform the necessary statistical computation and plot the graphs to draw inferences.
+    If they exist perform the necessary statistical computation and
+    plot the graphs to draw inferences.
     '''
     if os.path.exists('Least-Loaded'):
         algo = 'Least-Loaded'
@@ -116,14 +164,15 @@ def get_analytics():
         median_salgo2_task = df1_t2["duration"].median()
         median_salgo2_job = df1_j2["duration"].median()
 
-        graph_plot(df1_w2, ax2, 'Least Loaded Scheduling')
-
+        graph_plot(df1_w2, ax5, 'Least Loaded Scheduling')
+        get_heatmap(df1_w2, ax2, 'Least Loaded Scheduling')
     else:
         pass
 
     '''
     Checking if the log files for Random Algorithm exist.
-    If they exist perform the necessary statistical computation and plot the graphs to draw inferences.
+    If they exist perform the necessary statistical computation and plot the
+    graphs to draw inferences.
     '''
     if os.path.exists('Random'):
         algo = 'Random'
@@ -140,14 +189,14 @@ def get_analytics():
         median_salgo3_task = df1_t3["duration"].median()
         median_salgo3_job = df1_j3["duration"].median()
 
-        graph_plot(df1_w3, ax3, 'Random Scheduling')
-
+        graph_plot(df1_w3, ax6, 'Random Scheduling')
+        get_heatmap(df1_w2, ax3, 'Random Scheduling')
     else:
         pass
 
     '''
     The 3 blocks of code given below display the computed mean and median
-    values for each algorithm(if that algorithm was used) in a neat readable 
+    values for each algorithm(if that algorithm was used) in a neat readable
     format which can be used to easily read the data plotted in a graph format.
     '''
     if os.path.exists('Round-Robin'):
@@ -155,7 +204,7 @@ def get_analytics():
         print(f"Mean of task completion time : {mean_salgo1_task}")
         print(f"Mean of job completion time : {mean_salgo1_job}")
         print(f"Median of task completion time : {median_salgo1_task}")
-        print(f"Median of job completion time : {median_salgo1_job}\n")  
+        print(f"Median of job completion time : {median_salgo1_job}\n")
     else:
         pass
 
@@ -173,7 +222,7 @@ def get_analytics():
         print(f"Mean of task completion time : {mean_salgo3_task}")
         print(f"Mean of job completion time : {mean_salgo3_job}")
         print(f"Median of task completion time : {median_salgo3_task}")
-        print(f"Median of job completion time : {median_salgo3_job}\n")    
+        print(f"Median of job completion time : {median_salgo3_job}\n")
     else:
         pass
 
@@ -196,9 +245,9 @@ def get_analytics():
     x1.append('Random Scheduling')
 
     br1 = np.arange(len(x1))
-    br2 = [x + barWidth for x in br1] 
-    plt.bar(br1, y1, color='r', width=barWidth, edgecolor='grey', label='Tasks') 
-    plt.bar(br2, y2, color='g', width=barWidth, edgecolor='grey', label='Jobs') 
+    br2 = [x + barWidth for x in br1]
+    plt.bar(br1, y1, color='r', width=barWidth, edgecolor='grey', label='Tasks')
+    plt.bar(br2, y2, color='g', width=barWidth, edgecolor='grey', label='Jobs')
     plt.xlabel('Scheduling algorithms')
     plt.ylabel('Average task and job completion time')
     plt.xticks([r + barWidth for r in range(len(x1))], x1)
