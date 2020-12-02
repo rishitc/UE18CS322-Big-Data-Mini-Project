@@ -18,6 +18,9 @@ from Scheduler.RandomScheduling import RandomScheduler
 from Scheduler.RoundRobinScheduling import RoundRobinScheduler
 from Scheduler.LeastLoadedScheduling import LeastLoadedScheduler
 
+from Communication.protocol import messageToMasterType
+
+
 BUFFER_SIZE: int = 4096
 
 # Error codes to return to the shell
@@ -124,24 +127,32 @@ def workerUpdates(workerSocket: socket.socket,
     **type** ```jobUpdateTracker```: JobUpdateTracker
     """
     while True:
-        workerUpdate = workerSocket.recv(BUFFER_SIZE).decode()
+        workerUpdate: str = workerSocket.recv(BUFFER_SIZE).decode()
         if not workerUpdate:
             workerSocket.close()
             break
+
+        # Preprocess the received JSON data. This helps prevent
+        # JSON parsing errors when more then one message has been
+        # received at once at the master
+        workerUpdate = "[" + workerUpdate.replace("}{", "},{") + "]"
 
         master.PRINT_LOCK.acquire()
         print(f"Received worker update at master: {workerUpdate}")
         master.PRINT_LOCK.release()
 
-        parsedJSON_Msg = json.loads(workerUpdate)
+        parsedJSON_Msg: List[messageToMasterType] = \
+            json.loads(workerUpdate)
 
-        jobUpdateTracker.LOCK.acquire()
-        jobUpdateTracker.updateJob(parsedJSON_Msg)
-        jobUpdateTracker.LOCK.release()
+        msg: messageToMasterType
+        for msg in parsedJSON_Msg:
+            jobUpdateTracker.LOCK.acquire()
+            jobUpdateTracker.updateJob(msg)
+            jobUpdateTracker.LOCK.release()
 
-        workerStateTracker.LOCK.acquire()
-        workerStateTracker.freeSlot(parsedJSON_Msg["worker_id"])
-        workerStateTracker.LOCK.release()
+            workerStateTracker.LOCK.acquire()
+            workerStateTracker.freeSlot(msg["worker_id"])
+            workerStateTracker.LOCK.release()
 
         # master.PRINT_LOCK.acquire()
         # workerStateTracker.showWorkerStates()

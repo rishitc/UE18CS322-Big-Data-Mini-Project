@@ -1,4 +1,5 @@
 import json
+from typing import TypedDict
 
 # This lock is used to get access to print onto the standard output
 from Locks.MasterPrintLock import master
@@ -152,3 +153,28 @@ class YACS_Protocol:
         print(json.dumps(msg_dict, indent=4))
         worker.PRINT_LOCK.release()
         master.PRINT_LOCK.release()
+
+
+class messageToWorkerTaskType(TypedDict):
+    task_id: str
+    duration: int
+    worker_id: int
+
+
+class messageToWorkerType(TypedDict):
+    job_id: str
+    task_family: str
+    task: messageToWorkerTaskType
+
+
+class messageToMasterTaskType(TypedDict):
+    task_id: str
+    start_time: float
+    end_time: float
+
+
+class messageToMasterType(TypedDict):
+    worker_id: int
+    job_ID: str
+    task_family: str
+    task: messageToMasterTaskType

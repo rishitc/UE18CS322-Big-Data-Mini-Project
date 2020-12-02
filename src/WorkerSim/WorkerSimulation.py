@@ -3,9 +3,10 @@ import json  # For JSON to python conversion and vice-versa
 import threading  # For locks
 import socket  # For function parameters
 import queue  # For storing the completed tasks
+from typing import List
 
 from Locks.WorkerPrintLock import worker
-from Communication.protocol import YACS_Protocol
+from Communication.protocol import (YACS_Protocol, messageToWorkerType)
 # from master import PRINT_LOCK
 #  For sending message back to master
 
@@ -47,30 +48,38 @@ class Worker:
                 taskRequestSocket.close()
                 break
 
+            # Preprocess the received JSON data. This helps prevent
+            # JSON parsing errors when more then one message has been
+            # received at once at the master
+            taskRequest = "[" + taskRequest.replace("}{", "},{") + "]"
+
             worker.PRINT_LOCK.acquire()
             print(f"Task received at worker: {taskRequest}")
             worker.PRINT_LOCK.release()
 
             # Convert JSON to python dictionary
-            python_protocol_message = json.loads(taskRequest)
+            python_protocol_message: List[messageToWorkerType] = \
+                json.loads(taskRequest)
 
-            # To obtain key for addition to task exec pool
-            job_in_message = python_protocol_message["job_id"]
-            task_in_message = python_protocol_message["task"]["task_id"]
-            # Initialise the starting time of the task
-            python_protocol_message["task"]["start time"] = time.time()
-            python_protocol_message["task"]["end time"] = 0
-            # Adding components that are there in reply message to the master
-            # but not in the received message
-            worker.PRINT_LOCK.acquire()
-            print(python_protocol_message)
-            worker.PRINT_LOCK.release()
-            self.LOCK.acquire()  # Acquiring lock as shared object is accessed
-            if self.tasks.get(job_in_message) is None:
-                self.tasks[job_in_message] = dict()
+            request: messageToWorkerType
+            for request in python_protocol_message:
+                # To obtain key for addition to task exec pool
+                job_in_message = request["job_id"]
+                task_in_message = request["task"]["task_id"]
+                # Initialise the starting time of the task
+                request["task"]["start time"] = time.time()
+                request["task"]["end time"] = 0
+                # Adding components that are there in reply message to the
+                # master but not in the received message
+                worker.PRINT_LOCK.acquire()
+                print(request)
+                worker.PRINT_LOCK.release()
+                # Acquiring lock as shared object is accessed
+                self.LOCK.acquire()
+                if self.tasks.get(job_in_message) is None:
+                    self.tasks[job_in_message] = dict()
 
-            self.tasks[job_in_message][task_in_message] = \
-                python_protocol_message
+                self.tasks[job_in_message][task_in_message] = request
 
             #  Value for the tasks dictionary will be all the info
             self.LOCK.release()  # Release lock as CS code is complete
