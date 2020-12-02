@@ -95,7 +95,8 @@ class RoundRobinScheduler:
                         # 2. Update its state
                         enc_obj = Fernet(workerStateTracker
                                          .workerState[workerStateTracker
-                                         .workerIDs[_temp]]["pri_key"])
+                                                      .workerIDs[_temp]]
+                                         ["pri_key"])
                         workerStateTracker.getWorkerSocket(workerStateTracker.
                                                            workerIDs[_temp])\
                             .sendall(enc_obj.encrypt(protocolMsg.encode()))
