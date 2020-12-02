@@ -34,7 +34,7 @@ from typing import List, Optional
 class StateTracker:
     def __init__(self, confObj: dict) -&gt; None:
         &#34;&#34;&#34;Store the list of the worker dictionaries in a new dictionary
-         indexed by the ```worker_id``` key
+         indexed by the ```worker_id``` key.
 
         **param** ```configObj```: Dictionary got from loading in the json
         data stored in the worker configuration file
@@ -51,7 +51,7 @@ class StateTracker:
                                              socket.SOCK_STREAM)
             workerConnSocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR,
                                         1)
-            print(f&#39;{worker[&#34;port&#34;]=}&#39;)
+            # print(f&#39;{worker[&#34;port&#34;]=}&#39;)
             workerConnSocket.connect((socket.gethostname(), worker[&#34;port&#34;]))
             self.workerState[worker[&#34;worker_id&#34;]] = {
                 &#34;slots&#34;: worker[&#34;slots&#34;],
@@ -62,8 +62,9 @@ class StateTracker:
             self.workerIDs.append(worker[&#34;worker_id&#34;])
 
     def isWorkerFree(self, workerID: int, demand: int = 1) -&gt; bool:
-        &#34;&#34;&#34;Check if the worker whose ```worker_id``` key is equal to
-         workerID.
+        &#34;&#34;&#34;Checks if the worker whose ```worker_id``` key is equal to
+         ```workerID```, has ```demand``` number of free slots or not.
+         By default ```demand``` is set to 1.
 
         **param** ```workerID```: ```worker_id``` value of the worker node
         we are checking for free slots
@@ -94,7 +95,7 @@ class StateTracker:
 
     def allocateSlot(self, workerID: int, task_count: int = 1) -&gt; None:
         &#34;&#34;&#34;Allocates the task to the worker and decrements the number of
-         free slots in that worker
+         free slots in that worker.
 
         **param** ```workerID```: Specifies the worker to which we are
         allocating the task to
@@ -112,7 +113,7 @@ class StateTracker:
 
     def freeSlot(self, workerID: int, task_count: int = 1) -&gt; None:
         &#34;&#34;&#34;Updates the state of the worker to indicate task completion
-        by incrementing the number of free slots on that worker
+        by incrementing the number of free slots on that worker.
 
         **param** ```workerID```: Specifies the worker which has completed its
         task
@@ -147,7 +148,7 @@ class StateTracker:
         return _least_loaded_workerID
 
     def __del__(self):
-        &#34;&#34;&#34;```__del__``` Closes all task dispatch sockets to the workers
+        &#34;&#34;&#34;```__del__``` Closes all task dispatch sockets to the workers.
         &#34;&#34;&#34;
         for workerID in self.workerIDs:
             self.workerState[workerID][&#34;socket&#34;].close()</code></pre>
@@ -168,7 +169,7 @@ class StateTracker:
 </code></dt>
 <dd>
 <div class="desc"><p>Store the list of the worker dictionaries in a new dictionary
-indexed by the <code>worker_id</code> key</p>
+indexed by the <code>worker_id</code> key.</p>
 <p><strong>param</strong> <code>configObj</code>: Dictionary got from loading in the json
 data stored in the worker configuration file</p>
 <p><strong>type</strong> <code>configObj</code>: dict</p></div>
@@ -179,7 +180,7 @@ data stored in the worker configuration file</p>
 <pre><code class="python">class StateTracker:
     def __init__(self, confObj: dict) -&gt; None:
         &#34;&#34;&#34;Store the list of the worker dictionaries in a new dictionary
-         indexed by the ```worker_id``` key
+         indexed by the ```worker_id``` key.
 
         **param** ```configObj```: Dictionary got from loading in the json
         data stored in the worker configuration file
@@ -196,7 +197,7 @@ data stored in the worker configuration file</p>
                                              socket.SOCK_STREAM)
             workerConnSocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR,
                                         1)
-            print(f&#39;{worker[&#34;port&#34;]=}&#39;)
+            # print(f&#39;{worker[&#34;port&#34;]=}&#39;)
             workerConnSocket.connect((socket.gethostname(), worker[&#34;port&#34;]))
             self.workerState[worker[&#34;worker_id&#34;]] = {
                 &#34;slots&#34;: worker[&#34;slots&#34;],
@@ -207,8 +208,9 @@ data stored in the worker configuration file</p>
             self.workerIDs.append(worker[&#34;worker_id&#34;])
 
     def isWorkerFree(self, workerID: int, demand: int = 1) -&gt; bool:
-        &#34;&#34;&#34;Check if the worker whose ```worker_id``` key is equal to
-         workerID.
+        &#34;&#34;&#34;Checks if the worker whose ```worker_id``` key is equal to
+         ```workerID```, has ```demand``` number of free slots or not.
+         By default ```demand``` is set to 1.
 
         **param** ```workerID```: ```worker_id``` value of the worker node
         we are checking for free slots
@@ -239,7 +241,7 @@ data stored in the worker configuration file</p>
 
     def allocateSlot(self, workerID: int, task_count: int = 1) -&gt; None:
         &#34;&#34;&#34;Allocates the task to the worker and decrements the number of
-         free slots in that worker
+         free slots in that worker.
 
         **param** ```workerID```: Specifies the worker to which we are
         allocating the task to
@@ -257,7 +259,7 @@ data stored in the worker configuration file</p>
 
     def freeSlot(self, workerID: int, task_count: int = 1) -&gt; None:
         &#34;&#34;&#34;Updates the state of the worker to indicate task completion
-        by incrementing the number of free slots on that worker
+        by incrementing the number of free slots on that worker.
 
         **param** ```workerID```: Specifies the worker which has completed its
         task
@@ -292,7 +294,7 @@ data stored in the worker configuration file</p>
         return _least_loaded_workerID
 
     def __del__(self):
-        &#34;&#34;&#34;```__del__``` Closes all task dispatch sockets to the workers
+        &#34;&#34;&#34;```__del__``` Closes all task dispatch sockets to the workers.
         &#34;&#34;&#34;
         for workerID in self.workerIDs:
             self.workerState[workerID][&#34;socket&#34;].close()</code></pre>
@@ -304,7 +306,7 @@ data stored in the worker configuration file</p>
 </code></dt>
 <dd>
 <div class="desc"><p>Allocates the task to the worker and decrements the number of
-free slots in that worker</p>
+free slots in that worker.</p>
 <p><strong>param</strong> <code>workerID</code>: Specifies the worker to which we are
 allocating the task to</p>
 <p><strong>type</strong> <code>workerID</code>: int</p>
@@ -317,7 +319,7 @@ allocated the worker, defaults to 1</p>
 </summary>
 <pre><code class="python">def allocateSlot(self, workerID: int, task_count: int = 1) -&gt; None:
     &#34;&#34;&#34;Allocates the task to the worker and decrements the number of
-     free slots in that worker
+     free slots in that worker.
 
     **param** ```workerID```: Specifies the worker to which we are
     allocating the task to
@@ -339,7 +341,7 @@ allocated the worker, defaults to 1</p>
 </code></dt>
 <dd>
 <div class="desc"><p>Updates the state of the worker to indicate task completion
-by incrementing the number of free slots on that worker</p>
+by incrementing the number of free slots on that worker.</p>
 <p><strong>param</strong> <code>workerID</code>: Specifies the worker which has completed its
 task</p>
 <p><strong>type</strong> <code>workerID</code>: int</p>
@@ -352,7 +354,7 @@ the worker, defaults to 1</p>
 </summary>
 <pre><code class="python">def freeSlot(self, workerID: int, task_count: int = 1) -&gt; None:
     &#34;&#34;&#34;Updates the state of the worker to indicate task completion
-    by incrementing the number of free slots on that worker
+    by incrementing the number of free slots on that worker.
 
     **param** ```workerID```: Specifies the worker which has completed its
     task
@@ -414,8 +416,9 @@ the worker, defaults to 1</p>
 <span>def <span class="ident">isWorkerFree</span></span>(<span>self, workerID: int, demand: int = 1) ‑> bool</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Check if the worker whose <code>worker_id</code> key is equal to
-workerID.</p>
+<div class="desc"><p>Checks if the worker whose <code>worker_id</code> key is equal to
+<code>workerID</code>, has <code>demand</code> number of free slots or not.
+By default <code>demand</code> is set to 1.</p>
 <p><strong>param</strong> <code>workerID</code>: <code>worker_id</code> value of the worker node
 we are checking for free slots</p>
 <p><strong>type</strong> <code>workerID</code>: int</p>
@@ -431,8 +434,9 @@ defaults to 1</p>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def isWorkerFree(self, workerID: int, demand: int = 1) -&gt; bool:
-    &#34;&#34;&#34;Check if the worker whose ```worker_id``` key is equal to
-     workerID.
+    &#34;&#34;&#34;Checks if the worker whose ```worker_id``` key is equal to
+     ```workerID```, has ```demand``` number of free slots or not.
+     By default ```demand``` is set to 1.
 
     **param** ```workerID```: ```worker_id``` value of the worker node
     we are checking for free slots

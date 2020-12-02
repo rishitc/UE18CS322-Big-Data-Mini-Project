@@ -28,14 +28,15 @@
 </summary>
 <pre><code class="python">import json
 
+# This lock is used to get access to print onto the standard output
+from Locks.MasterPrintLock import master
+from Locks.WorkerPrintLock import worker
+
 
 class YACS_Protocol:
     @staticmethod
     def createMessageToWorker(job_ID, task_family, task_ID, duration,
                               worker_ID):
-        assert task_family in [&#34;map&#34;, &#34;reduce&#34;], (&#34;Task family name &#34;
-                                                  f&#34;{task_family} is &#34;
-                                                  &#34;incorrect!&#34;)
         &#34;&#34;&#34;
         The final JSON string will be as follows:
 
@@ -52,6 +53,10 @@ class YACS_Protocol:
         ```
 
         &#34;&#34;&#34;
+        assert task_family in [&#34;map&#34;, &#34;reduce&#34;], (&#34;Task family name &#34;
+                                                  f&#34;{task_family} is &#34;
+                                                  &#34;incorrect!&#34;)
+
         msg_dict = {}
         msg_dict[&#34;worker_id&#34;] = worker_ID
         msg_dict[&#34;job_id&#34;] = job_ID
@@ -65,9 +70,6 @@ class YACS_Protocol:
     @staticmethod
     def createMessageToMaster(job_ID, task_family, task_ID, start_time,
                               end_time, worker_ID):
-        assert task_family in [&#34;map&#34;, &#34;reduce&#34;], (&#34;Task family name &#34;
-                                                  f&#34;{task_family} is &#34;
-                                                  &#34;incorrect!&#34;)
         &#34;&#34;&#34;
         The final JSON string will be as follows:
 
@@ -85,6 +87,10 @@ class YACS_Protocol:
         ```
 
         &#34;&#34;&#34;
+        assert task_family in [&#34;map&#34;, &#34;reduce&#34;], (&#34;Task family name &#34;
+                                                  f&#34;{task_family} is &#34;
+                                                  &#34;incorrect!&#34;)
+
         msg_dict = {}
         msg_dict[&#34;worker_id&#34;] = worker_ID
         msg_dict[&#34;job_id&#34;] = job_ID
@@ -100,9 +106,6 @@ class YACS_Protocol:
     @staticmethod
     def prettyPrintMessageToWorker(job_ID, task_family, task_ID, duration,
                                    worker_ID):
-        assert task_family in [&#34;map&#34;, &#34;reduce&#34;], (&#34;Task family name &#34;
-                                                  f&#34;{task_family} is &#34;
-                                                  &#34;incorrect!&#34;)
         &#34;&#34;&#34;
         The final JSON string will be as follows:
 
@@ -119,6 +122,10 @@ class YACS_Protocol:
         ```
 
         &#34;&#34;&#34;
+        assert task_family in [&#34;map&#34;, &#34;reduce&#34;], (&#34;Task family name &#34;
+                                                  f&#34;{task_family} is &#34;
+                                                  &#34;incorrect!&#34;)
+
         msg_dict = {}
         msg_dict[&#34;worker_id&#34;] = worker_ID
         msg_dict[&#34;job_id&#34;] = job_ID
@@ -128,14 +135,15 @@ class YACS_Protocol:
                                 &#34;duration&#34;: duration
                             }
 
+        master.PRINT_LOCK.acquire()
+        worker.PRINT_LOCK.acquire()
         print(json.dumps(msg_dict, indent=4))
+        worker.PRINT_LOCK.release()
+        master.PRINT_LOCK.release()
 
     @staticmethod
     def prettyPrintMessageToMaster(job_ID, task_family, task_ID, start_time,
                                    end_time, worker_ID):
-        assert task_family in [&#34;map&#34;, &#34;reduce&#34;], (&#34;Task family name &#34;
-                                                  f&#34;{task_family} is &#34;
-                                                  &#34;incorrect!&#34;)
         &#34;&#34;&#34;
         The final JSON string will be as follows:
 
@@ -153,6 +161,10 @@ class YACS_Protocol:
         ```
 
         &#34;&#34;&#34;
+        assert task_family in [&#34;map&#34;, &#34;reduce&#34;], (&#34;Task family name &#34;
+                                                  f&#34;{task_family} is &#34;
+                                                  &#34;incorrect!&#34;)
+
         msg_dict = {}
         msg_dict[&#34;worker_id&#34;] = worker_ID
         msg_dict[&#34;job_id&#34;] = job_ID
@@ -163,7 +175,11 @@ class YACS_Protocol:
                                 &#34;end time&#34;: end_time,
                             }
 
-        print(json.dumps(msg_dict, indent=4))</code></pre>
+        master.PRINT_LOCK.acquire()
+        worker.PRINT_LOCK.acquire()
+        print(json.dumps(msg_dict, indent=4))
+        worker.PRINT_LOCK.release()
+        master.PRINT_LOCK.release()</code></pre>
 </details>
 </section>
 <section>
@@ -188,9 +204,6 @@ class YACS_Protocol:
     @staticmethod
     def createMessageToWorker(job_ID, task_family, task_ID, duration,
                               worker_ID):
-        assert task_family in [&#34;map&#34;, &#34;reduce&#34;], (&#34;Task family name &#34;
-                                                  f&#34;{task_family} is &#34;
-                                                  &#34;incorrect!&#34;)
         &#34;&#34;&#34;
         The final JSON string will be as follows:
 
@@ -207,6 +220,10 @@ class YACS_Protocol:
         ```
 
         &#34;&#34;&#34;
+        assert task_family in [&#34;map&#34;, &#34;reduce&#34;], (&#34;Task family name &#34;
+                                                  f&#34;{task_family} is &#34;
+                                                  &#34;incorrect!&#34;)
+
         msg_dict = {}
         msg_dict[&#34;worker_id&#34;] = worker_ID
         msg_dict[&#34;job_id&#34;] = job_ID
@@ -220,9 +237,6 @@ class YACS_Protocol:
     @staticmethod
     def createMessageToMaster(job_ID, task_family, task_ID, start_time,
                               end_time, worker_ID):
-        assert task_family in [&#34;map&#34;, &#34;reduce&#34;], (&#34;Task family name &#34;
-                                                  f&#34;{task_family} is &#34;
-                                                  &#34;incorrect!&#34;)
         &#34;&#34;&#34;
         The final JSON string will be as follows:
 
@@ -240,6 +254,10 @@ class YACS_Protocol:
         ```
 
         &#34;&#34;&#34;
+        assert task_family in [&#34;map&#34;, &#34;reduce&#34;], (&#34;Task family name &#34;
+                                                  f&#34;{task_family} is &#34;
+                                                  &#34;incorrect!&#34;)
+
         msg_dict = {}
         msg_dict[&#34;worker_id&#34;] = worker_ID
         msg_dict[&#34;job_id&#34;] = job_ID
@@ -255,9 +273,6 @@ class YACS_Protocol:
     @staticmethod
     def prettyPrintMessageToWorker(job_ID, task_family, task_ID, duration,
                                    worker_ID):
-        assert task_family in [&#34;map&#34;, &#34;reduce&#34;], (&#34;Task family name &#34;
-                                                  f&#34;{task_family} is &#34;
-                                                  &#34;incorrect!&#34;)
         &#34;&#34;&#34;
         The final JSON string will be as follows:
 
@@ -274,6 +289,10 @@ class YACS_Protocol:
         ```
 
         &#34;&#34;&#34;
+        assert task_family in [&#34;map&#34;, &#34;reduce&#34;], (&#34;Task family name &#34;
+                                                  f&#34;{task_family} is &#34;
+                                                  &#34;incorrect!&#34;)
+
         msg_dict = {}
         msg_dict[&#34;worker_id&#34;] = worker_ID
         msg_dict[&#34;job_id&#34;] = job_ID
@@ -283,14 +302,15 @@ class YACS_Protocol:
                                 &#34;duration&#34;: duration
                             }
 
+        master.PRINT_LOCK.acquire()
+        worker.PRINT_LOCK.acquire()
         print(json.dumps(msg_dict, indent=4))
+        worker.PRINT_LOCK.release()
+        master.PRINT_LOCK.release()
 
     @staticmethod
     def prettyPrintMessageToMaster(job_ID, task_family, task_ID, start_time,
                                    end_time, worker_ID):
-        assert task_family in [&#34;map&#34;, &#34;reduce&#34;], (&#34;Task family name &#34;
-                                                  f&#34;{task_family} is &#34;
-                                                  &#34;incorrect!&#34;)
         &#34;&#34;&#34;
         The final JSON string will be as follows:
 
@@ -308,6 +328,10 @@ class YACS_Protocol:
         ```
 
         &#34;&#34;&#34;
+        assert task_family in [&#34;map&#34;, &#34;reduce&#34;], (&#34;Task family name &#34;
+                                                  f&#34;{task_family} is &#34;
+                                                  &#34;incorrect!&#34;)
+
         msg_dict = {}
         msg_dict[&#34;worker_id&#34;] = worker_ID
         msg_dict[&#34;job_id&#34;] = job_ID
@@ -318,7 +342,11 @@ class YACS_Protocol:
                                 &#34;end time&#34;: end_time,
                             }
 
-        print(json.dumps(msg_dict, indent=4))</code></pre>
+        master.PRINT_LOCK.acquire()
+        worker.PRINT_LOCK.acquire()
+        print(json.dumps(msg_dict, indent=4))
+        worker.PRINT_LOCK.release()
+        master.PRINT_LOCK.release()</code></pre>
 </details>
 <h3>Static methods</h3>
 <dl>
@@ -326,7 +354,18 @@ class YACS_Protocol:
 <span>def <span class="ident">createMessageToMaster</span></span>(<span>job_ID, task_family, task_ID, start_time, end_time, worker_ID)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>The final JSON string will be as follows:</p>
+<pre><code class="language-json">{
+    &quot;worker_id&quot;:&lt;worker_id&gt;,
+    &quot;job_id&quot;:&lt;job_id&gt;,
+    &quot;task family&quot;: &lt;(&quot;map&quot;|&quot;reduce&quot;)&gt;,
+    &quot;task&quot;: {
+                &quot;task_id&quot;: &quot;&lt;task_id&gt;&quot;,
+                &quot;start time&quot;: &lt;arrival_time_of_task_at_Worker&gt;,
+                &quot;end time&quot;: &lt;end_time_of_task_in_Worker&gt;,
+            }
+}
+</code></pre></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -334,9 +373,6 @@ class YACS_Protocol:
 <pre><code class="python">@staticmethod
 def createMessageToMaster(job_ID, task_family, task_ID, start_time,
                           end_time, worker_ID):
-    assert task_family in [&#34;map&#34;, &#34;reduce&#34;], (&#34;Task family name &#34;
-                                              f&#34;{task_family} is &#34;
-                                              &#34;incorrect!&#34;)
     &#34;&#34;&#34;
     The final JSON string will be as follows:
 
@@ -354,6 +390,10 @@ def createMessageToMaster(job_ID, task_family, task_ID, start_time,
     ```
 
     &#34;&#34;&#34;
+    assert task_family in [&#34;map&#34;, &#34;reduce&#34;], (&#34;Task family name &#34;
+                                              f&#34;{task_family} is &#34;
+                                              &#34;incorrect!&#34;)
+
     msg_dict = {}
     msg_dict[&#34;worker_id&#34;] = worker_ID
     msg_dict[&#34;job_id&#34;] = job_ID
@@ -371,7 +411,17 @@ def createMessageToMaster(job_ID, task_family, task_ID, start_time,
 <span>def <span class="ident">createMessageToWorker</span></span>(<span>job_ID, task_family, task_ID, duration, worker_ID)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>The final JSON string will be as follows:</p>
+<pre><code class="language-json">{
+    &quot;worker_id&quot;: &lt;worker_id&gt;,
+    &quot;job_id&quot;: &lt;job_id&gt;,
+    &quot;task family&quot;: &lt;(&quot;map&quot;|&quot;reduce&quot;)&gt;,
+    &quot;task&quot;: {
+                &quot;task_id&quot;: &quot;&lt;task_id&gt;&quot;,
+                &quot;duration&quot;: &lt;in seconds&gt;
+            }
+}
+</code></pre></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -379,9 +429,6 @@ def createMessageToMaster(job_ID, task_family, task_ID, start_time,
 <pre><code class="python">@staticmethod
 def createMessageToWorker(job_ID, task_family, task_ID, duration,
                           worker_ID):
-    assert task_family in [&#34;map&#34;, &#34;reduce&#34;], (&#34;Task family name &#34;
-                                              f&#34;{task_family} is &#34;
-                                              &#34;incorrect!&#34;)
     &#34;&#34;&#34;
     The final JSON string will be as follows:
 
@@ -398,6 +445,10 @@ def createMessageToWorker(job_ID, task_family, task_ID, duration,
     ```
 
     &#34;&#34;&#34;
+    assert task_family in [&#34;map&#34;, &#34;reduce&#34;], (&#34;Task family name &#34;
+                                              f&#34;{task_family} is &#34;
+                                              &#34;incorrect!&#34;)
+
     msg_dict = {}
     msg_dict[&#34;worker_id&#34;] = worker_ID
     msg_dict[&#34;job_id&#34;] = job_ID
@@ -413,7 +464,18 @@ def createMessageToWorker(job_ID, task_family, task_ID, duration,
 <span>def <span class="ident">prettyPrintMessageToMaster</span></span>(<span>job_ID, task_family, task_ID, start_time, end_time, worker_ID)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>The final JSON string will be as follows:</p>
+<pre><code class="language-json">{
+    &quot;worker_id&quot;:&lt;worker_id&gt;,
+    &quot;job_id&quot;:&lt;job_id&gt;,
+    &quot;task family&quot;: &lt;(&quot;map&quot;|&quot;reduce&quot;)&gt;,
+    &quot;task&quot;: {
+                &quot;task_id&quot;: &quot;&lt;task_id&gt;&quot;,
+                &quot;start time&quot;: &lt;arrival_time_of_task_at_Worker&gt;,
+                &quot;end time&quot;: &lt;end_time_of_task_in_Worker&gt;
+            }
+}
+</code></pre></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -421,9 +483,6 @@ def createMessageToWorker(job_ID, task_family, task_ID, duration,
 <pre><code class="python">@staticmethod
 def prettyPrintMessageToMaster(job_ID, task_family, task_ID, start_time,
                                end_time, worker_ID):
-    assert task_family in [&#34;map&#34;, &#34;reduce&#34;], (&#34;Task family name &#34;
-                                              f&#34;{task_family} is &#34;
-                                              &#34;incorrect!&#34;)
     &#34;&#34;&#34;
     The final JSON string will be as follows:
 
@@ -441,6 +500,10 @@ def prettyPrintMessageToMaster(job_ID, task_family, task_ID, start_time,
     ```
 
     &#34;&#34;&#34;
+    assert task_family in [&#34;map&#34;, &#34;reduce&#34;], (&#34;Task family name &#34;
+                                              f&#34;{task_family} is &#34;
+                                              &#34;incorrect!&#34;)
+
     msg_dict = {}
     msg_dict[&#34;worker_id&#34;] = worker_ID
     msg_dict[&#34;job_id&#34;] = job_ID
@@ -451,14 +514,28 @@ def prettyPrintMessageToMaster(job_ID, task_family, task_ID, start_time,
                             &#34;end time&#34;: end_time,
                         }
 
-    print(json.dumps(msg_dict, indent=4))</code></pre>
+    master.PRINT_LOCK.acquire()
+    worker.PRINT_LOCK.acquire()
+    print(json.dumps(msg_dict, indent=4))
+    worker.PRINT_LOCK.release()
+    master.PRINT_LOCK.release()</code></pre>
 </details>
 </dd>
 <dt id="src.Communication.protocol.YACS_Protocol.prettyPrintMessageToWorker"><code class="name flex">
 <span>def <span class="ident">prettyPrintMessageToWorker</span></span>(<span>job_ID, task_family, task_ID, duration, worker_ID)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>The final JSON string will be as follows:</p>
+<pre><code class="language-json">{
+    &quot;worker_id&quot;: &lt;worker_id&gt;,
+    &quot;job_id&quot;: &lt;job_id&gt;,
+    &quot;task family&quot;: &lt;(&quot;map&quot;|&quot;reduce&quot;)&gt;,
+    &quot;task&quot;: {
+                &quot;task_id&quot;: &quot;&lt;task_id&gt;&quot;,
+                &quot;duration&quot;: &lt;in seconds&gt;
+            }
+}
+</code></pre></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -466,9 +543,6 @@ def prettyPrintMessageToMaster(job_ID, task_family, task_ID, start_time,
 <pre><code class="python">@staticmethod
 def prettyPrintMessageToWorker(job_ID, task_family, task_ID, duration,
                                worker_ID):
-    assert task_family in [&#34;map&#34;, &#34;reduce&#34;], (&#34;Task family name &#34;
-                                              f&#34;{task_family} is &#34;
-                                              &#34;incorrect!&#34;)
     &#34;&#34;&#34;
     The final JSON string will be as follows:
 
@@ -485,6 +559,10 @@ def prettyPrintMessageToWorker(job_ID, task_family, task_ID, duration,
     ```
 
     &#34;&#34;&#34;
+    assert task_family in [&#34;map&#34;, &#34;reduce&#34;], (&#34;Task family name &#34;
+                                              f&#34;{task_family} is &#34;
+                                              &#34;incorrect!&#34;)
+
     msg_dict = {}
     msg_dict[&#34;worker_id&#34;] = worker_ID
     msg_dict[&#34;job_id&#34;] = job_ID
@@ -494,7 +572,11 @@ def prettyPrintMessageToWorker(job_ID, task_family, task_ID, duration,
                             &#34;duration&#34;: duration
                         }
 
-    print(json.dumps(msg_dict, indent=4))</code></pre>
+    master.PRINT_LOCK.acquire()
+    worker.PRINT_LOCK.acquire()
+    print(json.dumps(msg_dict, indent=4))
+    worker.PRINT_LOCK.release()
+    master.PRINT_LOCK.release()</code></pre>
 </details>
 </dd>
 </dl>

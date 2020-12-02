@@ -26,32 +26,34 @@
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">import threading
+<pre><code class="python"># import threading
 import time
 from typing import Set
 
+# This lock is used to get access to print onto the standard output
+from Locks.MasterPrintLock import master
 from Communication.protocol import YACS_Protocol
 from Scheduler.JobRequests import JobRequestHandler
 from WorkerUtils.WorkerStateTracker import StateTracker
 
 
-PRINT_LOCK = threading.Lock()
+# PRINT_LOCK = threading.Lock()
 
 
 class RoundRobinScheduler:
     &#34;&#34;&#34; The ```RoundRobinScheduler``` class implements the **Round-Robin
-    Scheduling** algorithm. In this algorithm the Master chooses a
-    machine at random. It then checks if the machine has free slots
-    available. If yes, it launches the task on the machine. Else,
-    it chooses another machine at random. This process continues
-    until a free slot is found.
+    Scheduling** algorithm. In this algorithm  The machines are ordered based
+    on worker_id of the Worker running on the machine. The Master picks a
+    machine in round-robin fashion. If the machine does not have a free slot,
+    the Master moves on to the next worker_id in the ordering. This process
+    continues until a free slot is found.
     &#34;&#34;&#34;
     @staticmethod
     def jobDispatcher(requestHandler: JobRequestHandler,
                       workerStateTracker: StateTracker,
                       WORKER_COUNT: int):
         &#34;&#34;&#34;```jobDispatcher``` implements the **Round-Robin
-        Scheduling** algorithm
+        Scheduling** algorithm.
 
         **param** ```requestHandler```: This object will track the tasks of
         incomplete jobs, and provide them for allocation, respecting the
@@ -112,7 +114,7 @@ class RoundRobinScheduler:
                                         duration=(jobID_family_task[2]
                                                   [&#34;duration&#34;]),
                                         worker_ID=workerStateTracker
-                                                        .workerIDs[_temp]
+                                        .workerIDs[_temp]
                                        ))
                         # Once a worker with a free slot is found then
                         # 1. We dispatch the job to the worker
@@ -121,18 +123,18 @@ class RoundRobinScheduler:
                                                            workerIDs[_temp])\
                             .sendall(protocolMsg.encode())
 
-                        PRINT_LOCK.acquire()
+                        master.PRINT_LOCK.acquire()
                         print(f&#34;Sending task to worker: {protocolMsg}&#34;)
-                        PRINT_LOCK.release()
+                        master.PRINT_LOCK.release()
                         workerStateTracker.allocateSlot(workerStateTracker
                                                         .workerIDs[_temp])
-                        PRINT_LOCK.acquire()
+                        master.PRINT_LOCK.acquire()
                         workerStateTracker.showWorkerStates()
-                        PRINT_LOCK.release()
+                        master.PRINT_LOCK.release()
 
-                        PRINT_LOCK.acquire()
+                        master.PRINT_LOCK.acquire()
                         print(f&#34;{requestHandler.jobRequests=}&#34;)
-                        PRINT_LOCK.release()
+                        master.PRINT_LOCK.release()
 
                         # We have found a worker and hence set this to True
                         workerFound = True
@@ -154,6 +156,9 @@ class RoundRobinScheduler:
                         # workers
                         workerIDsVisited.clear()
 
+                # After sending a task to the worker, sleep for 0.01 seconds
+                # before sending the next task. This done so that the worker
+                # buffer only has at most 1 task in its socket&#39;s buffer
                 time.sleep(0.01)</code></pre>
 </details>
 </section>
@@ -171,29 +176,30 @@ class RoundRobinScheduler:
 </code></dt>
 <dd>
 <div class="desc"><p>The <code>RoundRobinScheduler</code> class implements the <strong>Round-Robin
-Scheduling</strong> algorithm. In this algorithm the Master chooses a
-machine at random. It then checks if the machine has free slots
-available. If yes, it launches the task on the machine. Else,
-it chooses another machine at random. This process continues
-until a free slot is found.</p></div>
+Scheduling</strong> algorithm. In this algorithm
+The machines are ordered based
+on worker_id of the Worker running on the machine. The Master picks a
+machine in round-robin fashion. If the machine does not have a free slot,
+the Master moves on to the next worker_id in the ordering. This process
+continues until a free slot is found.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class RoundRobinScheduler:
     &#34;&#34;&#34; The ```RoundRobinScheduler``` class implements the **Round-Robin
-    Scheduling** algorithm. In this algorithm the Master chooses a
-    machine at random. It then checks if the machine has free slots
-    available. If yes, it launches the task on the machine. Else,
-    it chooses another machine at random. This process continues
-    until a free slot is found.
+    Scheduling** algorithm. In this algorithm  The machines are ordered based
+    on worker_id of the Worker running on the machine. The Master picks a
+    machine in round-robin fashion. If the machine does not have a free slot,
+    the Master moves on to the next worker_id in the ordering. This process
+    continues until a free slot is found.
     &#34;&#34;&#34;
     @staticmethod
     def jobDispatcher(requestHandler: JobRequestHandler,
                       workerStateTracker: StateTracker,
                       WORKER_COUNT: int):
         &#34;&#34;&#34;```jobDispatcher``` implements the **Round-Robin
-        Scheduling** algorithm
+        Scheduling** algorithm.
 
         **param** ```requestHandler```: This object will track the tasks of
         incomplete jobs, and provide them for allocation, respecting the
@@ -254,7 +260,7 @@ until a free slot is found.</p></div>
                                         duration=(jobID_family_task[2]
                                                   [&#34;duration&#34;]),
                                         worker_ID=workerStateTracker
-                                                        .workerIDs[_temp]
+                                        .workerIDs[_temp]
                                        ))
                         # Once a worker with a free slot is found then
                         # 1. We dispatch the job to the worker
@@ -263,18 +269,18 @@ until a free slot is found.</p></div>
                                                            workerIDs[_temp])\
                             .sendall(protocolMsg.encode())
 
-                        PRINT_LOCK.acquire()
+                        master.PRINT_LOCK.acquire()
                         print(f&#34;Sending task to worker: {protocolMsg}&#34;)
-                        PRINT_LOCK.release()
+                        master.PRINT_LOCK.release()
                         workerStateTracker.allocateSlot(workerStateTracker
                                                         .workerIDs[_temp])
-                        PRINT_LOCK.acquire()
+                        master.PRINT_LOCK.acquire()
                         workerStateTracker.showWorkerStates()
-                        PRINT_LOCK.release()
+                        master.PRINT_LOCK.release()
 
-                        PRINT_LOCK.acquire()
+                        master.PRINT_LOCK.acquire()
                         print(f&#34;{requestHandler.jobRequests=}&#34;)
-                        PRINT_LOCK.release()
+                        master.PRINT_LOCK.release()
 
                         # We have found a worker and hence set this to True
                         workerFound = True
@@ -296,6 +302,9 @@ until a free slot is found.</p></div>
                         # workers
                         workerIDsVisited.clear()
 
+                # After sending a task to the worker, sleep for 0.01 seconds
+                # before sending the next task. This done so that the worker
+                # buffer only has at most 1 task in its socket&#39;s buffer
                 time.sleep(0.01)</code></pre>
 </details>
 <h3>Static methods</h3>
@@ -305,7 +314,7 @@ until a free slot is found.</p></div>
 </code></dt>
 <dd>
 <div class="desc"><p><code>jobDispatcher</code> implements the <strong>Round-Robin
-Scheduling</strong> algorithm</p>
+Scheduling</strong> algorithm.</p>
 <p><strong>param</strong> <code>requestHandler</code>: This object will track the tasks of
 incomplete jobs, and provide them for allocation, respecting the
 <em>map-reduce</em> dependency</p>
@@ -325,7 +334,7 @@ def jobDispatcher(requestHandler: JobRequestHandler,
                   workerStateTracker: StateTracker,
                   WORKER_COUNT: int):
     &#34;&#34;&#34;```jobDispatcher``` implements the **Round-Robin
-    Scheduling** algorithm
+    Scheduling** algorithm.
 
     **param** ```requestHandler```: This object will track the tasks of
     incomplete jobs, and provide them for allocation, respecting the
@@ -386,7 +395,7 @@ def jobDispatcher(requestHandler: JobRequestHandler,
                                     duration=(jobID_family_task[2]
                                               [&#34;duration&#34;]),
                                     worker_ID=workerStateTracker
-                                                    .workerIDs[_temp]
+                                    .workerIDs[_temp]
                                    ))
                     # Once a worker with a free slot is found then
                     # 1. We dispatch the job to the worker
@@ -395,18 +404,18 @@ def jobDispatcher(requestHandler: JobRequestHandler,
                                                        workerIDs[_temp])\
                         .sendall(protocolMsg.encode())
 
-                    PRINT_LOCK.acquire()
+                    master.PRINT_LOCK.acquire()
                     print(f&#34;Sending task to worker: {protocolMsg}&#34;)
-                    PRINT_LOCK.release()
+                    master.PRINT_LOCK.release()
                     workerStateTracker.allocateSlot(workerStateTracker
                                                     .workerIDs[_temp])
-                    PRINT_LOCK.acquire()
+                    master.PRINT_LOCK.acquire()
                     workerStateTracker.showWorkerStates()
-                    PRINT_LOCK.release()
+                    master.PRINT_LOCK.release()
 
-                    PRINT_LOCK.acquire()
+                    master.PRINT_LOCK.acquire()
                     print(f&#34;{requestHandler.jobRequests=}&#34;)
-                    PRINT_LOCK.release()
+                    master.PRINT_LOCK.release()
 
                     # We have found a worker and hence set this to True
                     workerFound = True
@@ -428,6 +437,9 @@ def jobDispatcher(requestHandler: JobRequestHandler,
                     # workers
                     workerIDsVisited.clear()
 
+            # After sending a task to the worker, sleep for 0.01 seconds
+            # before sending the next task. This done so that the worker
+            # buffer only has at most 1 task in its socket&#39;s buffer
             time.sleep(0.01)</code></pre>
 </details>
 </dd>

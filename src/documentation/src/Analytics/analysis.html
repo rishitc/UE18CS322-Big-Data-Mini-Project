@@ -30,6 +30,52 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
+import seaborn as sns
+import math
+
+
+def get_heatmap(df, ax, title):
+    &#34;&#34;&#34;
+    * This function takes in the *workers.csv* for each algorithm separately
+    and groups by worker id.
+    * For each worker, the number of tasks running at each second in a time
+    interval are calculated.
+    * There are 3 heatmap plots displayed in a window, with a plot each for a
+    scheduling algorithm. The X axis has the time in seconds and the Y axis
+    has the worker_id.
+    * In the plot ,each block represents number of tasks
+    &#34;&#34;&#34;
+    s_time = min(df[&#34;start_time&#34;])
+    df1 = pd.DataFrame()
+    df[&#34;start_time&#34;] -= s_time
+    df[&#34;end_time&#34;] -= s_time
+    splits1 = list(df.groupby(&#34;WorkerID&#34;))
+    task_count = []
+    seconds = []
+    wid = []
+    for i in range(len(splits1)):
+        a = pd.DataFrame(splits1[i][1],
+                         columns=[&#39;JobId&#39;, &#39;WorkerID&#39;, &#39;TaskId&#39;,
+                                  &#39;start_time&#39;, &#39;end_time&#39;])
+        end_time = a[&#34;end_time&#34;].iloc[-1]
+        for m in range(1, math.ceil(float(end_time))):
+            count = 0
+            for n in range(len(a[&#34;TaskId&#34;])):
+                if m &gt;= a[&#34;start_time&#34;].iloc[n] and m &lt;= a[&#34;end_time&#34;].iloc[n]:
+                    count = count + 1
+                else:
+                    pass
+            task_count.append(count)
+            seconds.append(m)
+            wid.append(splits1[i][0])
+
+    df1[&#39;WorkerID&#39;] = wid
+    df1[&#39;seconds&#39;] = seconds
+    df1[&#39;task_count&#39;] = task_count
+    df1 = df1.pivot(index=&#39;WorkerID&#39;, columns=&#39;seconds&#39;, values=&#39;task_count&#39;)
+    sns.color_palette(&#34;viridis&#34;)
+    sns.heatmap(df1, annot=False, ax=ax, cmap=&#34;Reds&#34;)
+    ax.set_title(title)
 
 
 def graph_plot(df, ax, title):
@@ -39,19 +85,23 @@ def graph_plot(df, ax, title):
     * For each worker, the number of tasks running at each second in a time
     interval are calculated.
     * There are 3 plots displayed in a window, with a plot each for a
-    scheduling algorithm. The X axis has the number of tasks and the Y axis
-    has the time in seconds.
+    scheduling algorithm. The X axis has the time in seconds and the Y axis
+    has the number of tasks.
     * For a given scheduling algorithm, each worker is represented with a line
     of a different colour.
     &#34;&#34;&#34;
+    s_time = min(df[&#34;start_time&#34;])
+    df[&#34;start_time&#34;] -= s_time
+    df[&#34;end_time&#34;] -= s_time
     splits1 = list(df.groupby(&#34;WorkerID&#34;))
+
     for i in range(len(splits1)):
         time = dict()
         a = pd.DataFrame(splits1[i][1],
                          columns=[&#39;JobId&#39;, &#39;WorkerID&#39;, &#39;TaskId&#39;,
                                   &#39;start_time&#39;, &#39;end_time&#39;, &#39;duration&#39;])
         end_time = a[&#34;end_time&#34;].iloc[-1]
-        for m in range(0, end_time):
+        for m in range(0, math.ceil(float(end_time))):
             count = 0
             for n in range(len(a[&#34;TaskId&#34;])):
                 if m &gt;= a[&#34;start_time&#34;].iloc[n] and m &lt;= a[&#34;end_time&#34;].iloc[n]:
@@ -82,17 +132,19 @@ def get_analytics():
     scheduling algorithms that plots the number of tasks scheduled on each
     worker at each instance of time.
     &#34;&#34;&#34;
-    fig, (ax1, ax2, ax3) = plt.subplots(3, figsize=(15, 25))
-    fig.tight_layout(pad=10.0)
+    fig1, (ax1, ax2, ax3) = plt.subplots(3, figsize=(15, 25))
+    fig1.tight_layout(pad=10.0)
+    fig2, (ax4, ax5, ax6) = plt.subplots(3, figsize=(15, 25))
+    fig2.tight_layout(pad=10.0)
     mean_salgo1_task = 0
     mean_salgo2_task = 0
     mean_salgo3_task = 0
     mean_salgo1_job = 0
     mean_salgo2_job = 0
     mean_salgo3_job = 0
-    median_salgo1_task = 0 
+    median_salgo1_task = 0
     median_salgo2_task = 0
-    median_salgo3_task = 0 
+    median_salgo3_task = 0
     median_salgo1_job = 0
     median_salgo2_job = 0
     median_salgo3_job = 0
@@ -116,14 +168,15 @@ def get_analytics():
         median_salgo1_task = df1_t1[&#34;duration&#34;].median()
         median_salgo1_job = df1_j1[&#34;duration&#34;].median()
 
-        graph_plot(df1_w1, ax1, &#39;Round Robin Scheduling&#39;)
-
+        graph_plot(df1_w1, ax4, &#39;Round Robin Scheduling&#39;)
+        get_heatmap(df1_w1, ax1, &#39;Round Robin Scheduling&#39;)
     else:
         pass
 
     &#39;&#39;&#39;
     Checking if the log files for Least Loaded Algorithm exist.
-    If they exist perform the necessary statistical computation and plot the graphs to draw inferences.
+    If they exist perform the necessary statistical computation and
+    plot the graphs to draw inferences.
     &#39;&#39;&#39;
     if os.path.exists(&#39;Least-Loaded&#39;):
         algo = &#39;Least-Loaded&#39;
@@ -140,14 +193,15 @@ def get_analytics():
         median_salgo2_task = df1_t2[&#34;duration&#34;].median()
         median_salgo2_job = df1_j2[&#34;duration&#34;].median()
 
-        graph_plot(df1_w2, ax2, &#39;Least Loaded Scheduling&#39;)
-
+        graph_plot(df1_w2, ax5, &#39;Least Loaded Scheduling&#39;)
+        get_heatmap(df1_w2, ax2, &#39;Least Loaded Scheduling&#39;)
     else:
         pass
 
     &#39;&#39;&#39;
     Checking if the log files for Random Algorithm exist.
-    If they exist perform the necessary statistical computation and plot the graphs to draw inferences.
+    If they exist perform the necessary statistical computation and plot the
+    graphs to draw inferences.
     &#39;&#39;&#39;
     if os.path.exists(&#39;Random&#39;):
         algo = &#39;Random&#39;
@@ -164,14 +218,14 @@ def get_analytics():
         median_salgo3_task = df1_t3[&#34;duration&#34;].median()
         median_salgo3_job = df1_j3[&#34;duration&#34;].median()
 
-        graph_plot(df1_w3, ax3, &#39;Random Scheduling&#39;)
-
+        graph_plot(df1_w3, ax6, &#39;Random Scheduling&#39;)
+        get_heatmap(df1_w2, ax3, &#39;Random Scheduling&#39;)
     else:
         pass
 
     &#39;&#39;&#39;
     The 3 blocks of code given below display the computed mean and median
-    values for each algorithm(if that algorithm was used) in a neat readable 
+    values for each algorithm(if that algorithm was used) in a neat readable
     format which can be used to easily read the data plotted in a graph format.
     &#39;&#39;&#39;
     if os.path.exists(&#39;Round-Robin&#39;):
@@ -179,7 +233,7 @@ def get_analytics():
         print(f&#34;Mean of task completion time : {mean_salgo1_task}&#34;)
         print(f&#34;Mean of job completion time : {mean_salgo1_job}&#34;)
         print(f&#34;Median of task completion time : {median_salgo1_task}&#34;)
-        print(f&#34;Median of job completion time : {median_salgo1_job}\n&#34;)  
+        print(f&#34;Median of job completion time : {median_salgo1_job}\n&#34;)
     else:
         pass
 
@@ -197,7 +251,7 @@ def get_analytics():
         print(f&#34;Mean of task completion time : {mean_salgo3_task}&#34;)
         print(f&#34;Mean of job completion time : {mean_salgo3_job}&#34;)
         print(f&#34;Median of task completion time : {median_salgo3_task}&#34;)
-        print(f&#34;Median of job completion time : {median_salgo3_job}\n&#34;)    
+        print(f&#34;Median of job completion time : {median_salgo3_job}\n&#34;)
     else:
         pass
 
@@ -220,9 +274,9 @@ def get_analytics():
     x1.append(&#39;Random Scheduling&#39;)
 
     br1 = np.arange(len(x1))
-    br2 = [x + barWidth for x in br1] 
-    plt.bar(br1, y1, color=&#39;r&#39;, width=barWidth, edgecolor=&#39;grey&#39;, label=&#39;Tasks&#39;) 
-    plt.bar(br2, y2, color=&#39;g&#39;, width=barWidth, edgecolor=&#39;grey&#39;, label=&#39;Jobs&#39;) 
+    br2 = [x + barWidth for x in br1]
+    plt.bar(br1, y1, color=&#39;r&#39;, width=barWidth, edgecolor=&#39;grey&#39;, label=&#39;Tasks&#39;)
+    plt.bar(br2, y2, color=&#39;g&#39;, width=barWidth, edgecolor=&#39;grey&#39;, label=&#39;Jobs&#39;)
     plt.xlabel(&#39;Scheduling algorithms&#39;)
     plt.ylabel(&#39;Average task and job completion time&#39;)
     plt.xticks([r + barWidth for r in range(len(x1))], x1)
@@ -304,17 +358,19 @@ worker at each instance of time.</li>
     scheduling algorithms that plots the number of tasks scheduled on each
     worker at each instance of time.
     &#34;&#34;&#34;
-    fig, (ax1, ax2, ax3) = plt.subplots(3, figsize=(15, 25))
-    fig.tight_layout(pad=10.0)
+    fig1, (ax1, ax2, ax3) = plt.subplots(3, figsize=(15, 25))
+    fig1.tight_layout(pad=10.0)
+    fig2, (ax4, ax5, ax6) = plt.subplots(3, figsize=(15, 25))
+    fig2.tight_layout(pad=10.0)
     mean_salgo1_task = 0
     mean_salgo2_task = 0
     mean_salgo3_task = 0
     mean_salgo1_job = 0
     mean_salgo2_job = 0
     mean_salgo3_job = 0
-    median_salgo1_task = 0 
+    median_salgo1_task = 0
     median_salgo2_task = 0
-    median_salgo3_task = 0 
+    median_salgo3_task = 0
     median_salgo1_job = 0
     median_salgo2_job = 0
     median_salgo3_job = 0
@@ -338,14 +394,15 @@ worker at each instance of time.</li>
         median_salgo1_task = df1_t1[&#34;duration&#34;].median()
         median_salgo1_job = df1_j1[&#34;duration&#34;].median()
 
-        graph_plot(df1_w1, ax1, &#39;Round Robin Scheduling&#39;)
-
+        graph_plot(df1_w1, ax4, &#39;Round Robin Scheduling&#39;)
+        get_heatmap(df1_w1, ax1, &#39;Round Robin Scheduling&#39;)
     else:
         pass
 
     &#39;&#39;&#39;
     Checking if the log files for Least Loaded Algorithm exist.
-    If they exist perform the necessary statistical computation and plot the graphs to draw inferences.
+    If they exist perform the necessary statistical computation and
+    plot the graphs to draw inferences.
     &#39;&#39;&#39;
     if os.path.exists(&#39;Least-Loaded&#39;):
         algo = &#39;Least-Loaded&#39;
@@ -362,14 +419,15 @@ worker at each instance of time.</li>
         median_salgo2_task = df1_t2[&#34;duration&#34;].median()
         median_salgo2_job = df1_j2[&#34;duration&#34;].median()
 
-        graph_plot(df1_w2, ax2, &#39;Least Loaded Scheduling&#39;)
-
+        graph_plot(df1_w2, ax5, &#39;Least Loaded Scheduling&#39;)
+        get_heatmap(df1_w2, ax2, &#39;Least Loaded Scheduling&#39;)
     else:
         pass
 
     &#39;&#39;&#39;
     Checking if the log files for Random Algorithm exist.
-    If they exist perform the necessary statistical computation and plot the graphs to draw inferences.
+    If they exist perform the necessary statistical computation and plot the
+    graphs to draw inferences.
     &#39;&#39;&#39;
     if os.path.exists(&#39;Random&#39;):
         algo = &#39;Random&#39;
@@ -386,14 +444,14 @@ worker at each instance of time.</li>
         median_salgo3_task = df1_t3[&#34;duration&#34;].median()
         median_salgo3_job = df1_j3[&#34;duration&#34;].median()
 
-        graph_plot(df1_w3, ax3, &#39;Random Scheduling&#39;)
-
+        graph_plot(df1_w3, ax6, &#39;Random Scheduling&#39;)
+        get_heatmap(df1_w2, ax3, &#39;Random Scheduling&#39;)
     else:
         pass
 
     &#39;&#39;&#39;
     The 3 blocks of code given below display the computed mean and median
-    values for each algorithm(if that algorithm was used) in a neat readable 
+    values for each algorithm(if that algorithm was used) in a neat readable
     format which can be used to easily read the data plotted in a graph format.
     &#39;&#39;&#39;
     if os.path.exists(&#39;Round-Robin&#39;):
@@ -401,7 +459,7 @@ worker at each instance of time.</li>
         print(f&#34;Mean of task completion time : {mean_salgo1_task}&#34;)
         print(f&#34;Mean of job completion time : {mean_salgo1_job}&#34;)
         print(f&#34;Median of task completion time : {median_salgo1_task}&#34;)
-        print(f&#34;Median of job completion time : {median_salgo1_job}\n&#34;)  
+        print(f&#34;Median of job completion time : {median_salgo1_job}\n&#34;)
     else:
         pass
 
@@ -419,7 +477,7 @@ worker at each instance of time.</li>
         print(f&#34;Mean of task completion time : {mean_salgo3_task}&#34;)
         print(f&#34;Mean of job completion time : {mean_salgo3_job}&#34;)
         print(f&#34;Median of task completion time : {median_salgo3_task}&#34;)
-        print(f&#34;Median of job completion time : {median_salgo3_job}\n&#34;)    
+        print(f&#34;Median of job completion time : {median_salgo3_job}\n&#34;)
     else:
         pass
 
@@ -442,9 +500,9 @@ worker at each instance of time.</li>
     x1.append(&#39;Random Scheduling&#39;)
 
     br1 = np.arange(len(x1))
-    br2 = [x + barWidth for x in br1] 
-    plt.bar(br1, y1, color=&#39;r&#39;, width=barWidth, edgecolor=&#39;grey&#39;, label=&#39;Tasks&#39;) 
-    plt.bar(br2, y2, color=&#39;g&#39;, width=barWidth, edgecolor=&#39;grey&#39;, label=&#39;Jobs&#39;) 
+    br2 = [x + barWidth for x in br1]
+    plt.bar(br1, y1, color=&#39;r&#39;, width=barWidth, edgecolor=&#39;grey&#39;, label=&#39;Tasks&#39;)
+    plt.bar(br2, y2, color=&#39;g&#39;, width=barWidth, edgecolor=&#39;grey&#39;, label=&#39;Jobs&#39;)
     plt.xlabel(&#39;Scheduling algorithms&#39;)
     plt.ylabel(&#39;Average task and job completion time&#39;)
     plt.xticks([r + barWidth for r in range(len(x1))], x1)
@@ -478,6 +536,68 @@ worker at each instance of time.</li>
     plt.legend()</code></pre>
 </details>
 </dd>
+<dt id="src.Analytics.analysis.get_heatmap"><code class="name flex">
+<span>def <span class="ident">get_heatmap</span></span>(<span>df, ax, title)</span>
+</code></dt>
+<dd>
+<div class="desc"><ul>
+<li>This function takes in the <em>workers.csv</em> for each algorithm separately
+and groups by worker id.</li>
+<li>For each worker, the number of tasks running at each second in a time
+interval are calculated.</li>
+<li>There are 3 heatmap plots displayed in a window, with a plot each for a
+scheduling algorithm. The X axis has the time in seconds and the Y axis
+has the worker_id.</li>
+<li>In the plot ,each block represents number of tasks</li>
+</ul></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_heatmap(df, ax, title):
+    &#34;&#34;&#34;
+    * This function takes in the *workers.csv* for each algorithm separately
+    and groups by worker id.
+    * For each worker, the number of tasks running at each second in a time
+    interval are calculated.
+    * There are 3 heatmap plots displayed in a window, with a plot each for a
+    scheduling algorithm. The X axis has the time in seconds and the Y axis
+    has the worker_id.
+    * In the plot ,each block represents number of tasks
+    &#34;&#34;&#34;
+    s_time = min(df[&#34;start_time&#34;])
+    df1 = pd.DataFrame()
+    df[&#34;start_time&#34;] -= s_time
+    df[&#34;end_time&#34;] -= s_time
+    splits1 = list(df.groupby(&#34;WorkerID&#34;))
+    task_count = []
+    seconds = []
+    wid = []
+    for i in range(len(splits1)):
+        a = pd.DataFrame(splits1[i][1],
+                         columns=[&#39;JobId&#39;, &#39;WorkerID&#39;, &#39;TaskId&#39;,
+                                  &#39;start_time&#39;, &#39;end_time&#39;])
+        end_time = a[&#34;end_time&#34;].iloc[-1]
+        for m in range(1, math.ceil(float(end_time))):
+            count = 0
+            for n in range(len(a[&#34;TaskId&#34;])):
+                if m &gt;= a[&#34;start_time&#34;].iloc[n] and m &lt;= a[&#34;end_time&#34;].iloc[n]:
+                    count = count + 1
+                else:
+                    pass
+            task_count.append(count)
+            seconds.append(m)
+            wid.append(splits1[i][0])
+
+    df1[&#39;WorkerID&#39;] = wid
+    df1[&#39;seconds&#39;] = seconds
+    df1[&#39;task_count&#39;] = task_count
+    df1 = df1.pivot(index=&#39;WorkerID&#39;, columns=&#39;seconds&#39;, values=&#39;task_count&#39;)
+    sns.color_palette(&#34;viridis&#34;)
+    sns.heatmap(df1, annot=False, ax=ax, cmap=&#34;Reds&#34;)
+    ax.set_title(title)</code></pre>
+</details>
+</dd>
 <dt id="src.Analytics.analysis.graph_plot"><code class="name flex">
 <span>def <span class="ident">graph_plot</span></span>(<span>df, ax, title)</span>
 </code></dt>
@@ -488,8 +608,8 @@ and groups by worker id.</li>
 <li>For each worker, the number of tasks running at each second in a time
 interval are calculated.</li>
 <li>There are 3 plots displayed in a window, with a plot each for a
-scheduling algorithm. The X axis has the number of tasks and the Y axis
-has the time in seconds.</li>
+scheduling algorithm. The X axis has the time in seconds and the Y axis
+has the number of tasks.</li>
 <li>For a given scheduling algorithm, each worker is represented with a line
 of a different colour.</li>
 </ul></div>
@@ -504,19 +624,23 @@ of a different colour.</li>
     * For each worker, the number of tasks running at each second in a time
     interval are calculated.
     * There are 3 plots displayed in a window, with a plot each for a
-    scheduling algorithm. The X axis has the number of tasks and the Y axis
-    has the time in seconds.
+    scheduling algorithm. The X axis has the time in seconds and the Y axis
+    has the number of tasks.
     * For a given scheduling algorithm, each worker is represented with a line
     of a different colour.
     &#34;&#34;&#34;
+    s_time = min(df[&#34;start_time&#34;])
+    df[&#34;start_time&#34;] -= s_time
+    df[&#34;end_time&#34;] -= s_time
     splits1 = list(df.groupby(&#34;WorkerID&#34;))
+
     for i in range(len(splits1)):
         time = dict()
         a = pd.DataFrame(splits1[i][1],
                          columns=[&#39;JobId&#39;, &#39;WorkerID&#39;, &#39;TaskId&#39;,
                                   &#39;start_time&#39;, &#39;end_time&#39;, &#39;duration&#39;])
         end_time = a[&#34;end_time&#34;].iloc[-1]
-        for m in range(0, end_time):
+        for m in range(0, math.ceil(float(end_time))):
             count = 0
             for n in range(len(a[&#34;TaskId&#34;])):
                 if m &gt;= a[&#34;start_time&#34;].iloc[n] and m &lt;= a[&#34;end_time&#34;].iloc[n]:
@@ -566,6 +690,7 @@ of a different colour.</li>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
 <li><code><a title="src.Analytics.analysis.get_analytics" href="#src.Analytics.analysis.get_analytics">get_analytics</a></code></li>
+<li><code><a title="src.Analytics.analysis.get_heatmap" href="#src.Analytics.analysis.get_heatmap">get_heatmap</a></code></li>
 <li><code><a title="src.Analytics.analysis.graph_plot" href="#src.Analytics.analysis.graph_plot">graph_plot</a></code></li>
 <li><code><a title="src.Analytics.analysis.main" href="#src.Analytics.analysis.main">main</a></code></li>
 </ul>
