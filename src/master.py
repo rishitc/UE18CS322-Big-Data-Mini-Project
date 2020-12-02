@@ -67,10 +67,6 @@ def listenForJobRequests(jobRequestHandler: JobRequestHandler,
             clientConn, clientAddr = jobReqSocket.accept()
 
             master.PRINT_LOCK.acquire()
-            print(f"Something connected to me!! {clientAddr}")
-            master.PRINT_LOCK.release()
-
-            master.PRINT_LOCK.acquire()
             print(info_text("Connected to client at address:"))
             print(f"IP Address: {clientAddr[0]}")
             print(f"Socket: {clientAddr[1]}")
@@ -259,13 +255,17 @@ if __name__ == "__main__":
                                               target=LeastLoadedScheduler.
                                               jobDispatcher,
                                               args=(obj_jobRequestHandler,
-                                                    obj_workerStateTracker,
-                                                    WORKER_COUNT))
+                                                    obj_workerStateTracker))
     else:
         master.PRINT_LOCK.acquire()
         print(error_text("Invalid value entered for type of scheduling!"))
         master.PRINT_LOCK.release()
         sys.exit(1)
+
+    master.PRINT_LOCK.acquire()
+    print(info_text((f"Selected scheduling algorithm: {attr(1)}"
+                     f"{_converter[TYPE_OF_SCHEDULING]}{attr(0)}")))
+    master.PRINT_LOCK.release()
 
     taskDispatchThread.daemon = True
     taskDispatchThread.start()
