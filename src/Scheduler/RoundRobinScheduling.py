@@ -131,4 +131,4 @@ class RoundRobinScheduler:
                 # After sending a task to the worker, sleep for 0.01 seconds
                 # before sending the next task. This done so that the worker
                 # buffer only has at most 1 task in its socket's buffer
-                time.sleep(0.01)
+                # time.sleep(0.01)

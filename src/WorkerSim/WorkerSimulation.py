@@ -175,7 +175,7 @@ class Worker:
                 worker.PRINT_LOCK.acquire()
                 print(f"Task sent: {response_msg}!")
                 worker.PRINT_LOCK.release()
-                time.sleep(0.01)
+                # time.sleep(0.01)
 
     def __del__(self):
         self.updates_q.join()
