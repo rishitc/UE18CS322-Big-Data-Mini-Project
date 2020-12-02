@@ -7,6 +7,9 @@ import colored as TC
 from colored.colored import attr
 import inflect
 
+# This lock is used to get access to print onto the standard output
+from Locks.MasterPrintLock import master
+
 from WorkerUtils.WorkerStateTracker import StateTracker
 from UpdateTracker.JobUpdateTracker import Tracker as JobUpdateTracker
 
@@ -24,9 +27,6 @@ MISSING_CMD_LINE_ARGS: int = 2
 BROKEN_CONFIG_FILE_PATH: int = 1
 
 GE = inflect.engine()  # GE means Grammar Engine
-
-# This lock is used to get access to print onto the standard output
-PRINT_LOCK = threading.Lock()
 
 
 def info_text(text):
@@ -54,9 +54,9 @@ def listenForJobRequests(jobRequestHandler: JobRequestHandler,
     """
     _JOB_REQUEST_ADDR: Tuple[str, int] = (socket.gethostname(), 5000)
 
-    PRINT_LOCK.acquire()
+    master.PRINT_LOCK.acquire()
     print("Inside listenForJobRequests")
-    PRINT_LOCK.release()
+    master.PRINT_LOCK.release()
 
     # Setup the master socket to listen for job requests
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as jobReqSocket:
@@ -66,15 +66,15 @@ def listenForJobRequests(jobRequestHandler: JobRequestHandler,
             jobReqSocket.listen()
             clientConn, clientAddr = jobReqSocket.accept()
 
-            PRINT_LOCK.acquire()
+            master.PRINT_LOCK.acquire()
             print(f"Something connected to me!! {clientAddr}")
-            PRINT_LOCK.release()
+            master.PRINT_LOCK.release()
 
-            PRINT_LOCK.acquire()
+            master.PRINT_LOCK.acquire()
             print(info_text("Connected to client at address:"))
             print(f"IP Address: {clientAddr[0]}")
             print(f"Socket: {clientAddr[1]}")
-            PRINT_LOCK.release()
+            master.PRINT_LOCK.release()
 
             # while True:
             jobRequest = clientConn.recv(BUFFER_SIZE)
@@ -98,9 +98,9 @@ def listenForJobRequests(jobRequestHandler: JobRequestHandler,
             jobUpdateTracker.addJobRequest(parsedJSON_Msg)
             jobUpdateTracker.LOCK.release()
 
-            PRINT_LOCK.acquire()
+            master.PRINT_LOCK.acquire()
             print(f"{jobRequestHandler.jobRequests=}")
-            PRINT_LOCK.release()
+            master.PRINT_LOCK.release()
 
             clientConn.close()
 
@@ -132,9 +132,9 @@ def workerUpdates(workerSocket: socket.socket,
             workerSocket.close()
             break
 
-        PRINT_LOCK.acquire()
+        master.PRINT_LOCK.acquire()
         print(f"Received worker update at master: {workerUpdate}")
-        PRINT_LOCK.release()
+        master.PRINT_LOCK.release()
 
         parsedJSON_Msg = json.loads(workerUpdate)
 
@@ -146,10 +146,10 @@ def workerUpdates(workerSocket: socket.socket,
         workerStateTracker.freeSlot(parsedJSON_Msg["worker_id"])
         workerStateTracker.LOCK.release()
 
-        # PRINT_LOCK.acquire()
+        # master.PRINT_LOCK.acquire()
         # workerStateTracker.showWorkerStates()
 
-        # PRINT_LOCK.release()
+        # master.PRINT_LOCK.release()
 
 
 if __name__ == "__main__":
@@ -219,7 +219,7 @@ if __name__ == "__main__":
     # ---
     # After this points we create the threads for the master
     # After this point any print statements need to acquire the
-    # PRINT_LOCK before printing
+    # master.PRINT_LOCK before printing
     # ---
 
     """
@@ -262,9 +262,9 @@ if __name__ == "__main__":
                                                     obj_workerStateTracker,
                                                     WORKER_COUNT))
     else:
-        PRINT_LOCK.acquire()
+        master.PRINT_LOCK.acquire()
         print(error_text("Invalid value entered for type of scheduling!"))
-        PRINT_LOCK.release()
+        master.PRINT_LOCK.release()
         sys.exit(1)
 
     taskDispatchThread.daemon = True
@@ -283,10 +283,10 @@ if __name__ == "__main__":
 
         # Put the socket into listening mode
         worker_updates_socket.listen(WORKER_COUNT)
-        PRINT_LOCK.acquire()
+        master.PRINT_LOCK.acquire()
         print(info_text(("Listening to updates from the workers on port: "
                          f"{WORKER_UPDATES_PORT}")))
-        PRINT_LOCK.release()
+        master.PRINT_LOCK.release()
 
         # List to hold the threads listening to updates from the workers
         workerUpdateThreads: List[threading.Thread] = []
@@ -300,13 +300,13 @@ if __name__ == "__main__":
             WORKER_ID: str = workerSocket.recv(BUFFER_SIZE).decode()
 
             # Printing connection updates
-            PRINT_LOCK.acquire()
+            master.PRINT_LOCK.acquire()
             print(
                   info_text(f"Connected to worker ID: {WORKER_ID} at address:")
                   )
             print(f"IP Address: {workerAddress[0]}")
             print(f"Socket: {workerAddress[1]}")
-            PRINT_LOCK.release()
+            master.PRINT_LOCK.release()
 
             # Start a new thread and return its thread object
             _temp = threading.Thread(target=workerUpdates,
