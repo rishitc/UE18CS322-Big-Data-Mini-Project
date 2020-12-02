@@ -33,6 +33,9 @@ class StateTracker:
             }
             self.workerIDs.append(worker["worker_id"])
 
+        # Sort the workerIDs
+        self.workerIDs.sort()
+
     def isWorkerFree(self, workerID: int, demand: int = 1) -> bool:
         """Checks if the worker whose ```worker_id``` key is equal to
          ```workerID```, has ```demand``` number of free slots or not.
