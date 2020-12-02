@@ -3,10 +3,9 @@ import json  # For JSON to python conversion and vice-versa
 import threading  # For locks
 import socket  # For function parameters
 import queue  # For storing the completed tasks
-from typing import List
 
 from Locks.WorkerPrintLock import worker
-from Communication.protocol import (YACS_Protocol, messageToWorkerType)
+from Communication.protocol import YACS_Protocol
 # from master import PRINT_LOCK
 #  For sending message back to master
 
