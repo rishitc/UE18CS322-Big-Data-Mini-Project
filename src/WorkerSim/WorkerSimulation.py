@@ -52,7 +52,8 @@ class Worker:
         _exec_pool_poller_thread.daemon = True
         _exec_pool_poller_thread.start()
         worker.PRINT_LOCK.acquire()
-        print(Worker.info_text("Created the Task Pool Poller thread!"))
+        print(Worker.info_text("Created the Task Execution Pool Poller thread!"
+                               ))
         worker.PRINT_LOCK.release()
 
         while True:
