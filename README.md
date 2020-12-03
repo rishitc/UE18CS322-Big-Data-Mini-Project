@@ -2,11 +2,14 @@
 UE18CS322 Big Data Mini Project Repository
 
 ## Running Instructions
-1. Installing all the packages mentioned in ```requirements.txt```
+1. Make sure that you have **Python 3.8.5 or above** installed on your system
+   1. In the following ```README.md```, we assume that you are using **Python 3.8.5 or above**
+   2. We use this version of **Python** in the terminal, using the command  ```python3``` 
+2. Installing all the packages mentioned in ```requirements.txt```
     ```bash
     $ pip install -r requirements.txt
     ```
-2. Add the src folder to your ```PYTHONPATH``` environment variable by following steps:
+3. Add the src folder to your ```PYTHONPATH``` environment variable by following steps:
    1. Open your terminal and in that, navigate into the ```src``` folder of the project
    2. Once in the ```src``` folder run the command
         ```bash
@@ -14,35 +17,35 @@ UE18CS322 Big Data Mini Project Repository
         ```
         - This will give you the complete path to the ```src``` folder your are currently in.
         - Make sure to save this path returned, as it will be needed in the next steps
-    3. Open your system's ```.bash_profile``` file using the command,
+    1. Open your system's ```.bash_profile``` file using the command,
        ```bash
        $ nano ~/.bash_profile
        ```
        - Navigate to the bottom of the file
-    4. Type in the following into the file,
+    2. Type in the following into the file,
         ```bash
         export PYTHONPATH="<The_path_returned_by_the_pwd_command_done_earlier>"
         ```
         - Save the file
         - Close the file
-    5. Now run the below command on your terminal,
+    3. Now run the below command on your terminal,
         ```bash
         $ source ~/.bash_profile
         ```
-    6. Now run the below command on your terminal,
+    4. Now run the below command on your terminal,
         ```bash
         $ echo $PYTHONPATH
         ```
         - You should see the path you had put as the value for the ```PYTHONPATH``` in the ```.bash_profile``` visible here
-    7. **NOTE:** The same steps can also be done using the ```~/.bashrc``` file instead of the file ```~/.bash_profile```
+    5. **NOTE:** The same steps can also be done using the ```~/.bashrc``` file instead of the file ```~/.bash_profile```
        1. Using ```~/.bash_profile``` is recommended for systems running MacOS
        2. Any of the 2 files can used for Linux systems
-3. Make sure you are in the ```src``` folder of the project. If not, then use the ```cd``` command to navigate into the ```src``` folder.
-4. Run the below command in a new terminal, to start the **master**:
+4. Make sure you are in the ```src``` folder of the project. If not, then use the ```cd``` command to navigate into the ```src``` folder.
+5. Run the below command in a new terminal, to start the **master**:
     ```bash
     $ python3 master.py "../setup/Copy of config.json" (RR|LL|RANDOM)
     ```
-5. To start the **3 workers**, run the below commands, each in a new terminal:
+6. To start the **3 workers**, run the below commands, each in a new terminal:
     ```bash
     $ python3 worker.py 4000 1
     ```
@@ -52,35 +55,56 @@ UE18CS322 Big Data Mini Project Repository
     ```bash
     $ python3 worker.py 4002 3
     ```
-6. Now, on the terminal in which you started the **master**, you should see the prompt:
+7. Now, on the terminal in which you started the **master**, you should see the prompt:
     ```bash
     Have the 3 workers been started, yet? [y/n] 
     ```
     - Enter ```y```
     - Now wait for **~2 seconds** and you will notice that the workers have connected to the master
-7. Now, start a new terminal and run the below command to start the client code:
+8. Now, start a new terminal and run the below command to start the client code:
     ```bash
     $ python3 "Copy_of_requests.py" <number_of_(job)_requests>
     ```
-8. Now, you'll notice that terminals in which the client, workers and master programs are running; there will be a **lot of debug information being output**. That's fine and it's the expected behaviour as well.
+9.  Now, you'll notice that terminals in which the client, workers and master programs are running; there will be a **lot of debug information being output**. That's fine and it's the expected behaviour as well.
    1. If you notice **any exceptions or errors** being raised during the execution on any of the above mentioned terminals, then please do consider opening an issue on our [project repository](https://github.com/rishitc/UE18CS322-Big-Data-Mini-Project)
-9. 
+10. Now once you notice that there is no new output on the master and that at the end of the master program's output on the terminal, there is a message:
+    ```bash
+    SUCCESS: All job updates have been received!
+    ```
+    Then it means that the **master has completed all the jobs and corresponding tasks**, requested by the client.
+11. Now that the code has completed execution, it's time to create the **logs**!... It's not as boring as you think :smile:
+    1.  Remember to **note down the number of tasks sent by the client code**. This value can be found in the output line of the client code (i.e. ```Copy_of_requests.py```) as:
+    ```bash
+    Total number of tasks sent by client are: <TOTAL_NO_OF_TASKS_SENT_BY_CLIENT>
+    ```
 
 ## How to store logs?
-1. Create a directory under Logs/Without Training Wheels under the naming convention Run_TestNumber_Scheduling Algorithm
-2. Create 4 files having .log extension(Master.log, Worker_1.log,Worker_2.log and Worker_3.log)
-3. Copy the terminal outputs under the respective files
+1. Create a directory under the folder ```Logs/Without Training Wheels``` following the naming convention:
+   ```bash
+   Run_<TestNumber>_<Scheduling_Algorithm_Used>
+   ```
+2. Create 4 files having the ```.log``` extension, namely:
+   1. Master.log
+   2. Worker_1.log
+   3. Worker_2.log
+   4. Worker_3.log
+   - Remember to follow this naming convention only or else the **log analysis script** will not work!
+   - All the filenames shown above are indicative of which machine's logs they will contain
+3. Copy the terminal outputs and paste them into the respective files
+4. Once you have populated the 4 files with their respective log outputs from the terminal output, then we move on to analysing the output
 
 ## How to check logs?
-1. Go to the Logs directory and to the Without Training Wheels directory and execute the following task
-2. ```bash
-   $ python3 "check_logs.py" <Run_TestNumber_Scheduling Algorithm>
-   ```
-3. Compare the task count and the individual worker counts
+1. Go to the ```Logs/Without Training Wheels``` directory and execute the **log analysis script** using the command below:
+    ```bash
+    $ python3 "check_logs.py" <Run_TestNumber_Scheduling Algorithm>
+    ```
+3. Compare the task count and the individual worker counts and verify that all the counts add up
+   1. Primarily make sure that **the number of tasks sent by the master**, **the number of task updates received by the master** and **the number of tasks sent by the client** are all the **same**
+   2. If they are not the same then please do consider **opening an issue** on our [project repository](https://github.com/rishitc/UE18CS322-Big-Data-Mini-Project). Make sure to include all the **4 log files** and the **scheduling algorithm used** as well as other information that would be useful in *replicating the issue*
 
 ## How to generate the documentation?
 1. Make sure the BASH script called ```build_docs.sh``` has **execute permission** set for the user you
-   are running as.
+   are running as
     - If not then you can easily add it using the ```chmod``` command
     - Preferably the command you can run to give permissions as well as maintain system security is:
     ```bash
@@ -94,14 +118,18 @@ UE18CS322 Big Data Mini Project Repository
    ```bash
    $ ./build_docs.sh
    ```
-   - In the output you may notice *PEP-224 UserWarnings*, please ignore them.
+   - In the output you may notice *PEP-224 UserWarnings*, please ignore them
    - Other than this, **no other warnings or errors** should show up. If they do then please consider **opening an issue** on our [project repository](https://github.com/rishitc/UE18CS322-Big-Data-Mini-Project)
 
 ## Contributors
 * Rishit C
+  * SRN: PES1201800316
 * Akhil E
+  * SRN:
 * Varun T
+  * SRN:
 * Saran P
+  * SRN: 
 
 ---
 
