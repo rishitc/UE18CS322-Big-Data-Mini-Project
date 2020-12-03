@@ -1,0 +1,124 @@
+2 generated the key b'nWMrRQojFRcHWyprqfGje013_KPz0SsPlN9AGHGU5lg='
+Sleeping for 1.0s
+Task received at worker: [{"worker_id": 2, "job_id": "3", "task family": "map", "task": {"task_id": "3_M0", "duration": 1}}]
+{'worker_id': 2, 'job_id': '3', 'task family': 'map', 'task': {'task_id': '3_M0', 'duration': 1, 'start_time': 1606997021.9100378, 'end_time': 0}}
+{'3': {'3_M0': {'worker_id': 2, 'job_id': '3', 'task family': 'map', 'task': {'task_id': '3_M0', 'duration': 1, 'start_time': 1606997021.9100378, 'end_time': 0}}}}
+<class 'int'>
+1
+Task received at worker: [{"worker_id": 2, "job_id": "3", "task family": "map", "task": {"task_id": "3_M2", "duration": 4}}]
+Task sent: {"worker_id": 2, "job_id": "3", "task family": "map", "task": {"task_id": "3_M0", "start_time": 1606997021.9100378, "end_time": 1606997022.0197444}}!
+{'worker_id': 2, 'job_id': '3', 'task family': 'map', 'task': {'task_id': '3_M2', 'duration': 4, 'start_time': 1606997022.020742, 'end_time': 0}}
+{'3': {'3_M2': {'worker_id': 2, 'job_id': '3', 'task family': 'map', 'task': {'task_id': '3_M2', 'duration': 4, 'start_time': 1606997022.020742, 'end_time': 0}}}}
+Task received at worker: [{"worker_id": 2, "job_id": "5", "task family": "map", "task": {"task_id": "5_M0", "duration": 2}}]
+{'worker_id': 2, 'job_id': '5', 'task family': 'map', 'task': {'task_id': '5_M0', 'duration': 2, 'start_time': 1606997022.3339043, 'end_time': 0}}
+{'3': {'3_M2': {'worker_id': 2, 'job_id': '3', 'task family': 'map', 'task': {'task_id': '3_M2', 'duration': 4, 'start_time': 1606997022.020742, 'end_time': 0}}}, '5': {'5_M0': {'worker_id': 2, 'job_id': '5', 'task family': 'map', 'task': {'task_id': '5_M0', 'duration': 2, 'start_time': 1606997022.3339043, 'end_time': 0}}}}
+<class 'int'>
+4
+<class 'int'>
+2
+Task received at worker: [{"worker_id": 2, "job_id": "6", "task family": "map", "task": {"task_id": "6_M0", "duration": 3}}]
+{'worker_id': 2, 'job_id': '6', 'task family': 'map', 'task': {'task_id': '6_M0', 'duration': 3, 'start_time': 1606997023.3372211, 'end_time': 0}}
+{'3': {'3_M2': {'worker_id': 2, 'job_id': '3', 'task family': 'map', 'task': {'task_id': '3_M2', 'duration': 3, 'start_time': 1606997022.020742, 'end_time': 0}}}, '5': {'5_M0': {'worker_id': 2, 'job_id': '5', 'task family': 'map', 'task': {'task_id': '5_M0', 'duration': 1, 'start_time': 1606997022.3339043, 'end_time': 0}}}, '6': {'6_M0': {'worker_id': 2, 'job_id': '6', 'task family': 'map', 'task': {'task_id': '6_M0', 'duration': 3, 'start_time': 1606997023.3372211, 'end_time': 0}}}}
+<class 'int'>
+3
+<class 'int'>
+1
+<class 'int'>
+3
+Task sent: {"worker_id": 2, "job_id": "5", "task family": "map", "task": {"task_id": "5_M0", "start_time": 1606997022.3339043, "end_time": 1606997024.1991086}}!
+Task received at worker: [{"worker_id": 2, "job_id": "0", "task family": "reduce", "task": {"task_id": "0_R0", "duration": 1}}]
+{'worker_id': 2, 'job_id': '0', 'task family': 'reduce', 'task': {'task_id': '0_R0', 'duration': 1, 'start_time': 1606997024.65888, 'end_time': 0}}
+{'3': {'3_M2': {'worker_id': 2, 'job_id': '3', 'task family': 'map', 'task': {'task_id': '3_M2', 'duration': 2, 'start_time': 1606997022.020742, 'end_time': 0}}}, '6': {'6_M0': {'worker_id': 2, 'job_id': '6', 'task family': 'map', 'task': {'task_id': '6_M0', 'duration': 2, 'start_time': 1606997023.3372211, 'end_time': 0}}}, '0': {'0_R0': {'worker_id': 2, 'job_id': '0', 'task family': 'reduce', 'task': {'task_id': '0_R0', 'duration': 1, 'start_time': 1606997024.65888, 'end_time': 0}}}}
+Task received at worker: [{"worker_id": 2, "job_id": "0", "task family": "reduce", "task": {"task_id": "0_R1", "duration": 1}}]
+{'worker_id': 2, 'job_id': '0', 'task family': 'reduce', 'task': {'task_id': '0_R1', 'duration': 1, 'start_time': 1606997024.8772936, 'end_time': 0}}
+{'3': {'3_M2': {'worker_id': 2, 'job_id': '3', 'task family': 'map', 'task': {'task_id': '3_M2', 'duration': 2, 'start_time': 1606997022.020742, 'end_time': 0}}}, '6': {'6_M0': {'worker_id': 2, 'job_id': '6', 'task family': 'map', 'task': {'task_id': '6_M0', 'duration': 2, 'start_time': 1606997023.3372211, 'end_time': 0}}}, '0': {'0_R0': {'worker_id': 2, 'job_id': '0', 'task family': 'reduce', 'task': {'task_id': '0_R0', 'duration': 1, 'start_time': 1606997024.65888, 'end_time': 0}}, '0_R1': {'worker_id': 2, 'job_id': '0', 'task family': 'reduce', 'task': {'task_id': '0_R1', 'duration': 1, 'start_time': 1606997024.8772936, 'end_time': 0}}}}
+<class 'int'>
+2
+<class 'int'>
+2
+<class 'int'>
+1
+<class 'int'>
+1
+Task sent: {"worker_id": 2, "job_id": "0", "task family": "reduce", "task": {"task_id": "0_R0", "start_time": 1606997024.65888, "end_time": 1606997025.3191128}}!
+Task sent: {"worker_id": 2, "job_id": "0", "task family": "reduce", "task": {"task_id": "0_R1", "start_time": 1606997024.8772936, "end_time": 1606997025.3211083}}!
+Task received at worker: [{"worker_id": 2, "job_id": "4", "task family": "reduce", "task": {"task_id": "4_R0", "duration": 3}}]
+{'worker_id': 2, 'job_id': '4', 'task family': 'reduce', 'task': {'task_id': '4_R0', 'duration': 3, 'start_time': 1606997025.5844038, 'end_time': 0}}
+{'3': {'3_M2': {'worker_id': 2, 'job_id': '3', 'task family': 'map', 'task': {'task_id': '3_M2', 'duration': 1, 'start_time': 1606997022.020742, 'end_time': 0}}}, '6': {'6_M0': {'worker_id': 2, 'job_id': '6', 'task family': 'map', 'task': {'task_id': '6_M0', 'duration': 1, 'start_time': 1606997023.3372211, 'end_time': 0}}}, '4': {'4_R0': {'worker_id': 2, 'job_id': '4', 'task family': 'reduce', 'task': {'task_id': '4_R0', 'duration': 3, 'start_time': 1606997025.5844038, 'end_time': 0}}}}
+Task received at worker: [{"worker_id": 2, "job_id": "7", "task family": "map", "task": {"task_id": "7_M1", "duration": 1}}]
+{'worker_id': 2, 'job_id': '7', 'task family': 'map', 'task': {'task_id': '7_M1', 'duration': 1, 'start_time': 1606997026.0990274, 'end_time': 0}}
+{'3': {'3_M2': {'worker_id': 2, 'job_id': '3', 'task family': 'map', 'task': {'task_id': '3_M2', 'duration': 1, 'start_time': 1606997022.020742, 'end_time': 0}}}, '6': {'6_M0': {'worker_id': 2, 'job_id': '6', 'task family': 'map', 'task': {'task_id': '6_M0', 'duration': 1, 'start_time': 1606997023.3372211, 'end_time': 0}}}, '4': {'4_R0': {'worker_id': 2, 'job_id': '4', 'task family': 'reduce', 'task': {'task_id': '4_R0', 'duration': 3, 'start_time': 1606997025.5844038, 'end_time': 0}}}, '7': {'7_M1': {'worker_id': 2, 'job_id': '7', 'task family': 'map', 'task': {'task_id': '7_M1', 'duration': 1, 'start_time': 1606997026.0990274, 'end_time': 0}}}}
+<class 'int'>
+1
+<class 'int'>
+1
+Task sent: {"worker_id": 2, "job_id": "3", "task family": "map", "task": {"task_id": "3_M2", "start_time": 1606997022.020742, "end_time": 1606997026.3822687}}!
+<class 'int'>
+3
+Task sent: {"worker_id": 2, "job_id": "6", "task family": "map", "task": {"task_id": "6_M0", "start_time": 1606997023.3372211, "end_time": 1606997026.3832674}}!
+<class 'int'>
+1
+Task received at worker: [{"worker_id": 2, "job_id": "8", "task family": "map", "task": {"task_id": "8_M0", "duration": 2}}]
+Task sent: {"worker_id": 2, "job_id": "7", "task family": "map", "task": {"task_id": "7_M1", "start_time": 1606997026.0990274, "end_time": 1606997026.4291444}}!
+{'worker_id': 2, 'job_id': '8', 'task family': 'map', 'task': {'task_id': '8_M0', 'duration': 2, 'start_time': 1606997026.430156, 'end_time': 0}}
+{'4': {'4_R0': {'worker_id': 2, 'job_id': '4', 'task family': 'reduce', 'task': {'task_id': '4_R0', 'duration': 2, 'start_time': 1606997025.5844038, 'end_time': 0}}}, '8': {'8_M0': {'worker_id': 2, 'job_id': '8', 'task family': 'map', 'task': {'task_id': '8_M0', 'duration': 2, 'start_time': 1606997026.430156, 'end_time': 0}}}}
+Task received at worker: [{"worker_id": 2, "job_id": "5", "task family": "reduce", "task": {"task_id": "5_R0", "duration": 1}}]
+{'worker_id': 2, 'job_id': '5', 'task family': 'reduce', 'task': {'task_id': '5_R0', 'duration': 1, 'start_time': 1606997026.9198308, 'end_time': 0}}
+{'4': {'4_R0': {'worker_id': 2, 'job_id': '4', 'task family': 'reduce', 'task': {'task_id': '4_R0', 'duration': 2, 'start_time': 1606997025.5844038, 'end_time': 0}}}, '8': {'8_M0': {'worker_id': 2, 'job_id': '8', 'task family': 'map', 'task': {'task_id': '8_M0', 'duration': 2, 'start_time': 1606997026.430156, 'end_time': 0}}}, '5': {'5_R0': {'worker_id': 2, 'job_id': '5', 'task family': 'reduce', 'task': {'task_id': '5_R0', 'duration': 1, 'start_time': 1606997026.9198308, 'end_time': 0}}}}
+<class 'int'>
+2
+<class 'int'>
+2
+<class 'int'>
+1
+Task sent: {"worker_id": 2, "job_id": "5", "task family": "reduce", "task": {"task_id": "5_R0", "start_time": 1606997026.9198308, "end_time": 1606997027.5511425}}!
+Task received at worker: [{"worker_id": 2, "job_id": "6", "task family": "reduce", "task": {"task_id": "6_R0", "duration": 4}}]
+{'worker_id': 2, 'job_id': '6', 'task family': 'reduce', 'task': {'task_id': '6_R0', 'duration': 4, 'start_time': 1606997028.0815299, 'end_time': 0}}
+{'4': {'4_R0': {'worker_id': 2, 'job_id': '4', 'task family': 'reduce', 'task': {'task_id': '4_R0', 'duration': 1, 'start_time': 1606997025.5844038, 'end_time': 0}}}, '8': {'8_M0': {'worker_id': 2, 'job_id': '8', 'task family': 'map', 'task': {'task_id': '8_M0', 'duration': 1, 'start_time': 1606997026.430156, 'end_time': 0}}}, '6': {'6_R0': {'worker_id': 2, 'job_id': '6', 'task family': 'reduce', 'task': {'task_id': '6_R0', 'duration': 4, 'start_time': 1606997028.0815299, 'end_time': 0}}}}
+Task received at worker: [{"worker_id": 2, "job_id": "6", "task family": "reduce", "task": {"task_id": "6_R1", "duration": 4}}]
+{'worker_id': 2, 'job_id': '6', 'task family': 'reduce', 'task': {'task_id': '6_R1', 'duration': 4, 'start_time': 1606997028.2241492, 'end_time': 0}}
+{'4': {'4_R0': {'worker_id': 2, 'job_id': '4', 'task family': 'reduce', 'task': {'task_id': '4_R0', 'duration': 1, 'start_time': 1606997025.5844038, 'end_time': 0}}}, '8': {'8_M0': {'worker_id': 2, 'job_id': '8', 'task family': 'map', 'task': {'task_id': '8_M0', 'duration': 1, 'start_time': 1606997026.430156, 'end_time': 0}}}, '6': {'6_R0': {'worker_id': 2, 'job_id': '6', 'task family': 'reduce', 'task': {'task_id': '6_R0', 'duration': 4, 'start_time': 1606997028.0815299, 'end_time': 0}}, '6_R1': {'worker_id': 2, 'job_id': '6', 'task family': 'reduce', 'task': {'task_id': '6_R1', 'duration': 4, 'start_time': 1606997028.2241492, 'end_time': 0}}}}
+<class 'int'>
+1
+<class 'int'>
+1
+Task sent: {"worker_id": 2, "job_id": "4", "task family": "reduce", "task": {"task_id": "4_R0", "start_time": 1606997025.5844038, "end_time": 1606997028.6032698}}!
+<class 'int'>
+4
+<class 'int'>
+4
+Task sent: {"worker_id": 2, "job_id": "8", "task family": "map", "task": {"task_id": "8_M0", "start_time": 1606997026.430156, "end_time": 1606997028.607261}}!
+Task received at worker: [{"worker_id": 2, "job_id": "8", "task family": "reduce", "task": {"task_id": "8_R0", "duration": 1}}]
+{'worker_id': 2, 'job_id': '8', 'task family': 'reduce', 'task': {'task_id': '8_R0', 'duration': 1, 'start_time': 1606997028.9653018, 'end_time': 0}}
+{'6': {'6_R0': {'worker_id': 2, 'job_id': '6', 'task family': 'reduce', 'task': {'task_id': '6_R0', 'duration': 3, 'start_time': 1606997028.0815299, 'end_time': 0}}, '6_R1': {'worker_id': 2, 'job_id': '6', 'task family': 'reduce', 'task': {'task_id': '6_R1', 'duration': 3, 'start_time': 1606997028.2241492, 'end_time': 0}}}, '8': {'8_R0': {'worker_id': 2, 'job_id': '8', 'task family': 'reduce', 'task': {'task_id': '8_R0', 'duration': 1, 'start_time': 1606997028.9653018, 'end_time': 0}}}}
+Task received at worker: [{"worker_id": 2, "job_id": "8", "task family": "reduce", "task": {"task_id": "8_R1", "duration": 1}}]
+{'worker_id': 2, 'job_id': '8', 'task family': 'reduce', 'task': {'task_id': '8_R1', 'duration': 1, 'start_time': 1606997029.1567898, 'end_time': 0}}
+{'6': {'6_R0': {'worker_id': 2, 'job_id': '6', 'task family': 'reduce', 'task': {'task_id': '6_R0', 'duration': 3, 'start_time': 1606997028.0815299, 'end_time': 0}}, '6_R1': {'worker_id': 2, 'job_id': '6', 'task family': 'reduce', 'task': {'task_id': '6_R1', 'duration': 3, 'start_time': 1606997028.2241492, 'end_time': 0}}}, '8': {'8_R0': {'worker_id': 2, 'job_id': '8', 'task family': 'reduce', 'task': {'task_id': '8_R0', 'duration': 1, 'start_time': 1606997028.9653018, 'end_time': 0}}, '8_R1': {'worker_id': 2, 'job_id': '8', 'task family': 'reduce', 'task': {'task_id': '8_R1', 'duration': 1, 'start_time': 1606997029.1567898, 'end_time': 0}}}}
+Task received at worker: [{"worker_id": 2, "job_id": "7", "task family": "reduce", "task": {"task_id": "7_R0", "duration": 2}}]
+{'worker_id': 2, 'job_id': '7', 'task family': 'reduce', 'task': {'task_id': '7_R0', 'duration': 2, 'start_time': 1606997029.250539, 'end_time': 0}}
+{'6': {'6_R0': {'worker_id': 2, 'job_id': '6', 'task family': 'reduce', 'task': {'task_id': '6_R0', 'duration': 3, 'start_time': 1606997028.0815299, 'end_time': 0}}, '6_R1': {'worker_id': 2, 'job_id': '6', 'task family': 'reduce', 'task': {'task_id': '6_R1', 'duration': 3, 'start_time': 1606997028.2241492, 'end_time': 0}}}, '8': {'8_R0': {'worker_id': 2, 'job_id': '8', 'task family': 'reduce', 'task': {'task_id': '8_R0', 'duration': 1, 'start_time': 1606997028.9653018, 'end_time': 0}}, '8_R1': {'worker_id': 2, 'job_id': '8', 'task family': 'reduce', 'task': {'task_id': '8_R1', 'duration': 1, 'start_time': 1606997029.1567898, 'end_time': 0}}}, '7': {'7_R0': {'worker_id': 2, 'job_id': '7', 'task family': 'reduce', 'task': {'task_id': '7_R0', 'duration': 2, 'start_time': 1606997029.250539, 'end_time': 0}}}}
+<class 'int'>
+3
+<class 'int'>
+3
+<class 'int'>
+1
+<class 'int'>
+1
+Task sent: {"worker_id": 2, "job_id": "8", "task family": "reduce", "task": {"task_id": "8_R0", "start_time": 1606997028.9653018, "end_time": 1606997029.727264}}!
+<class 'int'>
+2
+Task sent: {"worker_id": 2, "job_id": "8", "task family": "reduce", "task": {"task_id": "8_R1", "start_time": 1606997029.1567898, "end_time": 1606997029.7283049}}!
+<class 'int'>
+2
+<class 'int'>
+2
+<class 'int'>
+1
+Task sent: {"worker_id": 2, "job_id": "7", "task family": "reduce", "task": {"task_id": "7_R0", "start_time": 1606997029.250539, "end_time": 1606997030.8514307}}!
+<class 'int'>
+1
+<class 'int'>
+1
+Task sent: {"worker_id": 2, "job_id": "6", "task family": "reduce", "task": {"task_id": "6_R0", "start_time": 1606997028.0815299, "end_time": 1606997031.9105985}}!
+Task sent: {"worker_id": 2, "job_id": "6", "task family": "reduce", "task": {"task_id": "6_R1", "start_time": 1606997028.2241492, "end_time": 1606997031.9115987}}!
