@@ -62,19 +62,78 @@ GE = inflect.engine()  # GE means Grammar Engine
 
 
 def info_text(text):
+    &#34;&#34;&#34;```info_text``` returns a modified version of the input ```text``` such
+    that it looks like an *information message* when printed on the CLI.
+
+    **param** ```text```: The input string that will be modified to look like
+    an *information message* when printed on the CLI
+
+    **type** ```text```: str
+
+    **return**: The modified version of the input ```text``` such
+    that it looks like an *information message* when printed on the CLI
+
+    **rtype**: str
+    &#34;&#34;&#34;
     return f&#34;{TC.fg(6) + TC.attr(1)}INFO:{TC.attr(0)} {text}&#34;
 
 
 def error_text(text):
+    &#34;&#34;&#34;```error_text``` returns a modified version of the input ```text``` such
+    that it looks like an *error message* when printed on the CLI.
+
+    **param** ```text```: The input string that will be modified to look like
+    an *error message* when printed on the CLI
+
+    **type** ```text```: str
+
+    **return**: The modified version of the input ```text``` such
+    that it looks like an *error message* when printed on the CLI
+
+    **rtype**: str
+    &#34;&#34;&#34;
     return f&#34;{TC.fg(1) + TC.attr(1)}ERROR:{TC.attr(0)} {text}&#34;
 
 
 def success_text(text):
+    &#34;&#34;&#34;```success_text``` returns a modified version of the input ```text``` such
+    that it looks like a *success message* when printed on the CLI.
+
+    **param** ```text```: The input string that will be modified to look like
+    a *success message* when printed on the CLI
+
+    **type** ```text```: str
+
+    **return**: The modified version of the input ```text``` such
+    that it looks like a *success message* when printed on the CLI
+
+    **rtype**: str
+    &#34;&#34;&#34;
     return f&#34;{TC.fg(2) + TC.attr(1)}SUCCESS:{TC.attr(0)} {text}&#34;
 
 
 def checkJobPoller(jobRequestHandler: JobRequestHandler,
                    jobUpdateTracker: JobUpdateTracker):
+    &#34;&#34;&#34;```checkJobPoller``` continuously checks if all the tasks, for
+    every pending job, have been dispatched to one or the other worker,
+    by the master. It also checks whether the updates from the workers,
+    for every dispatched task, of every running job have been received by
+    the master.
+
+    It prints a ```success message``` once all tasks of all the pending jobs
+    have been dispatched as well as once all the tasks&#39; updates for all jobs
+    have been received, by the master.
+
+    **param** ```jobRequestHandler```: Used to track the task dispatch status
+    of the job
+
+    **type** ```jobRequestHandler```: JobRequestHandler
+
+    **param** ```jobUpdateTracker```: Used to track the updates from the
+    workers about the tasks assigned belonging to the different jobs
+
+    **type** ```jobUpdateTracker```: JobUpdateTracker
+    &#34;&#34;&#34;
     isJobDispatchComplete: bool = False
     _isPrint_1: bool = False
     isJobUpdatesComplete: bool = False
@@ -108,8 +167,8 @@ def listenForJobRequests(jobRequestHandler: JobRequestHandler,
     &#34;&#34;&#34;```listenForJobRequests``` listens for new job requests from the client
     code.
 
-    **param** ```jobRequestHandler```: Used to track the task dispath status of
-    the job
+    **param** ```jobRequestHandler```: Used to track the task dispatch status
+    of the job
 
     **type** ```jobRequestHandler```: JobRequestHandler
 
@@ -472,13 +531,46 @@ if __name__ == &#34;__main__&#34;:
 <span>def <span class="ident">checkJobPoller</span></span>(<span>jobRequestHandler: Scheduler.JobRequests.JobRequestHandler, jobUpdateTracker: UpdateTracker.JobUpdateTracker.Tracker)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p><code>checkJobPoller</code> continuously checks if all the tasks, for
+every pending job, have been dispatched to one or the other worker,
+by the master. It also checks whether the updates from the workers,
+for every dispatched task, of every running job have been received by
+the master.</p>
+<p>It prints a <code>success message</code> once all tasks of all the pending jobs
+have been dispatched as well as once all the tasks' updates for all jobs
+have been received, by the master.</p>
+<p><strong>param</strong> <code>jobRequestHandler</code>: Used to track the task dispatch status
+of the job</p>
+<p><strong>type</strong> <code>jobRequestHandler</code>: JobRequestHandler</p>
+<p><strong>param</strong> <code>jobUpdateTracker</code>: Used to track the updates from the
+workers about the tasks assigned belonging to the different jobs</p>
+<p><strong>type</strong> <code>jobUpdateTracker</code>: JobUpdateTracker</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def checkJobPoller(jobRequestHandler: JobRequestHandler,
                    jobUpdateTracker: JobUpdateTracker):
+    &#34;&#34;&#34;```checkJobPoller``` continuously checks if all the tasks, for
+    every pending job, have been dispatched to one or the other worker,
+    by the master. It also checks whether the updates from the workers,
+    for every dispatched task, of every running job have been received by
+    the master.
+
+    It prints a ```success message``` once all tasks of all the pending jobs
+    have been dispatched as well as once all the tasks&#39; updates for all jobs
+    have been received, by the master.
+
+    **param** ```jobRequestHandler```: Used to track the task dispatch status
+    of the job
+
+    **type** ```jobRequestHandler```: JobRequestHandler
+
+    **param** ```jobUpdateTracker```: Used to track the updates from the
+    workers about the tasks assigned belonging to the different jobs
+
+    **type** ```jobUpdateTracker```: JobUpdateTracker
+    &#34;&#34;&#34;
     isJobDispatchComplete: bool = False
     _isPrint_1: bool = False
     isJobUpdatesComplete: bool = False
@@ -511,12 +603,32 @@ if __name__ == &#34;__main__&#34;:
 <span>def <span class="ident">error_text</span></span>(<span>text)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p><code>error_text</code> returns a modified version of the input <code>text</code> such
+that it looks like an <em>error message</em> when printed on the CLI.</p>
+<p><strong>param</strong> <code>text</code>: The input string that will be modified to look like
+an <em>error message</em> when printed on the CLI</p>
+<p><strong>type</strong> <code>text</code>: str</p>
+<p><strong>return</strong>: The modified version of the input <code>text</code> such
+that it looks like an <em>error message</em> when printed on the CLI</p>
+<p><strong>rtype</strong>: str</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def error_text(text):
+    &#34;&#34;&#34;```error_text``` returns a modified version of the input ```text``` such
+    that it looks like an *error message* when printed on the CLI.
+
+    **param** ```text```: The input string that will be modified to look like
+    an *error message* when printed on the CLI
+
+    **type** ```text```: str
+
+    **return**: The modified version of the input ```text``` such
+    that it looks like an *error message* when printed on the CLI
+
+    **rtype**: str
+    &#34;&#34;&#34;
     return f&#34;{TC.fg(1) + TC.attr(1)}ERROR:{TC.attr(0)} {text}&#34;</code></pre>
 </details>
 </dd>
@@ -524,12 +636,32 @@ if __name__ == &#34;__main__&#34;:
 <span>def <span class="ident">info_text</span></span>(<span>text)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p><code>info_text</code> returns a modified version of the input <code>text</code> such
+that it looks like an <em>information message</em> when printed on the CLI.</p>
+<p><strong>param</strong> <code>text</code>: The input string that will be modified to look like
+an <em>information message</em> when printed on the CLI</p>
+<p><strong>type</strong> <code>text</code>: str</p>
+<p><strong>return</strong>: The modified version of the input <code>text</code> such
+that it looks like an <em>information message</em> when printed on the CLI</p>
+<p><strong>rtype</strong>: str</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def info_text(text):
+    &#34;&#34;&#34;```info_text``` returns a modified version of the input ```text``` such
+    that it looks like an *information message* when printed on the CLI.
+
+    **param** ```text```: The input string that will be modified to look like
+    an *information message* when printed on the CLI
+
+    **type** ```text```: str
+
+    **return**: The modified version of the input ```text``` such
+    that it looks like an *information message* when printed on the CLI
+
+    **rtype**: str
+    &#34;&#34;&#34;
     return f&#34;{TC.fg(6) + TC.attr(1)}INFO:{TC.attr(0)} {text}&#34;</code></pre>
 </details>
 </dd>
@@ -539,8 +671,8 @@ if __name__ == &#34;__main__&#34;:
 <dd>
 <div class="desc"><p><code>listenForJobRequests</code> listens for new job requests from the client
 code.</p>
-<p><strong>param</strong> <code>jobRequestHandler</code>: Used to track the task dispath status of
-the job</p>
+<p><strong>param</strong> <code>jobRequestHandler</code>: Used to track the task dispatch status
+of the job</p>
 <p><strong>type</strong> <code>jobRequestHandler</code>: JobRequestHandler</p>
 <p><strong>param</strong> <code>jobUpdateTracker</code>: Used to track the updates from the
 workers about the tasks assigned belonging to the different jobs</p>
@@ -554,8 +686,8 @@ workers about the tasks assigned belonging to the different jobs</p>
     &#34;&#34;&#34;```listenForJobRequests``` listens for new job requests from the client
     code.
 
-    **param** ```jobRequestHandler```: Used to track the task dispath status of
-    the job
+    **param** ```jobRequestHandler```: Used to track the task dispatch status
+    of the job
 
     **type** ```jobRequestHandler```: JobRequestHandler
 
@@ -636,12 +768,32 @@ workers about the tasks assigned belonging to the different jobs</p>
 <span>def <span class="ident">success_text</span></span>(<span>text)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p><code>success_text</code> returns a modified version of the input <code>text</code> such
+that it looks like a <em>success message</em> when printed on the CLI.</p>
+<p><strong>param</strong> <code>text</code>: The input string that will be modified to look like
+a <em>success message</em> when printed on the CLI</p>
+<p><strong>type</strong> <code>text</code>: str</p>
+<p><strong>return</strong>: The modified version of the input <code>text</code> such
+that it looks like a <em>success message</em> when printed on the CLI</p>
+<p><strong>rtype</strong>: str</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def success_text(text):
+    &#34;&#34;&#34;```success_text``` returns a modified version of the input ```text``` such
+    that it looks like a *success message* when printed on the CLI.
+
+    **param** ```text```: The input string that will be modified to look like
+    a *success message* when printed on the CLI
+
+    **type** ```text```: str
+
+    **return**: The modified version of the input ```text``` such
+    that it looks like a *success message* when printed on the CLI
+
+    **rtype**: str
+    &#34;&#34;&#34;
     return f&#34;{TC.fg(2) + TC.attr(1)}SUCCESS:{TC.attr(0)} {text}&#34;</code></pre>
 </details>
 </dd>

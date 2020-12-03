@@ -57,6 +57,7 @@ class JobRequestHandler:
         ```
 
         **return** Task meta-data and the task-dictionary
+
         **rtype** Optional[Tuple[Optional[int], Optional[str], Optional[dict]]]
         """
         # If there are no pending tasks and hence no pending jobs

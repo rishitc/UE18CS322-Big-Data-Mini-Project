@@ -34,19 +34,78 @@ GE = inflect.engine()  # GE means Grammar Engine
 
 
 def info_text(text):
+    """```info_text``` returns a modified version of the input ```text``` such
+    that it looks like an *information message* when printed on the CLI.
+
+    **param** ```text```: The input string that will be modified to look like
+    an *information message* when printed on the CLI
+
+    **type** ```text```: str
+
+    **return**: The modified version of the input ```text``` such
+    that it looks like an *information message* when printed on the CLI
+
+    **rtype**: str
+    """
     return f"{TC.fg(6) + TC.attr(1)}INFO:{TC.attr(0)} {text}"
 
 
 def error_text(text):
+    """```error_text``` returns a modified version of the input ```text``` such
+    that it looks like an *error message* when printed on the CLI.
+
+    **param** ```text```: The input string that will be modified to look like
+    an *error message* when printed on the CLI
+
+    **type** ```text```: str
+
+    **return**: The modified version of the input ```text``` such
+    that it looks like an *error message* when printed on the CLI
+
+    **rtype**: str
+    """
     return f"{TC.fg(1) + TC.attr(1)}ERROR:{TC.attr(0)} {text}"
 
 
 def success_text(text):
+    """```success_text``` returns a modified version of the input ```text``` such
+    that it looks like a *success message* when printed on the CLI.
+
+    **param** ```text```: The input string that will be modified to look like
+    a *success message* when printed on the CLI
+
+    **type** ```text```: str
+
+    **return**: The modified version of the input ```text``` such
+    that it looks like a *success message* when printed on the CLI
+
+    **rtype**: str
+    """
     return f"{TC.fg(2) + TC.attr(1)}SUCCESS:{TC.attr(0)} {text}"
 
 
 def checkJobPoller(jobRequestHandler: JobRequestHandler,
                    jobUpdateTracker: JobUpdateTracker):
+    """```checkJobPoller``` continuously checks if all the tasks, for
+    every pending job, have been dispatched to one or the other worker,
+    by the master. It also checks whether the updates from the workers,
+    for every dispatched task, of every running job have been received by
+    the master.
+
+    It prints a ```success message``` once all tasks of all the pending jobs
+    have been dispatched as well as once all the tasks' updates for all jobs
+    have been received, by the master.
+
+    **param** ```jobRequestHandler```: Used to track the task dispatch status
+    of the job
+
+    **type** ```jobRequestHandler```: JobRequestHandler
+
+    **param** ```jobUpdateTracker```: Used to track the updates from the
+    workers about the tasks assigned belonging to the different jobs
+
+    **type** ```jobUpdateTracker```: JobUpdateTracker
+    """
     isJobDispatchComplete: bool = False
     _isPrint_1: bool = False
     isJobUpdatesComplete: bool = False
@@ -80,8 +139,8 @@ def listenForJobRequests(jobRequestHandler: JobRequestHandler,
     """```listenForJobRequests``` listens for new job requests from the client
     code.
 
-    **param** ```jobRequestHandler```: Used to track the task dispath status of
-    the job
+    **param** ```jobRequestHandler```: Used to track the task dispatch status
+    of the job
 
     **type** ```jobRequestHandler```: JobRequestHandler
 
