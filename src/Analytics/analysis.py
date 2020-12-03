@@ -9,13 +9,13 @@ import math
 def get_heatmap(df, ax, title):
     """
     * This function takes in the *workers.csv* for each algorithm separately
-    and groups by worker id.
+    and groups by worker id
     * For each worker, the number of tasks running at each second in a time
-    interval are calculated.
+    interval are calculated
     * There are 3 heatmap plots displayed in a window, with a plot each for a
     scheduling algorithm. The X axis has the time in seconds and the Y axis
-    has the worker_id.
-    * In the plot, each block represents number of tasks.
+    has the worker_id
+    * In the plot, each block represents number of tasks
     """
     s_time = min(df["start_time"])
     df1 = pd.DataFrame()
@@ -53,14 +53,14 @@ def get_heatmap(df, ax, title):
 def graph_plot(df, ax, title):
     """
     * This function takes in the *workers.csv* for each algorithm separately
-    and groups by worker id.
+    and groups by worker id
     * For each worker, the number of tasks running at each second in a time
-    interval are calculated.
+    interval are calculated
     * There are 3 plots displayed in a window, with a plot each for a
     scheduling algorithm. The X axis has the time in seconds and the Y axis
-    has the number of tasks.
+    has the number of tasks
     * For a given scheduling algorithm, each worker is represented with a line
-    of a different colour.
+    of a different colour
     """
     s_time = min(df["start_time"])
     df["start_time"] -= s_time
@@ -94,15 +94,15 @@ def graph_plot(df, ax, title):
 def get_analytics():
     """
     * This function reads all the log files generated for each scheduling
-    algorithm.
+    algorithm
     * The objective of this function is to calculate the mean task completion
     time, mean job completion time, median task completion time, median job
-    completion time for each of the scheduling algorithms separately.
+    completion time for each of the scheduling algorithms separately
     * Various bar plots are plotted comparing the mean and median times of the
-    various scheduling algorithms.
+    various scheduling algorithms
     * This function also calls the graph_plot function for each of the
     scheduling algorithms that plots the number of tasks scheduled on each
-    worker at each instance of time.
+    worker at each instance of time
     """
     fig1, (ax1, ax2, ax3) = plt.subplots(3, figsize=(15, 25))
     fig1.tight_layout(pad=10.0)
