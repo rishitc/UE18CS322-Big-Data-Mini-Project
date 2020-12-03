@@ -207,7 +207,10 @@ class Tracker:
         # Once the job has been written into the CSV file then delete
         # its entry from the dictionary
         del self.jobs_time[JobID]
-
+        del self.jobs[JobID]
+        del self.map_tracker[JobID]
+        del self.reduce_tracker[JobID]
+        
     def writeTasksCSV(self, JobID, TaskID):
         """
         If a task has completed, then this method is called to write the
