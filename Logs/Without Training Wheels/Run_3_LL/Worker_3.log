@@ -1,0 +1,40 @@
+3 generated the key b'VsLdLyt96_NYupQoDgPqD0kk7GiMzHVRlzFA6f0LkbI='
+Sleeping for 1.5s
+Task received at worker: [{"worker_id": 3, "job_id": "6", "task family": "map", "task": {"task_id": "6_M0", "duration": 4}}]
+{'worker_id': 3, 'job_id': '6', 'task family': 'map', 'task': {'task_id': '6_M0', 'duration': 4, 'start_time': 1606953451.1442482, 'end_time': 0}}
+{'6': {'6_M0': {'worker_id': 3, 'job_id': '6', 'task family': 'map', 'task': {'task_id': '6_M0', 'duration': 4, 'start_time': 1606953451.1442482, 'end_time': 0}}}}
+<class 'int'>
+4
+Task received at worker: [{"worker_id": 3, "job_id": "7", "task family": "map", "task": {"task_id": "7_M0", "duration": 4}}]
+{'worker_id': 3, 'job_id': '7', 'task family': 'map', 'task': {'task_id': '7_M0', 'duration': 4, 'start_time': 1606953452.0842898, 'end_time': 0}}
+{'6': {'6_M0': {'worker_id': 3, 'job_id': '6', 'task family': 'map', 'task': {'task_id': '6_M0', 'duration': 3, 'start_time': 1606953451.1442482, 'end_time': 0}}}, '7': {'7_M0': {'worker_id': 3, 'job_id': '7', 'task family': 'map', 'task': {'task_id': '7_M0', 'duration': 4, 'start_time': 1606953452.0842898, 'end_time': 0}}}}
+<class 'int'>
+3
+<class 'int'>
+4
+<class 'int'>
+2
+<class 'int'>
+3
+<class 'int'>
+1
+<class 'int'>
+2
+Task sent: {"worker_id": 3, "job_id": "6", "task family": "map", "task": {"task_id": "6_M0", "start_time": 1606953451.1442482, "end_time": 1606953454.2343094}}!
+Task received at worker: [{"worker_id": 3, "job_id": "5", "task family": "reduce", "task": {"task_id": "5_R1", "duration": 4}}]
+{'worker_id': 3, 'job_id': '5', 'task family': 'reduce', 'task': {'task_id': '5_R1', 'duration': 4, 'start_time': 1606953454.4129763, 'end_time': 0}}
+{'7': {'7_M0': {'worker_id': 3, 'job_id': '7', 'task family': 'map', 'task': {'task_id': '7_M0', 'duration': 1, 'start_time': 1606953452.0842898, 'end_time': 0}}}, '5': {'5_R1': {'worker_id': 3, 'job_id': '5', 'task family': 'reduce', 'task': {'task_id': '5_R1', 'duration': 4, 'start_time': 1606953454.4129763, 'end_time': 0}}}}
+<class 'int'>
+1
+<class 'int'>
+4
+Task sent: {"worker_id": 3, "job_id": "7", "task family": "map", "task": {"task_id": "7_M0", "start_time": 1606953452.0842898, "end_time": 1606953455.250318}}!
+<class 'int'>
+3
+<class 'int'>
+2
+<class 'int'>
+1
+Task sent: {"worker_id": 3, "job_id": "5", "task family": "reduce", "task": {"task_id": "5_R1", "start_time": 1606953454.4129763, "end_time": 1606953458.2985091}}!
+
+
