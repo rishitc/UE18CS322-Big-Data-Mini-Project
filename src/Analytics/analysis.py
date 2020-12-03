@@ -191,7 +191,7 @@ def get_analytics():
         median_salgo3_job = df1_j3["duration"].median()
 
         graph_plot(df1_w3, ax6, 'Random Scheduling')
-        get_heatmap(df1_w2, ax3, 'Random Scheduling')
+        get_heatmap(df1_w3, ax3, 'Random Scheduling')
     else:
         pass
 
