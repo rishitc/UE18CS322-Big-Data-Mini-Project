@@ -245,4 +245,4 @@ class Worker:
             wasTaskPoolEmpty = isTaskPoolEmpty
 
     def __del__(self):
-        self.updates_q.join()
+        self.updates_q.join()  # block until all tasks are done

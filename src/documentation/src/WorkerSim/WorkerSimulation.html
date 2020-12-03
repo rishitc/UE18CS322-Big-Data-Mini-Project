@@ -273,7 +273,7 @@ class Worker:
             wasTaskPoolEmpty = isTaskPoolEmpty
 
     def __del__(self):
-        self.updates_q.join()</code></pre>
+        self.updates_q.join()  # block until all tasks are done</code></pre>
 </details>
 </section>
 <section>
@@ -542,7 +542,7 @@ using YACS Protocol Message (<strong><em>createMessageToMaster()</em></strong>).
             wasTaskPoolEmpty = isTaskPoolEmpty
 
     def __del__(self):
-        self.updates_q.join()</code></pre>
+        self.updates_q.join()  # block until all tasks are done</code></pre>
 </details>
 <h3>Static methods</h3>
 <dl>
