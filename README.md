@@ -74,7 +74,7 @@ UE18CS322 Big Data Mini Project Repository
 ## How to check logs?
 1. Go to the Logs directory and to the Without Training Wheels directory and execute the following task
 2. ```bash
-   $ python3 "check_logs.py" Folder (Run_TestNumber_Scheduling Algorithm)
+   $ python3 "check_logs.py" <Run_TestNumber_Scheduling Algorithm>
    ```
 3. Compare the task count and the individual worker counts
 
