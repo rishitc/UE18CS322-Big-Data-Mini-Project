@@ -60,7 +60,7 @@ UE18CS322 Big Data Mini Project Repository
     Have the 3 workers been started, yet? [y/n] 
     ```
     - Enter ```y```
-    - Now wait for **~2 seconds** and you will notice that the workers have connected to the master
+    - Now wait for **~2 seconds** and you will notice that the 3 workers have connected to the master
 8. Now, start a new terminal and run the below command to start the client code:
     ```bash
     $ python3 "Copy_of_requests.py" <number_of_(job)_requests>
