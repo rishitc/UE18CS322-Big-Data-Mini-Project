@@ -33,7 +33,7 @@ class MasterPrintLock:
     &#34;&#34;&#34; This class is used to create the *common object* across
     the files for the **master code** to share the ```PRINT_LOCK```, so that
     there are **no race condition**, i.e. in this case *garbled text* on the
-    CLI output, due to multiple threads trying to print onto the CLI all at
+    CLI output, due to multiple threads trying to print onto the CLI, all at
     once.
     &#34;&#34;&#34;
     PRINT_LOCK = threading.Lock()
@@ -58,7 +58,7 @@ master = MasterPrintLock()</code></pre>
 <div class="desc"><p>This class is used to create the <em>common object</em> across
 the files for the <strong>master code</strong> to share the <code>PRINT_LOCK</code>, so that
 there are <strong>no race condition</strong>, i.e. in this case <em>garbled text</em> on the
-CLI output, due to multiple threads trying to print onto the CLI all at
+CLI output, due to multiple threads trying to print onto the CLI, all at
 once.</p></div>
 <details class="source">
 <summary>
@@ -68,7 +68,7 @@ once.</p></div>
     &#34;&#34;&#34; This class is used to create the *common object* across
     the files for the **master code** to share the ```PRINT_LOCK```, so that
     there are **no race condition**, i.e. in this case *garbled text* on the
-    CLI output, due to multiple threads trying to print onto the CLI all at
+    CLI output, due to multiple threads trying to print onto the CLI, all at
     once.
     &#34;&#34;&#34;
     PRINT_LOCK = threading.Lock()</code></pre>
