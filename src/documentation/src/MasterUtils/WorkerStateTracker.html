@@ -1,0 +1,695 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.9.2" />
+<title>src.MasterUtils.WorkerStateTracker API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>src.MasterUtils.WorkerStateTracker</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">import socket
+from threading import Lock
+from typing import List, Optional
+
+from Communication.protocol import YACS_Protocol
+
+
+class StateTracker:
+    def __init__(self, confObj: dict) -&gt; None:
+        &#34;&#34;&#34;Store the list of the worker dictionaries in a new dictionary
+         indexed using the ```worker_id``` as key.
+
+        **param** ```configObj```: Dictionary got from loading in the json
+        data stored in the worker configuration file
+
+        **type** ```configObj```: dict
+        &#34;&#34;&#34;
+        self.workerState = {}
+        self.workerIDs: List[int] = []
+        self.LOCK = Lock()
+
+        for worker in confObj[&#34;workers&#34;]:
+            # print(f&#34;{worker[&#39;worker_id&#39;]=}&#34;)
+            workerConnSocket = socket.socket(socket.AF_INET,
+                                             socket.SOCK_STREAM)
+            workerConnSocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR,
+                                        1)
+            # print(f&#39;{worker[&#34;port&#34;]=}&#39;)
+            workerConnSocket.connect((socket.gethostname(), worker[&#34;port&#34;]))
+            self.workerState[worker[&#34;worker_id&#34;]] = {
+                &#34;slots&#34;: worker[&#34;slots&#34;],
+                &#34;port&#34;: worker[&#34;port&#34;],
+                &#34;free slots&#34;: worker[&#34;slots&#34;],
+                &#34;socket&#34;: workerConnSocket
+            }
+            self.workerIDs.append(worker[&#34;worker_id&#34;])
+
+        # Sort the workerIDs
+        self.workerIDs.sort()
+
+    def isWorkerFree(self, workerID: int, demand: int = 1) -&gt; bool:
+        &#34;&#34;&#34;```isWorkerFree``` checks if the worker whose ```worker_id``` key
+        is equal to ```workerID```, has ```demand``` number of free slots or
+        not. By default ```demand``` is set to 1.
+
+        **param** ```workerID```: ```worker_id``` value of the worker node
+        we are checking for free slots
+
+        **type** ```workerID```: int
+
+        **param** ```demand```: Specifies the number of free slots we are
+        looking for in the worker node with ```worker_id``` equal to workerID,
+        defaults to 1
+
+        **type** ```demand```: int, optional
+
+        **return**: Returns True if the number of free slots given by
+        ```demand``` are found, else it returns false
+
+        **rtype**: bool
+        &#34;&#34;&#34;
+        # print(f&#34;{workerID=}&#34;)
+        # print(f&#34;{workerID in self.workerIDs}&#34;)
+        return True if self.workerState[workerID][&#34;free slots&#34;] &gt;= demand \
+            else False
+
+    def showWorkerStates(self) -&gt; None:
+        &#34;&#34;&#34;```showWorkerStates``` displays the contents of the workerState dictionary
+        onto the standard output (here, CLI), for *debugging purposes*.
+        &#34;&#34;&#34;
+        print(f&#34;{self.workerState=}&#34;)
+
+    def getWorkerSocket(self, workerID: int) -&gt; socket.socket:
+        &#34;&#34;&#34;```getWorkerSocket``` returns the socket which is used to send tasks to
+        the worker with ID ```workerID```.
+
+        **param** ```workerID```: ID of the worker for whom the socket is
+        desired
+
+        **type** ```workerID```: int
+
+        **return** The socket which is used to send tasks to
+        the worker with ID ```workerID```
+
+        **rtype** socket.socket
+        &#34;&#34;&#34;
+        return self.workerState[workerID][&#34;socket&#34;]
+
+    def allocateSlot(self, workerID: int, task_count: int = 1) -&gt; None:
+        &#34;&#34;&#34;```allocateSlot``` allocates the task to the worker and decrements
+        the number of free slots in that worker.
+
+        **param** ```workerID```: Specifies the worker to which we are
+        allocating the task to
+
+        **type** ```workerID```: int
+
+        **param** ```task_count```: Specifies the number of tasks being
+        allocated the worker, defaults to 1
+
+        **type** ```task_count```: int, optional
+        &#34;&#34;&#34;
+        assert self.isWorkerFree(workerID, task_count) is True,\
+            &#34;Over allocating tasks to worker!&#34;
+        self.workerState[workerID][&#34;free slots&#34;] -= task_count
+
+    def freeSlot(self, workerID: int, task_count: int = 1) -&gt; None:
+        &#34;&#34;&#34;```freeSlot``` updates the state of the worker to indicate task completion
+        by incrementing the number of free slots on that worker.
+
+        **param** ```workerID```: Specifies the worker which has completed its
+        task
+
+        **type** ```workerID```: int
+
+        **param** ```task_count```: Specifies the number of tasks compelted by
+        the worker, defaults to 1
+
+        **type** ```task_count```: int, optional
+        &#34;&#34;&#34;
+        assert self.workerState[workerID][&#34;free slots&#34;] != \
+            self.workerState[workerID][&#34;slots&#34;],\
+            &#34;There are no slots to free up!&#34;
+        self.workerState[workerID][&#34;free slots&#34;] += task_count
+
+    def getLeastLoadedWorkerID(self) -&gt; Optional[int]:
+        &#34;&#34;&#34;```getLeastLoadedWorkerID``` this methods check all the worker
+        states and returns the worker ID of the **least loaded worker**. In the
+        case where there are **no workers with free slots**, then it returns
+        ```None```.
+
+        **return**: Worker ID of the least loaded worker or ```None``` if all
+        the workers are **fully loaded**
+
+        **rtype**: Optional[int]
+        &#34;&#34;&#34;
+        # Variables used to track the least loaded worker
+        _least_loaded_workerID = None
+        _least_loaded_workerFreeSlots = 0
+
+        for workerID in self.workerIDs:
+            # Get the free slots of worker with ID: workerID
+            _free_slot_count = self.workerState[workerID][&#34;free slots&#34;]
+
+            if _free_slot_count &gt; _least_loaded_workerFreeSlots:
+                # If the worker with ID: workerID has more free slots
+                # then update the tracking variables
+                _least_loaded_workerID = workerID
+                _least_loaded_workerFreeSlots = _free_slot_count
+
+        return _least_loaded_workerID
+
+    def connectBackRequest(self, public_key):
+        &#34;&#34;&#34;```connectBackRequest``` is used to send a message to all the workers on
+        their *socket for receiving tasks from the master* with the public key
+        information as well as the time after which the individual worker
+        should attempt to connect back to the master.
+
+        **param** ```public_key```: This is the encryption key which is shared
+        with the worker so that they can encrypt their private keys and later
+        send it back to the master, in encrypted format using this public key
+
+        **type** ```public_key```: bytes
+        &#34;&#34;&#34;
+        back_off_time = 0.5
+        for workerID in self.workerIDs:
+            message = YACS_Protocol \
+                .connectBackMessage(back_off_time=back_off_time,
+                                    public_key=public_key)
+            self.workerState[workerID][&#34;socket&#34;].sendall(message.encode())
+
+            back_off_time += 0.5
+
+    def __del__(self):
+        &#34;&#34;&#34;```__del__``` closes all task dispatch sockets to the workers.
+        &#34;&#34;&#34;
+        for workerID in self.workerIDs:
+            self.workerState[workerID][&#34;socket&#34;].close()</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="src.MasterUtils.WorkerStateTracker.StateTracker"><code class="flex name class">
+<span>class <span class="ident">StateTracker</span></span>
+<span>(</span><span>confObj: dict)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Store the list of the worker dictionaries in a new dictionary
+indexed using the <code>worker_id</code> as key.</p>
+<p><strong>param</strong> <code>configObj</code>: Dictionary got from loading in the json
+data stored in the worker configuration file</p>
+<p><strong>type</strong> <code>configObj</code>: dict</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class StateTracker:
+    def __init__(self, confObj: dict) -&gt; None:
+        &#34;&#34;&#34;Store the list of the worker dictionaries in a new dictionary
+         indexed using the ```worker_id``` as key.
+
+        **param** ```configObj```: Dictionary got from loading in the json
+        data stored in the worker configuration file
+
+        **type** ```configObj```: dict
+        &#34;&#34;&#34;
+        self.workerState = {}
+        self.workerIDs: List[int] = []
+        self.LOCK = Lock()
+
+        for worker in confObj[&#34;workers&#34;]:
+            # print(f&#34;{worker[&#39;worker_id&#39;]=}&#34;)
+            workerConnSocket = socket.socket(socket.AF_INET,
+                                             socket.SOCK_STREAM)
+            workerConnSocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR,
+                                        1)
+            # print(f&#39;{worker[&#34;port&#34;]=}&#39;)
+            workerConnSocket.connect((socket.gethostname(), worker[&#34;port&#34;]))
+            self.workerState[worker[&#34;worker_id&#34;]] = {
+                &#34;slots&#34;: worker[&#34;slots&#34;],
+                &#34;port&#34;: worker[&#34;port&#34;],
+                &#34;free slots&#34;: worker[&#34;slots&#34;],
+                &#34;socket&#34;: workerConnSocket
+            }
+            self.workerIDs.append(worker[&#34;worker_id&#34;])
+
+        # Sort the workerIDs
+        self.workerIDs.sort()
+
+    def isWorkerFree(self, workerID: int, demand: int = 1) -&gt; bool:
+        &#34;&#34;&#34;```isWorkerFree``` checks if the worker whose ```worker_id``` key
+        is equal to ```workerID```, has ```demand``` number of free slots or
+        not. By default ```demand``` is set to 1.
+
+        **param** ```workerID```: ```worker_id``` value of the worker node
+        we are checking for free slots
+
+        **type** ```workerID```: int
+
+        **param** ```demand```: Specifies the number of free slots we are
+        looking for in the worker node with ```worker_id``` equal to workerID,
+        defaults to 1
+
+        **type** ```demand```: int, optional
+
+        **return**: Returns True if the number of free slots given by
+        ```demand``` are found, else it returns false
+
+        **rtype**: bool
+        &#34;&#34;&#34;
+        # print(f&#34;{workerID=}&#34;)
+        # print(f&#34;{workerID in self.workerIDs}&#34;)
+        return True if self.workerState[workerID][&#34;free slots&#34;] &gt;= demand \
+            else False
+
+    def showWorkerStates(self) -&gt; None:
+        &#34;&#34;&#34;```showWorkerStates``` displays the contents of the workerState dictionary
+        onto the standard output (here, CLI), for *debugging purposes*.
+        &#34;&#34;&#34;
+        print(f&#34;{self.workerState=}&#34;)
+
+    def getWorkerSocket(self, workerID: int) -&gt; socket.socket:
+        &#34;&#34;&#34;```getWorkerSocket``` returns the socket which is used to send tasks to
+        the worker with ID ```workerID```.
+
+        **param** ```workerID```: ID of the worker for whom the socket is
+        desired
+
+        **type** ```workerID```: int
+
+        **return** The socket which is used to send tasks to
+        the worker with ID ```workerID```
+
+        **rtype** socket.socket
+        &#34;&#34;&#34;
+        return self.workerState[workerID][&#34;socket&#34;]
+
+    def allocateSlot(self, workerID: int, task_count: int = 1) -&gt; None:
+        &#34;&#34;&#34;```allocateSlot``` allocates the task to the worker and decrements
+        the number of free slots in that worker.
+
+        **param** ```workerID```: Specifies the worker to which we are
+        allocating the task to
+
+        **type** ```workerID```: int
+
+        **param** ```task_count```: Specifies the number of tasks being
+        allocated the worker, defaults to 1
+
+        **type** ```task_count```: int, optional
+        &#34;&#34;&#34;
+        assert self.isWorkerFree(workerID, task_count) is True,\
+            &#34;Over allocating tasks to worker!&#34;
+        self.workerState[workerID][&#34;free slots&#34;] -= task_count
+
+    def freeSlot(self, workerID: int, task_count: int = 1) -&gt; None:
+        &#34;&#34;&#34;```freeSlot``` updates the state of the worker to indicate task completion
+        by incrementing the number of free slots on that worker.
+
+        **param** ```workerID```: Specifies the worker which has completed its
+        task
+
+        **type** ```workerID```: int
+
+        **param** ```task_count```: Specifies the number of tasks compelted by
+        the worker, defaults to 1
+
+        **type** ```task_count```: int, optional
+        &#34;&#34;&#34;
+        assert self.workerState[workerID][&#34;free slots&#34;] != \
+            self.workerState[workerID][&#34;slots&#34;],\
+            &#34;There are no slots to free up!&#34;
+        self.workerState[workerID][&#34;free slots&#34;] += task_count
+
+    def getLeastLoadedWorkerID(self) -&gt; Optional[int]:
+        &#34;&#34;&#34;```getLeastLoadedWorkerID``` this methods check all the worker
+        states and returns the worker ID of the **least loaded worker**. In the
+        case where there are **no workers with free slots**, then it returns
+        ```None```.
+
+        **return**: Worker ID of the least loaded worker or ```None``` if all
+        the workers are **fully loaded**
+
+        **rtype**: Optional[int]
+        &#34;&#34;&#34;
+        # Variables used to track the least loaded worker
+        _least_loaded_workerID = None
+        _least_loaded_workerFreeSlots = 0
+
+        for workerID in self.workerIDs:
+            # Get the free slots of worker with ID: workerID
+            _free_slot_count = self.workerState[workerID][&#34;free slots&#34;]
+
+            if _free_slot_count &gt; _least_loaded_workerFreeSlots:
+                # If the worker with ID: workerID has more free slots
+                # then update the tracking variables
+                _least_loaded_workerID = workerID
+                _least_loaded_workerFreeSlots = _free_slot_count
+
+        return _least_loaded_workerID
+
+    def connectBackRequest(self, public_key):
+        &#34;&#34;&#34;```connectBackRequest``` is used to send a message to all the workers on
+        their *socket for receiving tasks from the master* with the public key
+        information as well as the time after which the individual worker
+        should attempt to connect back to the master.
+
+        **param** ```public_key```: This is the encryption key which is shared
+        with the worker so that they can encrypt their private keys and later
+        send it back to the master, in encrypted format using this public key
+
+        **type** ```public_key```: bytes
+        &#34;&#34;&#34;
+        back_off_time = 0.5
+        for workerID in self.workerIDs:
+            message = YACS_Protocol \
+                .connectBackMessage(back_off_time=back_off_time,
+                                    public_key=public_key)
+            self.workerState[workerID][&#34;socket&#34;].sendall(message.encode())
+
+            back_off_time += 0.5
+
+    def __del__(self):
+        &#34;&#34;&#34;```__del__``` closes all task dispatch sockets to the workers.
+        &#34;&#34;&#34;
+        for workerID in self.workerIDs:
+            self.workerState[workerID][&#34;socket&#34;].close()</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="src.MasterUtils.WorkerStateTracker.StateTracker.allocateSlot"><code class="name flex">
+<span>def <span class="ident">allocateSlot</span></span>(<span>self, workerID: int, task_count: int = 1) ‑> NoneType</span>
+</code></dt>
+<dd>
+<div class="desc"><p><code>allocateSlot</code> allocates the task to the worker and decrements
+the number of free slots in that worker.</p>
+<p><strong>param</strong> <code>workerID</code>: Specifies the worker to which we are
+allocating the task to</p>
+<p><strong>type</strong> <code>workerID</code>: int</p>
+<p><strong>param</strong> <code>task_count</code>: Specifies the number of tasks being
+allocated the worker, defaults to 1</p>
+<p><strong>type</strong> <code>task_count</code>: int, optional</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def allocateSlot(self, workerID: int, task_count: int = 1) -&gt; None:
+    &#34;&#34;&#34;```allocateSlot``` allocates the task to the worker and decrements
+    the number of free slots in that worker.
+
+    **param** ```workerID```: Specifies the worker to which we are
+    allocating the task to
+
+    **type** ```workerID```: int
+
+    **param** ```task_count```: Specifies the number of tasks being
+    allocated the worker, defaults to 1
+
+    **type** ```task_count```: int, optional
+    &#34;&#34;&#34;
+    assert self.isWorkerFree(workerID, task_count) is True,\
+        &#34;Over allocating tasks to worker!&#34;
+    self.workerState[workerID][&#34;free slots&#34;] -= task_count</code></pre>
+</details>
+</dd>
+<dt id="src.MasterUtils.WorkerStateTracker.StateTracker.connectBackRequest"><code class="name flex">
+<span>def <span class="ident">connectBackRequest</span></span>(<span>self, public_key)</span>
+</code></dt>
+<dd>
+<div class="desc"><p><code>connectBackRequest</code> is used to send a message to all the workers on
+their <em>socket for receiving tasks from the master</em> with the public key
+information as well as the time after which the individual worker
+should attempt to connect back to the master.</p>
+<p><strong>param</strong> <code>public_key</code>: This is the encryption key which is shared
+with the worker so that they can encrypt their private keys and later
+send it back to the master, in encrypted format using this public key</p>
+<p><strong>type</strong> <code>public_key</code>: bytes</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def connectBackRequest(self, public_key):
+    &#34;&#34;&#34;```connectBackRequest``` is used to send a message to all the workers on
+    their *socket for receiving tasks from the master* with the public key
+    information as well as the time after which the individual worker
+    should attempt to connect back to the master.
+
+    **param** ```public_key```: This is the encryption key which is shared
+    with the worker so that they can encrypt their private keys and later
+    send it back to the master, in encrypted format using this public key
+
+    **type** ```public_key```: bytes
+    &#34;&#34;&#34;
+    back_off_time = 0.5
+    for workerID in self.workerIDs:
+        message = YACS_Protocol \
+            .connectBackMessage(back_off_time=back_off_time,
+                                public_key=public_key)
+        self.workerState[workerID][&#34;socket&#34;].sendall(message.encode())
+
+        back_off_time += 0.5</code></pre>
+</details>
+</dd>
+<dt id="src.MasterUtils.WorkerStateTracker.StateTracker.freeSlot"><code class="name flex">
+<span>def <span class="ident">freeSlot</span></span>(<span>self, workerID: int, task_count: int = 1) ‑> NoneType</span>
+</code></dt>
+<dd>
+<div class="desc"><p><code>freeSlot</code> updates the state of the worker to indicate task completion
+by incrementing the number of free slots on that worker.</p>
+<p><strong>param</strong> <code>workerID</code>: Specifies the worker which has completed its
+task</p>
+<p><strong>type</strong> <code>workerID</code>: int</p>
+<p><strong>param</strong> <code>task_count</code>: Specifies the number of tasks compelted by
+the worker, defaults to 1</p>
+<p><strong>type</strong> <code>task_count</code>: int, optional</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def freeSlot(self, workerID: int, task_count: int = 1) -&gt; None:
+    &#34;&#34;&#34;```freeSlot``` updates the state of the worker to indicate task completion
+    by incrementing the number of free slots on that worker.
+
+    **param** ```workerID```: Specifies the worker which has completed its
+    task
+
+    **type** ```workerID```: int
+
+    **param** ```task_count```: Specifies the number of tasks compelted by
+    the worker, defaults to 1
+
+    **type** ```task_count```: int, optional
+    &#34;&#34;&#34;
+    assert self.workerState[workerID][&#34;free slots&#34;] != \
+        self.workerState[workerID][&#34;slots&#34;],\
+        &#34;There are no slots to free up!&#34;
+    self.workerState[workerID][&#34;free slots&#34;] += task_count</code></pre>
+</details>
+</dd>
+<dt id="src.MasterUtils.WorkerStateTracker.StateTracker.getLeastLoadedWorkerID"><code class="name flex">
+<span>def <span class="ident">getLeastLoadedWorkerID</span></span>(<span>self) ‑> Union[int, NoneType]</span>
+</code></dt>
+<dd>
+<div class="desc"><p><code>getLeastLoadedWorkerID</code> this methods check all the worker
+states and returns the worker ID of the <strong>least loaded worker</strong>. In the
+case where there are <strong>no workers with free slots</strong>, then it returns
+<code>None</code>.</p>
+<p><strong>return</strong>: Worker ID of the least loaded worker or <code>None</code> if all
+the workers are <strong>fully loaded</strong></p>
+<p><strong>rtype</strong>: Optional[int]</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def getLeastLoadedWorkerID(self) -&gt; Optional[int]:
+    &#34;&#34;&#34;```getLeastLoadedWorkerID``` this methods check all the worker
+    states and returns the worker ID of the **least loaded worker**. In the
+    case where there are **no workers with free slots**, then it returns
+    ```None```.
+
+    **return**: Worker ID of the least loaded worker or ```None``` if all
+    the workers are **fully loaded**
+
+    **rtype**: Optional[int]
+    &#34;&#34;&#34;
+    # Variables used to track the least loaded worker
+    _least_loaded_workerID = None
+    _least_loaded_workerFreeSlots = 0
+
+    for workerID in self.workerIDs:
+        # Get the free slots of worker with ID: workerID
+        _free_slot_count = self.workerState[workerID][&#34;free slots&#34;]
+
+        if _free_slot_count &gt; _least_loaded_workerFreeSlots:
+            # If the worker with ID: workerID has more free slots
+            # then update the tracking variables
+            _least_loaded_workerID = workerID
+            _least_loaded_workerFreeSlots = _free_slot_count
+
+    return _least_loaded_workerID</code></pre>
+</details>
+</dd>
+<dt id="src.MasterUtils.WorkerStateTracker.StateTracker.getWorkerSocket"><code class="name flex">
+<span>def <span class="ident">getWorkerSocket</span></span>(<span>self, workerID: int) ‑> socket.socket</span>
+</code></dt>
+<dd>
+<div class="desc"><p><code>getWorkerSocket</code> returns the socket which is used to send tasks to
+the worker with ID <code>workerID</code>.</p>
+<p><strong>param</strong> <code>workerID</code>: ID of the worker for whom the socket is
+desired</p>
+<p><strong>type</strong> <code>workerID</code>: int</p>
+<p><strong>return</strong> The socket which is used to send tasks to
+the worker with ID <code>workerID</code></p>
+<p><strong>rtype</strong> socket.socket</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def getWorkerSocket(self, workerID: int) -&gt; socket.socket:
+    &#34;&#34;&#34;```getWorkerSocket``` returns the socket which is used to send tasks to
+    the worker with ID ```workerID```.
+
+    **param** ```workerID```: ID of the worker for whom the socket is
+    desired
+
+    **type** ```workerID```: int
+
+    **return** The socket which is used to send tasks to
+    the worker with ID ```workerID```
+
+    **rtype** socket.socket
+    &#34;&#34;&#34;
+    return self.workerState[workerID][&#34;socket&#34;]</code></pre>
+</details>
+</dd>
+<dt id="src.MasterUtils.WorkerStateTracker.StateTracker.isWorkerFree"><code class="name flex">
+<span>def <span class="ident">isWorkerFree</span></span>(<span>self, workerID: int, demand: int = 1) ‑> bool</span>
+</code></dt>
+<dd>
+<div class="desc"><p><code>isWorkerFree</code> checks if the worker whose <code>worker_id</code> key
+is equal to <code>workerID</code>, has <code>demand</code> number of free slots or
+not. By default <code>demand</code> is set to 1.</p>
+<p><strong>param</strong> <code>workerID</code>: <code>worker_id</code> value of the worker node
+we are checking for free slots</p>
+<p><strong>type</strong> <code>workerID</code>: int</p>
+<p><strong>param</strong> <code>demand</code>: Specifies the number of free slots we are
+looking for in the worker node with <code>worker_id</code> equal to workerID,
+defaults to 1</p>
+<p><strong>type</strong> <code>demand</code>: int, optional</p>
+<p><strong>return</strong>: Returns True if the number of free slots given by
+<code>demand</code> are found, else it returns false</p>
+<p><strong>rtype</strong>: bool</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def isWorkerFree(self, workerID: int, demand: int = 1) -&gt; bool:
+    &#34;&#34;&#34;```isWorkerFree``` checks if the worker whose ```worker_id``` key
+    is equal to ```workerID```, has ```demand``` number of free slots or
+    not. By default ```demand``` is set to 1.
+
+    **param** ```workerID```: ```worker_id``` value of the worker node
+    we are checking for free slots
+
+    **type** ```workerID```: int
+
+    **param** ```demand```: Specifies the number of free slots we are
+    looking for in the worker node with ```worker_id``` equal to workerID,
+    defaults to 1
+
+    **type** ```demand```: int, optional
+
+    **return**: Returns True if the number of free slots given by
+    ```demand``` are found, else it returns false
+
+    **rtype**: bool
+    &#34;&#34;&#34;
+    # print(f&#34;{workerID=}&#34;)
+    # print(f&#34;{workerID in self.workerIDs}&#34;)
+    return True if self.workerState[workerID][&#34;free slots&#34;] &gt;= demand \
+        else False</code></pre>
+</details>
+</dd>
+<dt id="src.MasterUtils.WorkerStateTracker.StateTracker.showWorkerStates"><code class="name flex">
+<span>def <span class="ident">showWorkerStates</span></span>(<span>self) ‑> NoneType</span>
+</code></dt>
+<dd>
+<div class="desc"><p><code>showWorkerStates</code> displays the contents of the workerState dictionary
+onto the standard output (here, CLI), for <em>debugging purposes</em>.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def showWorkerStates(self) -&gt; None:
+    &#34;&#34;&#34;```showWorkerStates``` displays the contents of the workerState dictionary
+    onto the standard output (here, CLI), for *debugging purposes*.
+    &#34;&#34;&#34;
+    print(f&#34;{self.workerState=}&#34;)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="src.MasterUtils" href="index.html">src.MasterUtils</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="src.MasterUtils.WorkerStateTracker.StateTracker" href="#src.MasterUtils.WorkerStateTracker.StateTracker">StateTracker</a></code></h4>
+<ul class="">
+<li><code><a title="src.MasterUtils.WorkerStateTracker.StateTracker.allocateSlot" href="#src.MasterUtils.WorkerStateTracker.StateTracker.allocateSlot">allocateSlot</a></code></li>
+<li><code><a title="src.MasterUtils.WorkerStateTracker.StateTracker.connectBackRequest" href="#src.MasterUtils.WorkerStateTracker.StateTracker.connectBackRequest">connectBackRequest</a></code></li>
+<li><code><a title="src.MasterUtils.WorkerStateTracker.StateTracker.freeSlot" href="#src.MasterUtils.WorkerStateTracker.StateTracker.freeSlot">freeSlot</a></code></li>
+<li><code><a title="src.MasterUtils.WorkerStateTracker.StateTracker.getLeastLoadedWorkerID" href="#src.MasterUtils.WorkerStateTracker.StateTracker.getLeastLoadedWorkerID">getLeastLoadedWorkerID</a></code></li>
+<li><code><a title="src.MasterUtils.WorkerStateTracker.StateTracker.getWorkerSocket" href="#src.MasterUtils.WorkerStateTracker.StateTracker.getWorkerSocket">getWorkerSocket</a></code></li>
+<li><code><a title="src.MasterUtils.WorkerStateTracker.StateTracker.isWorkerFree" href="#src.MasterUtils.WorkerStateTracker.StateTracker.isWorkerFree">isWorkerFree</a></code></li>
+<li><code><a title="src.MasterUtils.WorkerStateTracker.StateTracker.showWorkerStates" href="#src.MasterUtils.WorkerStateTracker.StateTracker.showWorkerStates">showWorkerStates</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+</footer>
+</body>
+</html>

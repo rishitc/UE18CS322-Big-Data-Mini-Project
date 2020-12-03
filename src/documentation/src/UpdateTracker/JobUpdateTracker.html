@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
-<meta name="generator" content="pdoc 0.9.1" />
+<meta name="generator" content="pdoc 0.9.2" />
 <title>src.UpdateTracker.JobUpdateTracker API documentation</title>
 <meta name="description" content="" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
@@ -35,10 +35,10 @@ from threading import Lock
 
 class Tracker:
     &#34;&#34;&#34;
-    - This Class keeps track of the various Jobs that are created.
-    - The Jobs and the Tasks associated with the jobs are tracked.
-    - This Class also keeps track of the mapper reducer dependency.
-    - This Class creates csv log files for future analysis.
+    - This Class keeps track of the various Jobs that are created
+    - The Jobs and the Tasks associated with the jobs are tracked
+    - This Class also keeps track of the mapper reducer dependency
+    - This Class creates csv log files for future analysis
     - The log files include:
 
 | File Name | Contents |
@@ -62,7 +62,7 @@ class Tracker:
         fields_worker = [&#39;JobID&#39;, &#39;WorkerID&#39;, &#39;TaskID&#39;, &#39;start_time&#39;,
                          &#39;end_time&#39;]
 
-        print(f&#34;Program is at location: {os.getcwd()}&#34;)
+        # print(f&#34;Program is at location: {os.getcwd()}&#34;)
 
         algorithm = os.path.join(&#34;.&#34;, &#34;Analytics&#34;, algorithm)
 
@@ -99,15 +99,15 @@ class Tracker:
     def addJobRequest(self, parsed_json_request: dict):  # request_message):
         &#34;&#34;&#34;
         - Gets the Request message and initialises the dictionaries
-        to keep track of the jobs and associated tasks.
+        to keep track of the jobs and associated tasks
         - Get job_ids from request message, update jobs and tasks
-        - jobs_time keeps track of time to complete a job.
-        Starting time is initialized when request message is sent
-        Ending time is updated when all tasks in a job are complete and a
+        - jobs_time keeps track of time to complete a job
+        - Starting time is initialized when request message is sent
+        - Ending time is updated when all tasks in a job are complete and a
         response message is sent tasks_time keeps track of start time and
-        end time of a task.
-        The start time and end time of a particular task are received in the
-        response message.
+        end time of a task
+        - The start time and end time of a particular task are received in the
+        response message
         &#34;&#34;&#34;
         # json_string = json.loads(request_message)
 
@@ -144,11 +144,11 @@ class Tracker:
         This method takes in the response message and performs the following
         tasks:
 
-        - Updates task end time.
-        - If all tasks composing a job are done, updates job end time.
-        - Updates task stats of a worker.
-        - Writes out the stats of job, task, worker to a csv file.
-        - Format of task_stats is ```[start_time, end_time]```.
+        - Updates task end time
+        - If all tasks composing a job are done, updates job end time
+        - Updates task stats of a worker
+        - Writes out the stats of job, task, worker to a csv file
+        - Format of task_stats is ```[start_time, end_time]```
         &#34;&#34;&#34;
         # json_string = json.loads(response_message)
 
@@ -164,8 +164,8 @@ class Tracker:
         task_fam = parsed_json_request[&#34;task family&#34;]
 
         # Get task start and end time on worker
-        task_stats = [parsed_json_request[&#34;task&#34;][&#34;start time&#34;],
-                      parsed_json_request[&#34;task&#34;][&#34;end time&#34;]]
+        task_stats = [parsed_json_request[&#34;task&#34;][&#34;start_time&#34;],
+                      parsed_json_request[&#34;task&#34;][&#34;end_time&#34;]]
         self.jobs[job_id][task_id] = response_message
         # Stores start time and end time for a task
         self.tasks_time[job_id][task_id] = task_stats
@@ -193,13 +193,13 @@ class Tracker:
                 flag = 0
                 break
         if flag == 1:
-            self.jobs_time[job_id][1] = time.time()
+            self.jobs_time[job_id][1] = task_stats[1]  # time.time()
             self.writeJobsCSV(job_id)
 
     def isMapComplete(self, jobID) -&gt; bool:
         &#34;&#34;&#34;
-        - Performs a check whether all map tasks in a job are complete.
-        - This is to maintain *map-reduce dependency*.
+        - Performs a check whether all map tasks in a job are complete
+        - This is to maintain *map-reduce dependency*
         &#34;&#34;&#34;
         status = self.map_tracker[jobID].values()
         if 0 in status:
@@ -209,8 +209,8 @@ class Tracker:
 
     def isReduceComplete(self, jobID) -&gt; bool:
         &#34;&#34;&#34;
-        - Performs a check whether **all reduce tasks in a job are complete**.
-        - This is to maintain *map-reduce dependency*.
+        - Performs a check whether **all reduce tasks in a job are complete**
+        - This is to maintain *map-reduce dependency*
         &#34;&#34;&#34;
         status = self.reduce_tracker[jobID].values()
         if 0 in status:
@@ -235,6 +235,9 @@ class Tracker:
         # Once the job has been written into the CSV file then delete
         # its entry from the dictionary
         del self.jobs_time[JobID]
+        del self.jobs[JobID]
+        del self.map_tracker[JobID]
+        del self.reduce_tracker[JobID]
 
     def writeTasksCSV(self, JobID, TaskID):
         &#34;&#34;&#34;
@@ -309,10 +312,10 @@ if __name__ == &#34;__main__&#34;:
 </code></dt>
 <dd>
 <div class="desc"><ul>
-<li>This Class keeps track of the various Jobs that are created.<ul>
-<li>The Jobs and the Tasks associated with the jobs are tracked.</li>
-<li>This Class also keeps track of the mapper reducer dependency.</li>
-<li>This Class creates csv log files for future analysis.</li>
+<li>This Class keeps track of the various Jobs that are created<ul>
+<li>The Jobs and the Tasks associated with the jobs are tracked</li>
+<li>This Class also keeps track of the mapper reducer dependency</li>
+<li>This Class creates csv log files for future analysis</li>
 <li>The log files include:</li>
 </ul>
 </li>
@@ -345,10 +348,10 @@ if __name__ == &#34;__main__&#34;:
 </summary>
 <pre><code class="python">class Tracker:
     &#34;&#34;&#34;
-    - This Class keeps track of the various Jobs that are created.
-    - The Jobs and the Tasks associated with the jobs are tracked.
-    - This Class also keeps track of the mapper reducer dependency.
-    - This Class creates csv log files for future analysis.
+    - This Class keeps track of the various Jobs that are created
+    - The Jobs and the Tasks associated with the jobs are tracked
+    - This Class also keeps track of the mapper reducer dependency
+    - This Class creates csv log files for future analysis
     - The log files include:
 
 | File Name | Contents |
@@ -372,7 +375,7 @@ if __name__ == &#34;__main__&#34;:
         fields_worker = [&#39;JobID&#39;, &#39;WorkerID&#39;, &#39;TaskID&#39;, &#39;start_time&#39;,
                          &#39;end_time&#39;]
 
-        print(f&#34;Program is at location: {os.getcwd()}&#34;)
+        # print(f&#34;Program is at location: {os.getcwd()}&#34;)
 
         algorithm = os.path.join(&#34;.&#34;, &#34;Analytics&#34;, algorithm)
 
@@ -409,15 +412,15 @@ if __name__ == &#34;__main__&#34;:
     def addJobRequest(self, parsed_json_request: dict):  # request_message):
         &#34;&#34;&#34;
         - Gets the Request message and initialises the dictionaries
-        to keep track of the jobs and associated tasks.
+        to keep track of the jobs and associated tasks
         - Get job_ids from request message, update jobs and tasks
-        - jobs_time keeps track of time to complete a job.
-        Starting time is initialized when request message is sent
-        Ending time is updated when all tasks in a job are complete and a
+        - jobs_time keeps track of time to complete a job
+        - Starting time is initialized when request message is sent
+        - Ending time is updated when all tasks in a job are complete and a
         response message is sent tasks_time keeps track of start time and
-        end time of a task.
-        The start time and end time of a particular task are received in the
-        response message.
+        end time of a task
+        - The start time and end time of a particular task are received in the
+        response message
         &#34;&#34;&#34;
         # json_string = json.loads(request_message)
 
@@ -454,11 +457,11 @@ if __name__ == &#34;__main__&#34;:
         This method takes in the response message and performs the following
         tasks:
 
-        - Updates task end time.
-        - If all tasks composing a job are done, updates job end time.
-        - Updates task stats of a worker.
-        - Writes out the stats of job, task, worker to a csv file.
-        - Format of task_stats is ```[start_time, end_time]```.
+        - Updates task end time
+        - If all tasks composing a job are done, updates job end time
+        - Updates task stats of a worker
+        - Writes out the stats of job, task, worker to a csv file
+        - Format of task_stats is ```[start_time, end_time]```
         &#34;&#34;&#34;
         # json_string = json.loads(response_message)
 
@@ -474,8 +477,8 @@ if __name__ == &#34;__main__&#34;:
         task_fam = parsed_json_request[&#34;task family&#34;]
 
         # Get task start and end time on worker
-        task_stats = [parsed_json_request[&#34;task&#34;][&#34;start time&#34;],
-                      parsed_json_request[&#34;task&#34;][&#34;end time&#34;]]
+        task_stats = [parsed_json_request[&#34;task&#34;][&#34;start_time&#34;],
+                      parsed_json_request[&#34;task&#34;][&#34;end_time&#34;]]
         self.jobs[job_id][task_id] = response_message
         # Stores start time and end time for a task
         self.tasks_time[job_id][task_id] = task_stats
@@ -503,13 +506,13 @@ if __name__ == &#34;__main__&#34;:
                 flag = 0
                 break
         if flag == 1:
-            self.jobs_time[job_id][1] = time.time()
+            self.jobs_time[job_id][1] = task_stats[1]  # time.time()
             self.writeJobsCSV(job_id)
 
     def isMapComplete(self, jobID) -&gt; bool:
         &#34;&#34;&#34;
-        - Performs a check whether all map tasks in a job are complete.
-        - This is to maintain *map-reduce dependency*.
+        - Performs a check whether all map tasks in a job are complete
+        - This is to maintain *map-reduce dependency*
         &#34;&#34;&#34;
         status = self.map_tracker[jobID].values()
         if 0 in status:
@@ -519,8 +522,8 @@ if __name__ == &#34;__main__&#34;:
 
     def isReduceComplete(self, jobID) -&gt; bool:
         &#34;&#34;&#34;
-        - Performs a check whether **all reduce tasks in a job are complete**.
-        - This is to maintain *map-reduce dependency*.
+        - Performs a check whether **all reduce tasks in a job are complete**
+        - This is to maintain *map-reduce dependency*
         &#34;&#34;&#34;
         status = self.reduce_tracker[jobID].values()
         if 0 in status:
@@ -545,6 +548,9 @@ if __name__ == &#34;__main__&#34;:
         # Once the job has been written into the CSV file then delete
         # its entry from the dictionary
         del self.jobs_time[JobID]
+        del self.jobs[JobID]
+        del self.map_tracker[JobID]
+        del self.reduce_tracker[JobID]
 
     def writeTasksCSV(self, JobID, TaskID):
         &#34;&#34;&#34;
@@ -598,15 +604,15 @@ if __name__ == &#34;__main__&#34;:
 <dd>
 <div class="desc"><ul>
 <li>Gets the Request message and initialises the dictionaries
-to keep track of the jobs and associated tasks.</li>
+to keep track of the jobs and associated tasks</li>
 <li>Get job_ids from request message, update jobs and tasks</li>
-<li>jobs_time keeps track of time to complete a job.
-Starting time is initialized when request message is sent
-Ending time is updated when all tasks in a job are complete and a
+<li>jobs_time keeps track of time to complete a job</li>
+<li>Starting time is initialized when request message is sent</li>
+<li>Ending time is updated when all tasks in a job are complete and a
 response message is sent tasks_time keeps track of start time and
-end time of a task.
-The start time and end time of a particular task are received in the
-response message.</li>
+end time of a task</li>
+<li>The start time and end time of a particular task are received in the
+response message</li>
 </ul></div>
 <details class="source">
 <summary>
@@ -615,15 +621,15 @@ response message.</li>
 <pre><code class="python">def addJobRequest(self, parsed_json_request: dict):  # request_message):
     &#34;&#34;&#34;
     - Gets the Request message and initialises the dictionaries
-    to keep track of the jobs and associated tasks.
+    to keep track of the jobs and associated tasks
     - Get job_ids from request message, update jobs and tasks
-    - jobs_time keeps track of time to complete a job.
-    Starting time is initialized when request message is sent
-    Ending time is updated when all tasks in a job are complete and a
+    - jobs_time keeps track of time to complete a job
+    - Starting time is initialized when request message is sent
+    - Ending time is updated when all tasks in a job are complete and a
     response message is sent tasks_time keeps track of start time and
-    end time of a task.
-    The start time and end time of a particular task are received in the
-    response message.
+    end time of a task
+    - The start time and end time of a particular task are received in the
+    response message
     &#34;&#34;&#34;
     # json_string = json.loads(request_message)
 
@@ -676,8 +682,8 @@ response message.</li>
 </code></dt>
 <dd>
 <div class="desc"><ul>
-<li>Performs a check whether all map tasks in a job are complete.</li>
-<li>This is to maintain <em>map-reduce dependency</em>.</li>
+<li>Performs a check whether all map tasks in a job are complete</li>
+<li>This is to maintain <em>map-reduce dependency</em></li>
 </ul></div>
 <details class="source">
 <summary>
@@ -685,8 +691,8 @@ response message.</li>
 </summary>
 <pre><code class="python">def isMapComplete(self, jobID) -&gt; bool:
     &#34;&#34;&#34;
-    - Performs a check whether all map tasks in a job are complete.
-    - This is to maintain *map-reduce dependency*.
+    - Performs a check whether all map tasks in a job are complete
+    - This is to maintain *map-reduce dependency*
     &#34;&#34;&#34;
     status = self.map_tracker[jobID].values()
     if 0 in status:
@@ -700,8 +706,8 @@ response message.</li>
 </code></dt>
 <dd>
 <div class="desc"><ul>
-<li>Performs a check whether <strong>all reduce tasks in a job are complete</strong>.</li>
-<li>This is to maintain <em>map-reduce dependency</em>.</li>
+<li>Performs a check whether <strong>all reduce tasks in a job are complete</strong></li>
+<li>This is to maintain <em>map-reduce dependency</em></li>
 </ul></div>
 <details class="source">
 <summary>
@@ -709,8 +715,8 @@ response message.</li>
 </summary>
 <pre><code class="python">def isReduceComplete(self, jobID) -&gt; bool:
     &#34;&#34;&#34;
-    - Performs a check whether **all reduce tasks in a job are complete**.
-    - This is to maintain *map-reduce dependency*.
+    - Performs a check whether **all reduce tasks in a job are complete**
+    - This is to maintain *map-reduce dependency*
     &#34;&#34;&#34;
     status = self.reduce_tracker[jobID].values()
     if 0 in status:
@@ -726,11 +732,11 @@ response message.</li>
 <div class="desc"><p>This method takes in the response message and performs the following
 tasks:</p>
 <ul>
-<li>Updates task end time.</li>
-<li>If all tasks composing a job are done, updates job end time.</li>
-<li>Updates task stats of a worker.</li>
-<li>Writes out the stats of job, task, worker to a csv file.</li>
-<li>Format of task_stats is <code>[start_time, end_time]</code>.</li>
+<li>Updates task end time</li>
+<li>If all tasks composing a job are done, updates job end time</li>
+<li>Updates task stats of a worker</li>
+<li>Writes out the stats of job, task, worker to a csv file</li>
+<li>Format of task_stats is <code>[start_time, end_time]</code></li>
 </ul></div>
 <details class="source">
 <summary>
@@ -741,11 +747,11 @@ tasks:</p>
     This method takes in the response message and performs the following
     tasks:
 
-    - Updates task end time.
-    - If all tasks composing a job are done, updates job end time.
-    - Updates task stats of a worker.
-    - Writes out the stats of job, task, worker to a csv file.
-    - Format of task_stats is ```[start_time, end_time]```.
+    - Updates task end time
+    - If all tasks composing a job are done, updates job end time
+    - Updates task stats of a worker
+    - Writes out the stats of job, task, worker to a csv file
+    - Format of task_stats is ```[start_time, end_time]```
     &#34;&#34;&#34;
     # json_string = json.loads(response_message)
 
@@ -761,8 +767,8 @@ tasks:</p>
     task_fam = parsed_json_request[&#34;task family&#34;]
 
     # Get task start and end time on worker
-    task_stats = [parsed_json_request[&#34;task&#34;][&#34;start time&#34;],
-                  parsed_json_request[&#34;task&#34;][&#34;end time&#34;]]
+    task_stats = [parsed_json_request[&#34;task&#34;][&#34;start_time&#34;],
+                  parsed_json_request[&#34;task&#34;][&#34;end_time&#34;]]
     self.jobs[job_id][task_id] = response_message
     # Stores start time and end time for a task
     self.tasks_time[job_id][task_id] = task_stats
@@ -790,7 +796,7 @@ tasks:</p>
             flag = 0
             break
     if flag == 1:
-        self.jobs_time[job_id][1] = time.time()
+        self.jobs_time[job_id][1] = task_stats[1]  # time.time()
         self.writeJobsCSV(job_id)</code></pre>
 </details>
 </dd>
@@ -820,7 +826,10 @@ the stats of that particular job to a log file.</p></div>
     self.flush()
     # Once the job has been written into the CSV file then delete
     # its entry from the dictionary
-    del self.jobs_time[JobID]</code></pre>
+    del self.jobs_time[JobID]
+    del self.jobs[JobID]
+    del self.map_tracker[JobID]
+    del self.reduce_tracker[JobID]</code></pre>
 </details>
 </dd>
 <dt id="src.UpdateTracker.JobUpdateTracker.Tracker.writeTasksCSV"><code class="name flex">
@@ -916,7 +925,7 @@ stats of that particular task to a log file.</p></div>
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.1</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
 </footer>
 </body>
 </html>

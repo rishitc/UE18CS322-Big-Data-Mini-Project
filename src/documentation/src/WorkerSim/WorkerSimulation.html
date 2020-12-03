@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
-<meta name="generator" content="pdoc 0.9.1" />
+<meta name="generator" content="pdoc 0.9.2" />
 <title>src.WorkerSim.WorkerSimulation API documentation</title>
 <meta name="description" content="" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
@@ -31,6 +31,8 @@ import json  # For JSON to python conversion and vice-versa
 import threading  # For locks
 import socket  # For function parameters
 import queue  # For storing the completed tasks
+from cryptography.fernet import Fernet
+import colored as TC
 
 from Locks.WorkerPrintLock import worker
 from Communication.protocol import YACS_Protocol
@@ -60,7 +62,8 @@ class Worker:
         self.LOCK = threading.Lock()
         self.updates_q = queue.Queue()  # For completed tasks
 
-    def listenForTaskRequest(self, taskRequestSocket: socket.socket):
+    def listenForTaskRequest(self, taskRequestSocket: socket.socket,
+                             WORKER_KEY):
         &#34;&#34;&#34;
         This listens for a JSON message which was created using the
         ***createMessageToWorker()*** method (*i.e. following the set protocol
@@ -68,6 +71,20 @@ class Worker:
         as task id and the value is all the related information of the task,
         i.e the dictionary obtained from **createMessageToWorker()** method.
         &#34;&#34;&#34;
+        dec_obj = Fernet(WORKER_KEY)
+        # Fernet uses a key for symmetric encryption/decryption
+
+        # Thread to log when the worker task pool is empty
+        _exec_pool_poller_thread = threading\
+            .Thread(name=&#34;Task Pool Poller Thread&#34;,
+                    target=self.tasksPoolPoller)
+        _exec_pool_poller_thread.daemon = True
+        _exec_pool_poller_thread.start()
+        worker.PRINT_LOCK.acquire()
+        print(Worker.info_text(&#34;Created the Task Execution Pool Poller thread!&#34;
+                               ))
+        worker.PRINT_LOCK.release()
+
         while True:
             # To extract the message sent from master
             taskRequest = taskRequestSocket.recv(MESSAGE_BUFFER_SIZE).decode()
@@ -75,6 +92,17 @@ class Worker:
                 taskRequestSocket.close()
                 break
 
+            _temp: str = &#39;&#39;
+            for i in taskRequest.split(&#39;==&#39;)[:-1]:
+                _temp += dec_obj.decrypt((i + &#39;==&#39;).encode()).decode()
+            taskRequest = _temp
+
+            # Preprocess the received JSON data. This helps prevent
+            # JSON parsing errors when more then one message has been
+            # received at once at the worker
+            taskRequest = &#34;[&#34; + taskRequest.replace(&#34;}{&#34;, &#34;},{&#34;) + &#34;]&#34;
+
+            # For logging purposes
             worker.PRINT_LOCK.acquire()
             print(f&#34;Task received at worker: {taskRequest}&#34;)
             worker.PRINT_LOCK.release()
@@ -82,44 +110,53 @@ class Worker:
             # Convert JSON to python dictionary
             python_protocol_message = json.loads(taskRequest)
 
-            # To obtain key for addition to task exec pool
-            job_in_message = python_protocol_message[&#34;job_id&#34;]
-            task_in_message = python_protocol_message[&#34;task&#34;][&#34;task_id&#34;]
-            # Initialise the starting time of the task
-            python_protocol_message[&#34;task&#34;][&#34;start time&#34;] = time.time()
-            python_protocol_message[&#34;task&#34;][&#34;end time&#34;] = 0
-            # Adding components that are there in reply message to the master
-            # but not in the received message
-            worker.PRINT_LOCK.acquire()
-            print(python_protocol_message)
-            worker.PRINT_LOCK.release()
-            self.LOCK.acquire()  # Acquiring lock as shared object is accessed
-            if self.tasks.get(job_in_message) is None:
-                self.tasks[job_in_message] = dict()
+            # Acquiring lock as shared object is accessed
+            self.LOCK.acquire()
 
-            self.tasks[job_in_message][task_in_message] = \
-                python_protocol_message
+            # request: messageToWorker type
+            for request in python_protocol_message:
+                # To obtain key for addition to task exec pool
+                job_in_message = request[&#34;job_id&#34;]
+                task_in_message = request[&#34;task&#34;][&#34;task_id&#34;]
+                # Initialise the starting time of the task
+                request[&#34;task&#34;][&#34;start_time&#34;] = time.time()
+                request[&#34;task&#34;][&#34;end_time&#34;] = 0
+                # Adding components that are there in reply message to the
+                # master but not in the received message
+                worker.PRINT_LOCK.acquire()
+                print(request)
+                worker.PRINT_LOCK.release()
+                if self.tasks.get(job_in_message) is None:
+                    self.tasks[job_in_message] = dict()
+                # The dictionary that stores the incoming task requests is a
+                # nested dictionary with first level key as job_id and the
+                # value being another dictionary with task_id(unique for a job)
+                # as the key for this nested dictionary and value being the
+                # actual response to the master
 
-            #  Value for the tasks dictionary will be all the info
+                self.tasks[job_in_message][task_in_message] = request
+
             self.LOCK.release()  # Release lock as CS code is complete
 
             worker.PRINT_LOCK.acquire()
-            print(self.tasks)
+            print(self.tasks)  # Print the task exec pool
             worker.PRINT_LOCK.release()
+
+        _exec_pool_poller_thread.join()
 
     def simulateWorker(self):
         # While there is a task to execute in the task exec pool
         while True:
             # Get the number of tasks in the Task pool
             self.LOCK.acquire()  # Acquiring lock as shared object is accessed
-            tasksInExecutionPool_Count = len(self.tasks)
+            tasksInExecutionPool_Count = len(self.tasks)  # Returns no_of_jobs
             self.LOCK.release()  # Release lock as CS code is complete
 
             # If there are tasks to execute in the task pool
             if tasksInExecutionPool_Count != 0:
                 self.LOCK.acquire()  # Lock as shared object is accessed
-                _temp_1 = list(self.tasks)
-                for job_id in _temp_1:
+                _temp_1 = list(self.tasks)  # Need to store as list for
+                for job_id in _temp_1:      # correct iterating
                     &#34;&#34;&#34;Durations (i.e. the value in the dictionary) will be
                     positive(non-zero) integers.&#34;&#34;&#34;
                     _temp_2 = list(self.tasks[job_id])
@@ -136,7 +173,7 @@ class Worker:
                         # finished execution
                         if (self.tasks[job_id][task_id][&#34;task&#34;][&#34;duration&#34;]
                                 == 0):
-                            self.tasks[job_id][task_id][&#34;task&#34;][&#34;end time&#34;] = \
+                            self.tasks[job_id][task_id][&#34;task&#34;][&#34;end_time&#34;] = \
                                 time.time()
                             # Store the end-time of the task
                             response_message_to_master = YACS_Protocol\
@@ -150,16 +187,18 @@ class Worker:
                                                         [&#34;task_id&#34;]),
                                                        (self.tasks[job_id]
                                                         [task_id][&#34;task&#34;]
-                                                        [&#34;start time&#34;]),
+                                                        [&#34;start_time&#34;]),
                                                        (self.tasks[job_id]
                                                         [task_id][&#34;task&#34;]
-                                                        [&#34;end time&#34;]),
+                                                        [&#34;end_time&#34;]),
                                                        (self.tasks[job_id]
                                                         [task_id]
                                                         [&#34;worker_id&#34;]))
                             # YACS Protocol based response to master
                             self.updates_q.put(response_message_to_master)
                             # Adding the task in the completed tasks queue
+                            # The queue is a shared object that can be accessed
+                            # between separate threads
                             del self.tasks[job_id][task_id]
                             # Remove the task entry from the task exec pool
                             if len(self.tasks[job_id]) == 0:
@@ -177,7 +216,7 @@ class Worker:
         # UPDATE 1: Acknowledged. Working on that right now.
         # UPDATE 2: The same has been implemented
 
-    def taskComplete(self, reply_socket: socket.socket):
+    def taskComplete(self, reply_socket: socket.socket, WORKER_KEY):
         &#34;&#34;&#34;
         This method creates and returns returns the **JSON string**
         of format createMessageToMaster() of YACS Protocol.
@@ -185,17 +224,40 @@ class Worker:
         This method is called by ***simulateWorker()*** method when the
         *remaining_duration attribute* of the task **becomes 0**.
         &#34;&#34;&#34;
-
+        enc_obj = Fernet(WORKER_KEY)
         while True:
             if not self.updates_q.empty():
                 response_msg: str = self.updates_q.get()
                 self.updates_q.task_done()
+                # get() and task_done() are similar to lock()
+                # and release() for the queue
                 # Sending to master
-                reply_socket.sendall(response_msg.encode())
+                reply_socket.sendall(enc_obj.encrypt(response_msg.encode()))
                 worker.PRINT_LOCK.acquire()
                 print(f&#34;Task sent: {response_msg}!&#34;)
                 worker.PRINT_LOCK.release()
-                time.sleep(0.01)
+                # time.sleep(0.01)
+
+    @staticmethod
+    def info_text(text):
+        return f&#34;{TC.fg(6) + TC.attr(1)}INFO:{TC.attr(0)} {text}&#34;
+
+    def tasksPoolPoller(self):
+        isTaskPoolEmpty: bool = False
+        wasTaskPoolEmpty: bool = False
+        # Prints when the task pool is empty
+        while True:
+            self.LOCK.acquire()
+            isTaskPoolEmpty = not self.tasks
+            self.LOCK.release()
+
+            if isTaskPoolEmpty and not wasTaskPoolEmpty:
+                worker.PRINT_LOCK.acquire()
+                print(Worker.info_text(&#34;The task execution pool is empty!&#34;)
+                      )
+                worker.PRINT_LOCK.release()
+
+            wasTaskPoolEmpty = isTaskPoolEmpty
 
     def __del__(self):
         self.updates_q.join()</code></pre>
@@ -256,7 +318,8 @@ using YACS Protocol Message (<strong><em>createMessageToMaster()</em></strong>).
         self.LOCK = threading.Lock()
         self.updates_q = queue.Queue()  # For completed tasks
 
-    def listenForTaskRequest(self, taskRequestSocket: socket.socket):
+    def listenForTaskRequest(self, taskRequestSocket: socket.socket,
+                             WORKER_KEY):
         &#34;&#34;&#34;
         This listens for a JSON message which was created using the
         ***createMessageToWorker()*** method (*i.e. following the set protocol
@@ -264,6 +327,20 @@ using YACS Protocol Message (<strong><em>createMessageToMaster()</em></strong>).
         as task id and the value is all the related information of the task,
         i.e the dictionary obtained from **createMessageToWorker()** method.
         &#34;&#34;&#34;
+        dec_obj = Fernet(WORKER_KEY)
+        # Fernet uses a key for symmetric encryption/decryption
+
+        # Thread to log when the worker task pool is empty
+        _exec_pool_poller_thread = threading\
+            .Thread(name=&#34;Task Pool Poller Thread&#34;,
+                    target=self.tasksPoolPoller)
+        _exec_pool_poller_thread.daemon = True
+        _exec_pool_poller_thread.start()
+        worker.PRINT_LOCK.acquire()
+        print(Worker.info_text(&#34;Created the Task Execution Pool Poller thread!&#34;
+                               ))
+        worker.PRINT_LOCK.release()
+
         while True:
             # To extract the message sent from master
             taskRequest = taskRequestSocket.recv(MESSAGE_BUFFER_SIZE).decode()
@@ -271,6 +348,17 @@ using YACS Protocol Message (<strong><em>createMessageToMaster()</em></strong>).
                 taskRequestSocket.close()
                 break
 
+            _temp: str = &#39;&#39;
+            for i in taskRequest.split(&#39;==&#39;)[:-1]:
+                _temp += dec_obj.decrypt((i + &#39;==&#39;).encode()).decode()
+            taskRequest = _temp
+
+            # Preprocess the received JSON data. This helps prevent
+            # JSON parsing errors when more then one message has been
+            # received at once at the worker
+            taskRequest = &#34;[&#34; + taskRequest.replace(&#34;}{&#34;, &#34;},{&#34;) + &#34;]&#34;
+
+            # For logging purposes
             worker.PRINT_LOCK.acquire()
             print(f&#34;Task received at worker: {taskRequest}&#34;)
             worker.PRINT_LOCK.release()
@@ -278,44 +366,53 @@ using YACS Protocol Message (<strong><em>createMessageToMaster()</em></strong>).
             # Convert JSON to python dictionary
             python_protocol_message = json.loads(taskRequest)
 
-            # To obtain key for addition to task exec pool
-            job_in_message = python_protocol_message[&#34;job_id&#34;]
-            task_in_message = python_protocol_message[&#34;task&#34;][&#34;task_id&#34;]
-            # Initialise the starting time of the task
-            python_protocol_message[&#34;task&#34;][&#34;start time&#34;] = time.time()
-            python_protocol_message[&#34;task&#34;][&#34;end time&#34;] = 0
-            # Adding components that are there in reply message to the master
-            # but not in the received message
-            worker.PRINT_LOCK.acquire()
-            print(python_protocol_message)
-            worker.PRINT_LOCK.release()
-            self.LOCK.acquire()  # Acquiring lock as shared object is accessed
-            if self.tasks.get(job_in_message) is None:
-                self.tasks[job_in_message] = dict()
+            # Acquiring lock as shared object is accessed
+            self.LOCK.acquire()
 
-            self.tasks[job_in_message][task_in_message] = \
-                python_protocol_message
+            # request: messageToWorker type
+            for request in python_protocol_message:
+                # To obtain key for addition to task exec pool
+                job_in_message = request[&#34;job_id&#34;]
+                task_in_message = request[&#34;task&#34;][&#34;task_id&#34;]
+                # Initialise the starting time of the task
+                request[&#34;task&#34;][&#34;start_time&#34;] = time.time()
+                request[&#34;task&#34;][&#34;end_time&#34;] = 0
+                # Adding components that are there in reply message to the
+                # master but not in the received message
+                worker.PRINT_LOCK.acquire()
+                print(request)
+                worker.PRINT_LOCK.release()
+                if self.tasks.get(job_in_message) is None:
+                    self.tasks[job_in_message] = dict()
+                # The dictionary that stores the incoming task requests is a
+                # nested dictionary with first level key as job_id and the
+                # value being another dictionary with task_id(unique for a job)
+                # as the key for this nested dictionary and value being the
+                # actual response to the master
 
-            #  Value for the tasks dictionary will be all the info
+                self.tasks[job_in_message][task_in_message] = request
+
             self.LOCK.release()  # Release lock as CS code is complete
 
             worker.PRINT_LOCK.acquire()
-            print(self.tasks)
+            print(self.tasks)  # Print the task exec pool
             worker.PRINT_LOCK.release()
+
+        _exec_pool_poller_thread.join()
 
     def simulateWorker(self):
         # While there is a task to execute in the task exec pool
         while True:
             # Get the number of tasks in the Task pool
             self.LOCK.acquire()  # Acquiring lock as shared object is accessed
-            tasksInExecutionPool_Count = len(self.tasks)
+            tasksInExecutionPool_Count = len(self.tasks)  # Returns no_of_jobs
             self.LOCK.release()  # Release lock as CS code is complete
 
             # If there are tasks to execute in the task pool
             if tasksInExecutionPool_Count != 0:
                 self.LOCK.acquire()  # Lock as shared object is accessed
-                _temp_1 = list(self.tasks)
-                for job_id in _temp_1:
+                _temp_1 = list(self.tasks)  # Need to store as list for
+                for job_id in _temp_1:      # correct iterating
                     &#34;&#34;&#34;Durations (i.e. the value in the dictionary) will be
                     positive(non-zero) integers.&#34;&#34;&#34;
                     _temp_2 = list(self.tasks[job_id])
@@ -332,7 +429,7 @@ using YACS Protocol Message (<strong><em>createMessageToMaster()</em></strong>).
                         # finished execution
                         if (self.tasks[job_id][task_id][&#34;task&#34;][&#34;duration&#34;]
                                 == 0):
-                            self.tasks[job_id][task_id][&#34;task&#34;][&#34;end time&#34;] = \
+                            self.tasks[job_id][task_id][&#34;task&#34;][&#34;end_time&#34;] = \
                                 time.time()
                             # Store the end-time of the task
                             response_message_to_master = YACS_Protocol\
@@ -346,16 +443,18 @@ using YACS Protocol Message (<strong><em>createMessageToMaster()</em></strong>).
                                                         [&#34;task_id&#34;]),
                                                        (self.tasks[job_id]
                                                         [task_id][&#34;task&#34;]
-                                                        [&#34;start time&#34;]),
+                                                        [&#34;start_time&#34;]),
                                                        (self.tasks[job_id]
                                                         [task_id][&#34;task&#34;]
-                                                        [&#34;end time&#34;]),
+                                                        [&#34;end_time&#34;]),
                                                        (self.tasks[job_id]
                                                         [task_id]
                                                         [&#34;worker_id&#34;]))
                             # YACS Protocol based response to master
                             self.updates_q.put(response_message_to_master)
                             # Adding the task in the completed tasks queue
+                            # The queue is a shared object that can be accessed
+                            # between separate threads
                             del self.tasks[job_id][task_id]
                             # Remove the task entry from the task exec pool
                             if len(self.tasks[job_id]) == 0:
@@ -373,7 +472,7 @@ using YACS Protocol Message (<strong><em>createMessageToMaster()</em></strong>).
         # UPDATE 1: Acknowledged. Working on that right now.
         # UPDATE 2: The same has been implemented
 
-    def taskComplete(self, reply_socket: socket.socket):
+    def taskComplete(self, reply_socket: socket.socket, WORKER_KEY):
         &#34;&#34;&#34;
         This method creates and returns returns the **JSON string**
         of format createMessageToMaster() of YACS Protocol.
@@ -381,25 +480,65 @@ using YACS Protocol Message (<strong><em>createMessageToMaster()</em></strong>).
         This method is called by ***simulateWorker()*** method when the
         *remaining_duration attribute* of the task **becomes 0**.
         &#34;&#34;&#34;
-
+        enc_obj = Fernet(WORKER_KEY)
         while True:
             if not self.updates_q.empty():
                 response_msg: str = self.updates_q.get()
                 self.updates_q.task_done()
+                # get() and task_done() are similar to lock()
+                # and release() for the queue
                 # Sending to master
-                reply_socket.sendall(response_msg.encode())
+                reply_socket.sendall(enc_obj.encrypt(response_msg.encode()))
                 worker.PRINT_LOCK.acquire()
                 print(f&#34;Task sent: {response_msg}!&#34;)
                 worker.PRINT_LOCK.release()
-                time.sleep(0.01)
+                # time.sleep(0.01)
+
+    @staticmethod
+    def info_text(text):
+        return f&#34;{TC.fg(6) + TC.attr(1)}INFO:{TC.attr(0)} {text}&#34;
+
+    def tasksPoolPoller(self):
+        isTaskPoolEmpty: bool = False
+        wasTaskPoolEmpty: bool = False
+        # Prints when the task pool is empty
+        while True:
+            self.LOCK.acquire()
+            isTaskPoolEmpty = not self.tasks
+            self.LOCK.release()
+
+            if isTaskPoolEmpty and not wasTaskPoolEmpty:
+                worker.PRINT_LOCK.acquire()
+                print(Worker.info_text(&#34;The task execution pool is empty!&#34;)
+                      )
+                worker.PRINT_LOCK.release()
+
+            wasTaskPoolEmpty = isTaskPoolEmpty
 
     def __del__(self):
         self.updates_q.join()</code></pre>
 </details>
+<h3>Static methods</h3>
+<dl>
+<dt id="src.WorkerSim.WorkerSimulation.Worker.info_text"><code class="name flex">
+<span>def <span class="ident">info_text</span></span>(<span>text)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def info_text(text):
+    return f&#34;{TC.fg(6) + TC.attr(1)}INFO:{TC.attr(0)} {text}&#34;</code></pre>
+</details>
+</dd>
+</dl>
 <h3>Methods</h3>
 <dl>
 <dt id="src.WorkerSim.WorkerSimulation.Worker.listenForTaskRequest"><code class="name flex">
-<span>def <span class="ident">listenForTaskRequest</span></span>(<span>self, taskRequestSocket: socket.socket)</span>
+<span>def <span class="ident">listenForTaskRequest</span></span>(<span>self, taskRequestSocket: socket.socket, WORKER_KEY)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>This listens for a JSON message which was created using the
@@ -411,7 +550,8 @@ i.e the dictionary obtained from <strong>createMessageToWorker()</strong> method
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def listenForTaskRequest(self, taskRequestSocket: socket.socket):
+<pre><code class="python">def listenForTaskRequest(self, taskRequestSocket: socket.socket,
+                         WORKER_KEY):
     &#34;&#34;&#34;
     This listens for a JSON message which was created using the
     ***createMessageToWorker()*** method (*i.e. following the set protocol
@@ -419,6 +559,20 @@ i.e the dictionary obtained from <strong>createMessageToWorker()</strong> method
     as task id and the value is all the related information of the task,
     i.e the dictionary obtained from **createMessageToWorker()** method.
     &#34;&#34;&#34;
+    dec_obj = Fernet(WORKER_KEY)
+    # Fernet uses a key for symmetric encryption/decryption
+
+    # Thread to log when the worker task pool is empty
+    _exec_pool_poller_thread = threading\
+        .Thread(name=&#34;Task Pool Poller Thread&#34;,
+                target=self.tasksPoolPoller)
+    _exec_pool_poller_thread.daemon = True
+    _exec_pool_poller_thread.start()
+    worker.PRINT_LOCK.acquire()
+    print(Worker.info_text(&#34;Created the Task Execution Pool Poller thread!&#34;
+                           ))
+    worker.PRINT_LOCK.release()
+
     while True:
         # To extract the message sent from master
         taskRequest = taskRequestSocket.recv(MESSAGE_BUFFER_SIZE).decode()
@@ -426,6 +580,17 @@ i.e the dictionary obtained from <strong>createMessageToWorker()</strong> method
             taskRequestSocket.close()
             break
 
+        _temp: str = &#39;&#39;
+        for i in taskRequest.split(&#39;==&#39;)[:-1]:
+            _temp += dec_obj.decrypt((i + &#39;==&#39;).encode()).decode()
+        taskRequest = _temp
+
+        # Preprocess the received JSON data. This helps prevent
+        # JSON parsing errors when more then one message has been
+        # received at once at the worker
+        taskRequest = &#34;[&#34; + taskRequest.replace(&#34;}{&#34;, &#34;},{&#34;) + &#34;]&#34;
+
+        # For logging purposes
         worker.PRINT_LOCK.acquire()
         print(f&#34;Task received at worker: {taskRequest}&#34;)
         worker.PRINT_LOCK.release()
@@ -433,30 +598,39 @@ i.e the dictionary obtained from <strong>createMessageToWorker()</strong> method
         # Convert JSON to python dictionary
         python_protocol_message = json.loads(taskRequest)
 
-        # To obtain key for addition to task exec pool
-        job_in_message = python_protocol_message[&#34;job_id&#34;]
-        task_in_message = python_protocol_message[&#34;task&#34;][&#34;task_id&#34;]
-        # Initialise the starting time of the task
-        python_protocol_message[&#34;task&#34;][&#34;start time&#34;] = time.time()
-        python_protocol_message[&#34;task&#34;][&#34;end time&#34;] = 0
-        # Adding components that are there in reply message to the master
-        # but not in the received message
-        worker.PRINT_LOCK.acquire()
-        print(python_protocol_message)
-        worker.PRINT_LOCK.release()
-        self.LOCK.acquire()  # Acquiring lock as shared object is accessed
-        if self.tasks.get(job_in_message) is None:
-            self.tasks[job_in_message] = dict()
+        # Acquiring lock as shared object is accessed
+        self.LOCK.acquire()
 
-        self.tasks[job_in_message][task_in_message] = \
-            python_protocol_message
+        # request: messageToWorker type
+        for request in python_protocol_message:
+            # To obtain key for addition to task exec pool
+            job_in_message = request[&#34;job_id&#34;]
+            task_in_message = request[&#34;task&#34;][&#34;task_id&#34;]
+            # Initialise the starting time of the task
+            request[&#34;task&#34;][&#34;start_time&#34;] = time.time()
+            request[&#34;task&#34;][&#34;end_time&#34;] = 0
+            # Adding components that are there in reply message to the
+            # master but not in the received message
+            worker.PRINT_LOCK.acquire()
+            print(request)
+            worker.PRINT_LOCK.release()
+            if self.tasks.get(job_in_message) is None:
+                self.tasks[job_in_message] = dict()
+            # The dictionary that stores the incoming task requests is a
+            # nested dictionary with first level key as job_id and the
+            # value being another dictionary with task_id(unique for a job)
+            # as the key for this nested dictionary and value being the
+            # actual response to the master
 
-        #  Value for the tasks dictionary will be all the info
+            self.tasks[job_in_message][task_in_message] = request
+
         self.LOCK.release()  # Release lock as CS code is complete
 
         worker.PRINT_LOCK.acquire()
-        print(self.tasks)
-        worker.PRINT_LOCK.release()</code></pre>
+        print(self.tasks)  # Print the task exec pool
+        worker.PRINT_LOCK.release()
+
+    _exec_pool_poller_thread.join()</code></pre>
 </details>
 </dd>
 <dt id="src.WorkerSim.WorkerSimulation.Worker.simulateWorker"><code class="name flex">
@@ -473,14 +647,14 @@ i.e the dictionary obtained from <strong>createMessageToWorker()</strong> method
     while True:
         # Get the number of tasks in the Task pool
         self.LOCK.acquire()  # Acquiring lock as shared object is accessed
-        tasksInExecutionPool_Count = len(self.tasks)
+        tasksInExecutionPool_Count = len(self.tasks)  # Returns no_of_jobs
         self.LOCK.release()  # Release lock as CS code is complete
 
         # If there are tasks to execute in the task pool
         if tasksInExecutionPool_Count != 0:
             self.LOCK.acquire()  # Lock as shared object is accessed
-            _temp_1 = list(self.tasks)
-            for job_id in _temp_1:
+            _temp_1 = list(self.tasks)  # Need to store as list for
+            for job_id in _temp_1:      # correct iterating
                 &#34;&#34;&#34;Durations (i.e. the value in the dictionary) will be
                 positive(non-zero) integers.&#34;&#34;&#34;
                 _temp_2 = list(self.tasks[job_id])
@@ -497,7 +671,7 @@ i.e the dictionary obtained from <strong>createMessageToWorker()</strong> method
                     # finished execution
                     if (self.tasks[job_id][task_id][&#34;task&#34;][&#34;duration&#34;]
                             == 0):
-                        self.tasks[job_id][task_id][&#34;task&#34;][&#34;end time&#34;] = \
+                        self.tasks[job_id][task_id][&#34;task&#34;][&#34;end_time&#34;] = \
                             time.time()
                         # Store the end-time of the task
                         response_message_to_master = YACS_Protocol\
@@ -511,16 +685,18 @@ i.e the dictionary obtained from <strong>createMessageToWorker()</strong> method
                                                     [&#34;task_id&#34;]),
                                                    (self.tasks[job_id]
                                                     [task_id][&#34;task&#34;]
-                                                    [&#34;start time&#34;]),
+                                                    [&#34;start_time&#34;]),
                                                    (self.tasks[job_id]
                                                     [task_id][&#34;task&#34;]
-                                                    [&#34;end time&#34;]),
+                                                    [&#34;end_time&#34;]),
                                                    (self.tasks[job_id]
                                                     [task_id]
                                                     [&#34;worker_id&#34;]))
                         # YACS Protocol based response to master
                         self.updates_q.put(response_message_to_master)
                         # Adding the task in the completed tasks queue
+                        # The queue is a shared object that can be accessed
+                        # between separate threads
                         del self.tasks[job_id][task_id]
                         # Remove the task entry from the task exec pool
                         if len(self.tasks[job_id]) == 0:
@@ -533,7 +709,7 @@ i.e the dictionary obtained from <strong>createMessageToWorker()</strong> method
 </details>
 </dd>
 <dt id="src.WorkerSim.WorkerSimulation.Worker.taskComplete"><code class="name flex">
-<span>def <span class="ident">taskComplete</span></span>(<span>self, reply_socket: socket.socket)</span>
+<span>def <span class="ident">taskComplete</span></span>(<span>self, reply_socket: socket.socket, WORKER_KEY)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>This method creates and returns returns the <strong>JSON string</strong>
@@ -544,7 +720,7 @@ of format createMessageToMaster() of YACS Protocol.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def taskComplete(self, reply_socket: socket.socket):
+<pre><code class="python">def taskComplete(self, reply_socket: socket.socket, WORKER_KEY):
     &#34;&#34;&#34;
     This method creates and returns returns the **JSON string**
     of format createMessageToMaster() of YACS Protocol.
@@ -552,17 +728,45 @@ of format createMessageToMaster() of YACS Protocol.</p>
     This method is called by ***simulateWorker()*** method when the
     *remaining_duration attribute* of the task **becomes 0**.
     &#34;&#34;&#34;
-
+    enc_obj = Fernet(WORKER_KEY)
     while True:
         if not self.updates_q.empty():
             response_msg: str = self.updates_q.get()
             self.updates_q.task_done()
+            # get() and task_done() are similar to lock()
+            # and release() for the queue
             # Sending to master
-            reply_socket.sendall(response_msg.encode())
+            reply_socket.sendall(enc_obj.encrypt(response_msg.encode()))
             worker.PRINT_LOCK.acquire()
             print(f&#34;Task sent: {response_msg}!&#34;)
+            worker.PRINT_LOCK.release()</code></pre>
+</details>
+</dd>
+<dt id="src.WorkerSim.WorkerSimulation.Worker.tasksPoolPoller"><code class="name flex">
+<span>def <span class="ident">tasksPoolPoller</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def tasksPoolPoller(self):
+    isTaskPoolEmpty: bool = False
+    wasTaskPoolEmpty: bool = False
+    # Prints when the task pool is empty
+    while True:
+        self.LOCK.acquire()
+        isTaskPoolEmpty = not self.tasks
+        self.LOCK.release()
+
+        if isTaskPoolEmpty and not wasTaskPoolEmpty:
+            worker.PRINT_LOCK.acquire()
+            print(Worker.info_text(&#34;The task execution pool is empty!&#34;)
+                  )
             worker.PRINT_LOCK.release()
-            time.sleep(0.01)</code></pre>
+
+        wasTaskPoolEmpty = isTaskPoolEmpty</code></pre>
 </details>
 </dd>
 </dl>
@@ -586,9 +790,11 @@ of format createMessageToMaster() of YACS Protocol.</p>
 <li>
 <h4><code><a title="src.WorkerSim.WorkerSimulation.Worker" href="#src.WorkerSim.WorkerSimulation.Worker">Worker</a></code></h4>
 <ul class="">
+<li><code><a title="src.WorkerSim.WorkerSimulation.Worker.info_text" href="#src.WorkerSim.WorkerSimulation.Worker.info_text">info_text</a></code></li>
 <li><code><a title="src.WorkerSim.WorkerSimulation.Worker.listenForTaskRequest" href="#src.WorkerSim.WorkerSimulation.Worker.listenForTaskRequest">listenForTaskRequest</a></code></li>
 <li><code><a title="src.WorkerSim.WorkerSimulation.Worker.simulateWorker" href="#src.WorkerSim.WorkerSimulation.Worker.simulateWorker">simulateWorker</a></code></li>
 <li><code><a title="src.WorkerSim.WorkerSimulation.Worker.taskComplete" href="#src.WorkerSim.WorkerSimulation.Worker.taskComplete">taskComplete</a></code></li>
+<li><code><a title="src.WorkerSim.WorkerSimulation.Worker.tasksPoolPoller" href="#src.WorkerSim.WorkerSimulation.Worker.tasksPoolPoller">tasksPoolPoller</a></code></li>
 </ul>
 </li>
 </ul>
@@ -597,7 +803,7 @@ of format createMessageToMaster() of YACS Protocol.</p>
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.1</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
 </footer>
 </body>
 </html>

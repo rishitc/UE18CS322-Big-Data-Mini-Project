@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
-<meta name="generator" content="pdoc 0.9.1" />
+<meta name="generator" content="pdoc 0.9.2" />
 <title>src.worker API documentation</title>
 <meta name="description" content="" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
@@ -30,6 +30,11 @@
 import sys
 import threading
 from WorkerSim.WorkerSimulation import Worker
+import json
+from cryptography.fernet import Fernet
+import time
+from Communication.protocol import YACS_Protocol
+
 
 &#34;&#34;&#34;
 Some of the important pointers to be implemented in this code are:
@@ -59,6 +64,11 @@ def createWorkerSocket(task_request_addr):
     to connect worker to its designated port in order to listen for
     task requests from the master.
 
+    **param** ```task_request_addr```: Tuple containing the address to which
+    the socket object should bind to
+
+    **type** ```task_request_addr```: Tuple
+
     ```return```: Socket object
 
     ```rtype```: socket.socket
@@ -72,6 +82,11 @@ def createWorkerSocket(task_request_addr):
 def createMasterSocket(task_complete_addr):
     &#34;&#34;&#34; ```createSocket``` returns a socket that will be used
     to connect to the master.
+
+    **param** ```task_complete_addr```: Tuple containing the address to which
+    the socket object should connect to
+
+    **type** ```task_complete_addr```: Tuple
 
     ```return```: Socket object
 
@@ -93,27 +108,34 @@ if __name__ == &#34;__main__&#34;:
     worker_instance = Worker(worker_id)  # Instance of Worker class
     workerPortConnSocket = createWorkerSocket(_TASK_REQUEST_ADDR)
     workerPortConnSocket.listen()
-    # workerPortConnSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    # workerPortConnSocket.bind(_TASK_REQUEST_ADDR) # Binding the socket
-    # to the socket tuple created above
-    # workerPortConnSocket.listen()  # Listens for any connections
     masterConn, masterAddr = workerPortConnSocket.accept()  # Accepts the
     # connection with return value being (new socket object usable to send and
     # recv data, address bound to the socket on the other end of the connection
     # ---
 
-    input(&#34;Have all the workers connected??&#34;)
+    connBackDetails = json.loads(masterConn.recv(MESSAGE_BUFFER_SIZE).decode())
+    connBackDetails[&#34;public_key&#34;] = connBackDetails[&#34;public_key&#34;].encode()
+    # Generate the worker&#39;s private key
+    WORKER_KEY = Fernet.generate_key()
+    print(f&#34;{worker_id} generated the key {WORKER_KEY}&#34;)
+    print(f&#34;Sleeping for {connBackDetails[&#39;back_off_time&#39;]}s&#34;)
+    time.sleep(connBackDetails[&#34;back_off_time&#34;])
 
     _TASK_COMPLETION_RESPONSE_ADDR = (socket.gethostname(), 5001)  # Master
     # port which takes updates on task completion from the worker
     workerToMasterCompletionSocket = \
         createMasterSocket(_TASK_COMPLETION_RESPONSE_ADDR)
-    workerToMasterCompletionSocket.sendall(str(worker_id).encode())
+    # workerToMasterCompletionSocket.sendall(str(worker_id).encode())
+    workerToMasterCompletionSocket.sendall(YACS_Protocol.connectBackResponse(
+        str(worker_id), Fernet(connBackDetails[&#34;public_key&#34;])
+        .encrypt(WORKER_KEY))
+        .encode())
+
     # Creating all the threads
     json_receive_master = threading.Thread(name=&#34;Sending Task To Exec Pool&#34;,
                                            target=worker_instance.
                                            listenForTaskRequest,
-                                           args=(masterConn,))
+                                           args=(masterConn, WORKER_KEY))
     json_receive_master.daemon = True
     json_receive_master.start()
 
@@ -127,7 +149,7 @@ if __name__ == &#34;__main__&#34;:
         .Thread(name=(&#34;Sending Task Completion &#34;
                       &#34;From Worker To Master&#34;),
                 target=worker_instance.taskComplete,
-                args=(workerToMasterCompletionSocket,))
+                args=(workerToMasterCompletionSocket, WORKER_KEY))
     json_reply_master.daemon = True
     json_reply_master.start()
 
@@ -154,6 +176,9 @@ if __name__ == &#34;__main__&#34;:
 <dd>
 <div class="desc"><p><code>createSocket</code> returns a socket that will be used
 to connect to the master.</p>
+<p><strong>param</strong> <code>task_complete_addr</code>: Tuple containing the address to which
+the socket object should connect to</p>
+<p><strong>type</strong> <code>task_complete_addr</code>: Tuple</p>
 <p><code>return</code>: Socket object</p>
 <p><code>rtype</code>: socket.socket</p></div>
 <details class="source">
@@ -163,6 +188,11 @@ to connect to the master.</p>
 <pre><code class="python">def createMasterSocket(task_complete_addr):
     &#34;&#34;&#34; ```createSocket``` returns a socket that will be used
     to connect to the master.
+
+    **param** ```task_complete_addr```: Tuple containing the address to which
+    the socket object should connect to
+
+    **type** ```task_complete_addr```: Tuple
 
     ```return```: Socket object
 
@@ -181,6 +211,9 @@ to connect to the master.</p>
 <div class="desc"><p><code>createWorkerSocket</code> returns a socket that will be used
 to connect worker to its designated port in order to listen for
 task requests from the master.</p>
+<p><strong>param</strong> <code>task_request_addr</code>: Tuple containing the address to which
+the socket object should bind to</p>
+<p><strong>type</strong> <code>task_request_addr</code>: Tuple</p>
 <p><code>return</code>: Socket object</p>
 <p><code>rtype</code>: socket.socket</p></div>
 <details class="source">
@@ -191,6 +224,11 @@ task requests from the master.</p>
     &#34;&#34;&#34; ```createWorkerSocket``` returns a socket that will be used
     to connect worker to its designated port in order to listen for
     task requests from the master.
+
+    **param** ```task_request_addr```: Tuple containing the address to which
+    the socket object should bind to
+
+    **type** ```task_request_addr```: Tuple
 
     ```return```: Socket object
 
@@ -252,7 +290,7 @@ in order of <code>port number</code> and <code>worker ID</code></p>
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.1</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
 </footer>
 </body>
 </html>

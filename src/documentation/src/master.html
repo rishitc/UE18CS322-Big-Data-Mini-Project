@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
-<meta name="generator" content="pdoc 0.9.1" />
+<meta name="generator" content="pdoc 0.9.2" />
 <title>src.master API documentation</title>
 <meta name="description" content="" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
@@ -34,17 +34,21 @@ from typing import List, Optional, Tuple
 import colored as TC
 from colored.colored import attr
 import inflect
+from cryptography.fernet import Fernet
 
 # This lock is used to get access to print onto the standard output
 from Locks.MasterPrintLock import master
 
-from WorkerUtils.WorkerStateTracker import StateTracker
+from MasterUtils.WorkerStateTracker import StateTracker
 from UpdateTracker.JobUpdateTracker import Tracker as JobUpdateTracker
 
 from Scheduler.JobRequests import JobRequestHandler
 from Scheduler.RandomScheduling import RandomScheduler
 from Scheduler.RoundRobinScheduling import RoundRobinScheduler
 from Scheduler.LeastLoadedScheduling import LeastLoadedScheduler
+
+from Communication.protocol import messageToMasterType
+
 
 BUFFER_SIZE: int = 4096
 
@@ -65,6 +69,40 @@ def error_text(text):
     return f&#34;{TC.fg(1) + TC.attr(1)}ERROR:{TC.attr(0)} {text}&#34;
 
 
+def success_text(text):
+    return f&#34;{TC.fg(2) + TC.attr(1)}SUCCESS:{TC.attr(0)} {text}&#34;
+
+
+def checkJobPoller(jobRequestHandler: JobRequestHandler,
+                   jobUpdateTracker: JobUpdateTracker):
+    isJobDispatchComplete: bool = False
+    _isPrint_1: bool = False
+    isJobUpdatesComplete: bool = False
+    _isPrint_2: bool = False
+
+    while (isJobDispatchComplete and isJobUpdatesComplete) is False:
+        jobRequestHandler.LOCK.acquire()
+        isJobDispatchComplete = not jobRequestHandler.jobRequests
+        jobRequestHandler.LOCK.release()
+
+        if isJobDispatchComplete and not _isPrint_1:
+            master.PRINT_LOCK.acquire()
+            print(success_text(&#34;All jobs have been dispatched to the workers!&#34;)
+                  )
+            master.PRINT_LOCK.release()
+            _isPrint_1 = True
+
+        jobUpdateTracker.LOCK.acquire()
+        isJobUpdatesComplete = not jobUpdateTracker.jobs_time
+        jobUpdateTracker.LOCK.release()
+
+        if isJobUpdatesComplete and not _isPrint_2:
+            master.PRINT_LOCK.acquire()
+            print(success_text(&#34;All job updates have been received!&#34;))
+            master.PRINT_LOCK.release()
+            _isPrint_2 = True
+
+
 def listenForJobRequests(jobRequestHandler: JobRequestHandler,
                          jobUpdateTracker: JobUpdateTracker):
     &#34;&#34;&#34;```listenForJobRequests``` listens for new job requests from the client
@@ -80,10 +118,11 @@ def listenForJobRequests(jobRequestHandler: JobRequestHandler,
 
     **type** ```jobUpdateTracker```: JobUpdateTracker
     &#34;&#34;&#34;
-    _JOB_REQUEST_ADDR: Tuple[str, int] = (socket.gethostname(), 5000)
+    _JOB_REQUEST_ADDR: Tuple[str, int] = (&#34;localhost&#34;, 5000)
+    # Older version of address tuple used: (socket.gethostname(), 5000)
 
     master.PRINT_LOCK.acquire()
-    print(&#34;Inside listenForJobRequests&#34;)
+    print(info_text(&#34;Inside listenForJobRequests&#34;))
     master.PRINT_LOCK.release()
 
     # Setup the master socket to listen for job requests
@@ -126,12 +165,31 @@ def listenForJobRequests(jobRequestHandler: JobRequestHandler,
             print(f&#34;{jobRequestHandler.jobRequests=}&#34;)
             master.PRINT_LOCK.release()
 
+            # Close the client connection as we have finished receiving the job
+            # request from the client
             clientConn.close()
+
+            _job_poller_thread = threading.Thread(name=&#34;Job Poller Thread&#34;,
+                                                  target=checkJobPoller,
+                                                  args=(jobRequestHandler,
+                                                        jobUpdateTracker)
+                                                  )
+            _job_poller_thread.daemon = True
+            _job_poller_thread.start()
+
+            master.PRINT_LOCK.acquire()
+            print(info_text(&#34;Created the job poller thread!&#34;))
+            print(&#34;You have reached the bottom of the &#39;__main__&#39;&#34;)
+            print(threading.enumerate())
+            master.PRINT_LOCK.release()
+
+            _job_poller_thread.join()
 
 
 def workerUpdates(workerSocket: socket.socket,
                   workerStateTracker: StateTracker,
-                  jobUpdateTracker: JobUpdateTracker):
+                  jobUpdateTracker: JobUpdateTracker,
+                  WORKER_KEY):
     &#34;&#34;&#34;```workerUpdates``` captures the updates from the worker as and when
     they complete the tasks assigned to them, and respond back.
 
@@ -150,25 +208,39 @@ def workerUpdates(workerSocket: socket.socket,
 
     **type** ```jobUpdateTracker```: JobUpdateTracker
     &#34;&#34;&#34;
+    dec_obj = Fernet(WORKER_KEY)
     while True:
-        workerUpdate = workerSocket.recv(BUFFER_SIZE).decode()
+        workerUpdate: str = workerSocket.recv(BUFFER_SIZE).decode()
         if not workerUpdate:
             workerSocket.close()
             break
+
+        _temp: str = &#39;&#39;
+        for i in workerUpdate.split(&#39;==&#39;)[:-1]:
+            _temp += dec_obj.decrypt((i + &#39;==&#39;).encode()).decode()
+        workerUpdate = _temp
+
+        # Preprocess the received JSON data. This helps prevent
+        # JSON parsing errors when more then one message has been
+        # received at once at the master
+        workerUpdate = &#34;[&#34; + workerUpdate.replace(&#34;}{&#34;, &#34;},{&#34;) + &#34;]&#34;
 
         master.PRINT_LOCK.acquire()
         print(f&#34;Received worker update at master: {workerUpdate}&#34;)
         master.PRINT_LOCK.release()
 
-        parsedJSON_Msg = json.loads(workerUpdate)
+        parsedJSON_Msg: List[messageToMasterType] = \
+            json.loads(workerUpdate)
 
-        jobUpdateTracker.LOCK.acquire()
-        jobUpdateTracker.updateJob(parsedJSON_Msg)
-        jobUpdateTracker.LOCK.release()
+        msg: messageToMasterType
+        for msg in parsedJSON_Msg:
+            jobUpdateTracker.LOCK.acquire()
+            jobUpdateTracker.updateJob(msg)
+            jobUpdateTracker.LOCK.release()
 
-        workerStateTracker.LOCK.acquire()
-        workerStateTracker.freeSlot(parsedJSON_Msg[&#34;worker_id&#34;])
-        workerStateTracker.LOCK.release()
+            workerStateTracker.LOCK.acquire()
+            workerStateTracker.freeSlot(msg[&#34;worker_id&#34;])
+            workerStateTracker.LOCK.release()
 
         # master.PRINT_LOCK.acquire()
         # workerStateTracker.showWorkerStates()
@@ -298,6 +370,14 @@ if __name__ == &#34;__main__&#34;:
     taskDispatchThread.daemon = True
     taskDispatchThread.start()
 
+    # Worker connect back mechanism
+    PUBLIC_KEY = Fernet.generate_key()
+    PUBLIC_KEY_OBJ = Fernet(PUBLIC_KEY)
+
+    obj_workerStateTracker.LOCK.acquire()
+    obj_workerStateTracker.connectBackRequest(PUBLIC_KEY)
+    obj_workerStateTracker.LOCK.release()
+
     WORKER_UPDATES_PORT: int = 5001
     WORKER_UPDATES_ADDR: Tuple[str, int] = \
         (socket.gethostname(), WORKER_UPDATES_PORT)
@@ -325,7 +405,15 @@ if __name__ == &#34;__main__&#34;:
             workerSocket, workerAddress = worker_updates_socket.accept()
 
             # Get the worker number from the newly connected worker
-            WORKER_ID: str = workerSocket.recv(BUFFER_SIZE).decode()
+            response_msg = json.loads(workerSocket.recv(BUFFER_SIZE).decode())
+            response_msg[&#34;enc_pri_key&#34;] = response_msg[&#34;enc_pri_key&#34;].encode()
+            WORKER_ID: str = response_msg[&#34;worker_id&#34;]
+            _worker_key = PUBLIC_KEY_OBJ.decrypt(response_msg[&#34;enc_pri_key&#34;])
+
+            obj_workerStateTracker.LOCK.acquire()
+            obj_workerStateTracker.workerState[int(WORKER_ID)][&#34;pri_key&#34;] = \
+                _worker_key
+            obj_workerStateTracker.LOCK.release()
 
             # Printing connection updates
             master.PRINT_LOCK.acquire()
@@ -334,6 +422,7 @@ if __name__ == &#34;__main__&#34;:
                   )
             print(f&#34;IP Address: {workerAddress[0]}&#34;)
             print(f&#34;Socket: {workerAddress[1]}&#34;)
+            print(f&#34;Private Key: {_worker_key}&#34;)
             master.PRINT_LOCK.release()
 
             # Start a new thread and return its thread object
@@ -342,17 +431,22 @@ if __name__ == &#34;__main__&#34;:
                                            &#34;Listener&#34;),
                                      args=(workerSocket,
                                            obj_workerStateTracker,
-                                           obj_jobUpdatesTracker))
+                                           obj_jobUpdatesTracker,
+                                           _worker_key))
             _temp.daemon = True
             _temp.start()
 
             # Store the thread object in a list
             workerUpdateThreads.append(_temp)
 
+        master.PRINT_LOCK.acquire()
         print(f&#34;{workerUpdateThreads=}&#34;)
+        master.PRINT_LOCK.release()
 
+    master.PRINT_LOCK.acquire()
     print(&#34;You have reached the bottom of the &#39;__main__&#39;&#34;)
     print(threading.enumerate())
+    master.PRINT_LOCK.release()
 
     &#34;&#34;&#34; Wait for all the threads to finish.
     &#34;&#34;&#34;
@@ -374,6 +468,45 @@ if __name__ == &#34;__main__&#34;:
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
+<dt id="src.master.checkJobPoller"><code class="name flex">
+<span>def <span class="ident">checkJobPoller</span></span>(<span>jobRequestHandler: Scheduler.JobRequests.JobRequestHandler, jobUpdateTracker: UpdateTracker.JobUpdateTracker.Tracker)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def checkJobPoller(jobRequestHandler: JobRequestHandler,
+                   jobUpdateTracker: JobUpdateTracker):
+    isJobDispatchComplete: bool = False
+    _isPrint_1: bool = False
+    isJobUpdatesComplete: bool = False
+    _isPrint_2: bool = False
+
+    while (isJobDispatchComplete and isJobUpdatesComplete) is False:
+        jobRequestHandler.LOCK.acquire()
+        isJobDispatchComplete = not jobRequestHandler.jobRequests
+        jobRequestHandler.LOCK.release()
+
+        if isJobDispatchComplete and not _isPrint_1:
+            master.PRINT_LOCK.acquire()
+            print(success_text(&#34;All jobs have been dispatched to the workers!&#34;)
+                  )
+            master.PRINT_LOCK.release()
+            _isPrint_1 = True
+
+        jobUpdateTracker.LOCK.acquire()
+        isJobUpdatesComplete = not jobUpdateTracker.jobs_time
+        jobUpdateTracker.LOCK.release()
+
+        if isJobUpdatesComplete and not _isPrint_2:
+            master.PRINT_LOCK.acquire()
+            print(success_text(&#34;All job updates have been received!&#34;))
+            master.PRINT_LOCK.release()
+            _isPrint_2 = True</code></pre>
+</details>
+</dd>
 <dt id="src.master.error_text"><code class="name flex">
 <span>def <span class="ident">error_text</span></span>(<span>text)</span>
 </code></dt>
@@ -431,10 +564,11 @@ workers about the tasks assigned belonging to the different jobs</p>
 
     **type** ```jobUpdateTracker```: JobUpdateTracker
     &#34;&#34;&#34;
-    _JOB_REQUEST_ADDR: Tuple[str, int] = (socket.gethostname(), 5000)
+    _JOB_REQUEST_ADDR: Tuple[str, int] = (&#34;localhost&#34;, 5000)
+    # Older version of address tuple used: (socket.gethostname(), 5000)
 
     master.PRINT_LOCK.acquire()
-    print(&#34;Inside listenForJobRequests&#34;)
+    print(info_text(&#34;Inside listenForJobRequests&#34;))
     master.PRINT_LOCK.release()
 
     # Setup the master socket to listen for job requests
@@ -477,11 +611,42 @@ workers about the tasks assigned belonging to the different jobs</p>
             print(f&#34;{jobRequestHandler.jobRequests=}&#34;)
             master.PRINT_LOCK.release()
 
-            clientConn.close()</code></pre>
+            # Close the client connection as we have finished receiving the job
+            # request from the client
+            clientConn.close()
+
+            _job_poller_thread = threading.Thread(name=&#34;Job Poller Thread&#34;,
+                                                  target=checkJobPoller,
+                                                  args=(jobRequestHandler,
+                                                        jobUpdateTracker)
+                                                  )
+            _job_poller_thread.daemon = True
+            _job_poller_thread.start()
+
+            master.PRINT_LOCK.acquire()
+            print(info_text(&#34;Created the job poller thread!&#34;))
+            print(&#34;You have reached the bottom of the &#39;__main__&#39;&#34;)
+            print(threading.enumerate())
+            master.PRINT_LOCK.release()
+
+            _job_poller_thread.join()</code></pre>
+</details>
+</dd>
+<dt id="src.master.success_text"><code class="name flex">
+<span>def <span class="ident">success_text</span></span>(<span>text)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def success_text(text):
+    return f&#34;{TC.fg(2) + TC.attr(1)}SUCCESS:{TC.attr(0)} {text}&#34;</code></pre>
 </details>
 </dd>
 <dt id="src.master.workerUpdates"><code class="name flex">
-<span>def <span class="ident">workerUpdates</span></span>(<span>workerSocket: socket.socket, workerStateTracker: WorkerUtils.WorkerStateTracker.StateTracker, jobUpdateTracker: UpdateTracker.JobUpdateTracker.Tracker)</span>
+<span>def <span class="ident">workerUpdates</span></span>(<span>workerSocket: socket.socket, workerStateTracker: MasterUtils.WorkerStateTracker.StateTracker, jobUpdateTracker: UpdateTracker.JobUpdateTracker.Tracker, WORKER_KEY)</span>
 </code></dt>
 <dd>
 <div class="desc"><p><code>workerUpdates</code> captures the updates from the worker as and when
@@ -501,7 +666,8 @@ and their corresponding updates</p>
 </summary>
 <pre><code class="python">def workerUpdates(workerSocket: socket.socket,
                   workerStateTracker: StateTracker,
-                  jobUpdateTracker: JobUpdateTracker):
+                  jobUpdateTracker: JobUpdateTracker,
+                  WORKER_KEY):
     &#34;&#34;&#34;```workerUpdates``` captures the updates from the worker as and when
     they complete the tasks assigned to them, and respond back.
 
@@ -520,25 +686,39 @@ and their corresponding updates</p>
 
     **type** ```jobUpdateTracker```: JobUpdateTracker
     &#34;&#34;&#34;
+    dec_obj = Fernet(WORKER_KEY)
     while True:
-        workerUpdate = workerSocket.recv(BUFFER_SIZE).decode()
+        workerUpdate: str = workerSocket.recv(BUFFER_SIZE).decode()
         if not workerUpdate:
             workerSocket.close()
             break
+
+        _temp: str = &#39;&#39;
+        for i in workerUpdate.split(&#39;==&#39;)[:-1]:
+            _temp += dec_obj.decrypt((i + &#39;==&#39;).encode()).decode()
+        workerUpdate = _temp
+
+        # Preprocess the received JSON data. This helps prevent
+        # JSON parsing errors when more then one message has been
+        # received at once at the master
+        workerUpdate = &#34;[&#34; + workerUpdate.replace(&#34;}{&#34;, &#34;},{&#34;) + &#34;]&#34;
 
         master.PRINT_LOCK.acquire()
         print(f&#34;Received worker update at master: {workerUpdate}&#34;)
         master.PRINT_LOCK.release()
 
-        parsedJSON_Msg = json.loads(workerUpdate)
+        parsedJSON_Msg: List[messageToMasterType] = \
+            json.loads(workerUpdate)
 
-        jobUpdateTracker.LOCK.acquire()
-        jobUpdateTracker.updateJob(parsedJSON_Msg)
-        jobUpdateTracker.LOCK.release()
+        msg: messageToMasterType
+        for msg in parsedJSON_Msg:
+            jobUpdateTracker.LOCK.acquire()
+            jobUpdateTracker.updateJob(msg)
+            jobUpdateTracker.LOCK.release()
 
-        workerStateTracker.LOCK.acquire()
-        workerStateTracker.freeSlot(parsedJSON_Msg[&#34;worker_id&#34;])
-        workerStateTracker.LOCK.release()</code></pre>
+            workerStateTracker.LOCK.acquire()
+            workerStateTracker.freeSlot(msg[&#34;worker_id&#34;])
+            workerStateTracker.LOCK.release()</code></pre>
 </details>
 </dd>
 </dl>
@@ -559,9 +739,11 @@ and their corresponding updates</p>
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
+<li><code><a title="src.master.checkJobPoller" href="#src.master.checkJobPoller">checkJobPoller</a></code></li>
 <li><code><a title="src.master.error_text" href="#src.master.error_text">error_text</a></code></li>
 <li><code><a title="src.master.info_text" href="#src.master.info_text">info_text</a></code></li>
 <li><code><a title="src.master.listenForJobRequests" href="#src.master.listenForJobRequests">listenForJobRequests</a></code></li>
+<li><code><a title="src.master.success_text" href="#src.master.success_text">success_text</a></code></li>
 <li><code><a title="src.master.workerUpdates" href="#src.master.workerUpdates">workerUpdates</a></code></li>
 </ul>
 </li>
@@ -569,7 +751,7 @@ and their corresponding updates</p>
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.1</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
 </footer>
 </body>
 </html>

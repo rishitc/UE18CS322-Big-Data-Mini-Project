@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
-<meta name="generator" content="pdoc 0.9.1" />
+<meta name="generator" content="pdoc 0.9.2" />
 <title>src.Scheduler.RandomScheduling API documentation</title>
 <meta name="description" content="" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
@@ -29,12 +29,14 @@
 <pre><code class="python">import random
 import time
 from typing import Set
+from cryptography.fernet import Fernet
+
 
 # This lock is used to get access to print onto the standard output
 from Locks.MasterPrintLock import master
 from Communication.protocol import YACS_Protocol
 from Scheduler.JobRequests import JobRequestHandler
-from WorkerUtils.WorkerStateTracker import StateTracker
+from MasterUtils.WorkerStateTracker import StateTracker
 
 
 class RandomScheduler:
@@ -107,8 +109,10 @@ class RandomScheduler:
                         # Once a worker with a free slot is found then
                         # 1. We dispatch the job to the worker
                         # 2. Update its state
+                        enc_obj = Fernet(workerStateTracker
+                                         .workerState[_temp][&#34;pri_key&#34;])
                         workerStateTracker.getWorkerSocket(_temp)\
-                            .sendall(protocolMsg.encode())
+                            .sendall(enc_obj.encrypt(protocolMsg.encode()))
 
                         master.PRINT_LOCK.acquire()
                         print(f&#34;Sending task to worker: {protocolMsg}&#34;)
@@ -144,7 +148,7 @@ class RandomScheduler:
                 # After sending a task to the worker, sleep for 0.01 seconds
                 # before sending the next task. This done so that the worker
                 # buffer only has at most 1 task in its socket&#39;s buffer
-                time.sleep(0.01)</code></pre>
+                # time.sleep(0.01)</code></pre>
 </details>
 </section>
 <section>
@@ -239,8 +243,10 @@ random. This process continues until a free slot is found.</p></div>
                         # Once a worker with a free slot is found then
                         # 1. We dispatch the job to the worker
                         # 2. Update its state
+                        enc_obj = Fernet(workerStateTracker
+                                         .workerState[_temp][&#34;pri_key&#34;])
                         workerStateTracker.getWorkerSocket(_temp)\
-                            .sendall(protocolMsg.encode())
+                            .sendall(enc_obj.encrypt(protocolMsg.encode()))
 
                         master.PRINT_LOCK.acquire()
                         print(f&#34;Sending task to worker: {protocolMsg}&#34;)
@@ -271,17 +277,12 @@ random. This process continues until a free slot is found.</p></div>
                         # Clear the worker IDs visited set as we are
                         # restarting our search for a free slot on one of the
                         # workers
-                        workerIDsVisited.clear()
-
-                # After sending a task to the worker, sleep for 0.01 seconds
-                # before sending the next task. This done so that the worker
-                # buffer only has at most 1 task in its socket&#39;s buffer
-                time.sleep(0.01)</code></pre>
+                        workerIDsVisited.clear()</code></pre>
 </details>
 <h3>Static methods</h3>
 <dl>
 <dt id="src.Scheduler.RandomScheduling.RandomScheduler.jobDispatcher"><code class="name flex">
-<span>def <span class="ident">jobDispatcher</span></span>(<span>requestHandler: Scheduler.JobRequests.JobRequestHandler, workerStateTracker: WorkerUtils.WorkerStateTracker.StateTracker)</span>
+<span>def <span class="ident">jobDispatcher</span></span>(<span>requestHandler: Scheduler.JobRequests.JobRequestHandler, workerStateTracker: MasterUtils.WorkerStateTracker.StateTracker)</span>
 </code></dt>
 <dd>
 <div class="desc"><p><code>jobDispatcher</code> implements the <strong>Random Scheduling</strong> algorithm</p>
@@ -359,8 +360,10 @@ def jobDispatcher(requestHandler: JobRequestHandler,
                     # Once a worker with a free slot is found then
                     # 1. We dispatch the job to the worker
                     # 2. Update its state
+                    enc_obj = Fernet(workerStateTracker
+                                     .workerState[_temp][&#34;pri_key&#34;])
                     workerStateTracker.getWorkerSocket(_temp)\
-                        .sendall(protocolMsg.encode())
+                        .sendall(enc_obj.encrypt(protocolMsg.encode()))
 
                     master.PRINT_LOCK.acquire()
                     print(f&#34;Sending task to worker: {protocolMsg}&#34;)
@@ -391,12 +394,7 @@ def jobDispatcher(requestHandler: JobRequestHandler,
                     # Clear the worker IDs visited set as we are
                     # restarting our search for a free slot on one of the
                     # workers
-                    workerIDsVisited.clear()
-
-            # After sending a task to the worker, sleep for 0.01 seconds
-            # before sending the next task. This done so that the worker
-            # buffer only has at most 1 task in its socket&#39;s buffer
-            time.sleep(0.01)</code></pre>
+                    workerIDsVisited.clear()</code></pre>
 </details>
 </dd>
 </dl>
@@ -429,7 +427,7 @@ def jobDispatcher(requestHandler: JobRequestHandler,
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.1</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
 </footer>
 </body>
 </html>

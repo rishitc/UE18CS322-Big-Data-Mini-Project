@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
-<meta name="generator" content="pdoc 0.9.1" />
+<meta name="generator" content="pdoc 0.9.2" />
 <title>src.Communication.protocol API documentation</title>
 <meta name="description" content="" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
@@ -27,6 +27,7 @@
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">import json
+from typing import TypedDict
 
 # This lock is used to get access to print onto the standard output
 from Locks.MasterPrintLock import master
@@ -80,8 +81,8 @@ class YACS_Protocol:
             &#34;task family&#34;: &lt;(&#34;map&#34;|&#34;reduce&#34;)&gt;,
             &#34;task&#34;: {
                         &#34;task_id&#34;: &#34;&lt;task_id&gt;&#34;,
-                        &#34;start time&#34;: &lt;arrival_time_of_task_at_Worker&gt;,
-                        &#34;end time&#34;: &lt;end_time_of_task_in_Worker&gt;,
+                        &#34;start_time&#34;: &lt;arrival_time_of_task_at_Worker&gt;,
+                        &#34;end_time&#34;: &lt;end_time_of_task_in_Worker&gt;,
                     }
         }
         ```
@@ -97,8 +98,8 @@ class YACS_Protocol:
         msg_dict[&#34;task family&#34;] = task_family
         msg_dict[&#34;task&#34;] = {
                                 &#34;task_id&#34;: task_ID,
-                                &#34;start time&#34;: start_time,
-                                &#34;end time&#34;: end_time,
+                                &#34;start_time&#34;: start_time,
+                                &#34;end_time&#34;: end_time,
                             }
 
         return json.dumps(msg_dict)
@@ -154,8 +155,8 @@ class YACS_Protocol:
             &#34;task family&#34;: &lt;(&#34;map&#34;|&#34;reduce&#34;)&gt;,
             &#34;task&#34;: {
                         &#34;task_id&#34;: &#34;&lt;task_id&gt;&#34;,
-                        &#34;start time&#34;: &lt;arrival_time_of_task_at_Worker&gt;,
-                        &#34;end time&#34;: &lt;end_time_of_task_in_Worker&gt;
+                        &#34;start_time&#34;: &lt;arrival_time_of_task_at_Worker&gt;,
+                        &#34;end_time&#34;: &lt;end_time_of_task_in_Worker&gt;
                     }
         }
         ```
@@ -171,15 +172,54 @@ class YACS_Protocol:
         msg_dict[&#34;task family&#34;] = task_family
         msg_dict[&#34;task&#34;] = {
                                 &#34;task_id&#34;: task_ID,
-                                &#34;start time&#34;: start_time,
-                                &#34;end time&#34;: end_time,
+                                &#34;start_time&#34;: start_time,
+                                &#34;end_time&#34;: end_time,
                             }
 
         master.PRINT_LOCK.acquire()
         worker.PRINT_LOCK.acquire()
         print(json.dumps(msg_dict, indent=4))
         worker.PRINT_LOCK.release()
-        master.PRINT_LOCK.release()</code></pre>
+        master.PRINT_LOCK.release()
+
+    @staticmethod
+    def connectBackMessage(back_off_time, public_key):
+        msg_dict = {}
+        msg_dict[&#34;back_off_time&#34;] = back_off_time
+        msg_dict[&#34;public_key&#34;] = public_key.decode()
+        return json.dumps(msg_dict)
+
+    @staticmethod
+    def connectBackResponse(worker_id, enc_pri_key):
+        msg_dict = {}
+        msg_dict[&#34;worker_id&#34;] = worker_id
+        msg_dict[&#34;enc_pri_key&#34;] = enc_pri_key.decode()
+        return json.dumps(msg_dict)
+
+
+class messageToWorkerTaskType(TypedDict):
+    task_id: str
+    duration: int
+    worker_id: int
+
+
+class messageToWorkerType(TypedDict):
+    job_id: str
+    task_family: str
+    task: messageToWorkerTaskType
+
+
+class messageToMasterTaskType(TypedDict):
+    task_id: str
+    start_time: float
+    end_time: float
+
+
+class messageToMasterType(TypedDict):
+    worker_id: int
+    job_ID: str
+    task_family: str
+    task: messageToMasterTaskType</code></pre>
 </details>
 </section>
 <section>
@@ -247,8 +287,8 @@ class YACS_Protocol:
             &#34;task family&#34;: &lt;(&#34;map&#34;|&#34;reduce&#34;)&gt;,
             &#34;task&#34;: {
                         &#34;task_id&#34;: &#34;&lt;task_id&gt;&#34;,
-                        &#34;start time&#34;: &lt;arrival_time_of_task_at_Worker&gt;,
-                        &#34;end time&#34;: &lt;end_time_of_task_in_Worker&gt;,
+                        &#34;start_time&#34;: &lt;arrival_time_of_task_at_Worker&gt;,
+                        &#34;end_time&#34;: &lt;end_time_of_task_in_Worker&gt;,
                     }
         }
         ```
@@ -264,8 +304,8 @@ class YACS_Protocol:
         msg_dict[&#34;task family&#34;] = task_family
         msg_dict[&#34;task&#34;] = {
                                 &#34;task_id&#34;: task_ID,
-                                &#34;start time&#34;: start_time,
-                                &#34;end time&#34;: end_time,
+                                &#34;start_time&#34;: start_time,
+                                &#34;end_time&#34;: end_time,
                             }
 
         return json.dumps(msg_dict)
@@ -321,8 +361,8 @@ class YACS_Protocol:
             &#34;task family&#34;: &lt;(&#34;map&#34;|&#34;reduce&#34;)&gt;,
             &#34;task&#34;: {
                         &#34;task_id&#34;: &#34;&lt;task_id&gt;&#34;,
-                        &#34;start time&#34;: &lt;arrival_time_of_task_at_Worker&gt;,
-                        &#34;end time&#34;: &lt;end_time_of_task_in_Worker&gt;
+                        &#34;start_time&#34;: &lt;arrival_time_of_task_at_Worker&gt;,
+                        &#34;end_time&#34;: &lt;end_time_of_task_in_Worker&gt;
                     }
         }
         ```
@@ -338,18 +378,66 @@ class YACS_Protocol:
         msg_dict[&#34;task family&#34;] = task_family
         msg_dict[&#34;task&#34;] = {
                                 &#34;task_id&#34;: task_ID,
-                                &#34;start time&#34;: start_time,
-                                &#34;end time&#34;: end_time,
+                                &#34;start_time&#34;: start_time,
+                                &#34;end_time&#34;: end_time,
                             }
 
         master.PRINT_LOCK.acquire()
         worker.PRINT_LOCK.acquire()
         print(json.dumps(msg_dict, indent=4))
         worker.PRINT_LOCK.release()
-        master.PRINT_LOCK.release()</code></pre>
+        master.PRINT_LOCK.release()
+
+    @staticmethod
+    def connectBackMessage(back_off_time, public_key):
+        msg_dict = {}
+        msg_dict[&#34;back_off_time&#34;] = back_off_time
+        msg_dict[&#34;public_key&#34;] = public_key.decode()
+        return json.dumps(msg_dict)
+
+    @staticmethod
+    def connectBackResponse(worker_id, enc_pri_key):
+        msg_dict = {}
+        msg_dict[&#34;worker_id&#34;] = worker_id
+        msg_dict[&#34;enc_pri_key&#34;] = enc_pri_key.decode()
+        return json.dumps(msg_dict)</code></pre>
 </details>
 <h3>Static methods</h3>
 <dl>
+<dt id="src.Communication.protocol.YACS_Protocol.connectBackMessage"><code class="name flex">
+<span>def <span class="ident">connectBackMessage</span></span>(<span>back_off_time, public_key)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def connectBackMessage(back_off_time, public_key):
+    msg_dict = {}
+    msg_dict[&#34;back_off_time&#34;] = back_off_time
+    msg_dict[&#34;public_key&#34;] = public_key.decode()
+    return json.dumps(msg_dict)</code></pre>
+</details>
+</dd>
+<dt id="src.Communication.protocol.YACS_Protocol.connectBackResponse"><code class="name flex">
+<span>def <span class="ident">connectBackResponse</span></span>(<span>worker_id, enc_pri_key)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def connectBackResponse(worker_id, enc_pri_key):
+    msg_dict = {}
+    msg_dict[&#34;worker_id&#34;] = worker_id
+    msg_dict[&#34;enc_pri_key&#34;] = enc_pri_key.decode()
+    return json.dumps(msg_dict)</code></pre>
+</details>
+</dd>
 <dt id="src.Communication.protocol.YACS_Protocol.createMessageToMaster"><code class="name flex">
 <span>def <span class="ident">createMessageToMaster</span></span>(<span>job_ID, task_family, task_ID, start_time, end_time, worker_ID)</span>
 </code></dt>
@@ -361,8 +449,8 @@ class YACS_Protocol:
     &quot;task family&quot;: &lt;(&quot;map&quot;|&quot;reduce&quot;)&gt;,
     &quot;task&quot;: {
                 &quot;task_id&quot;: &quot;&lt;task_id&gt;&quot;,
-                &quot;start time&quot;: &lt;arrival_time_of_task_at_Worker&gt;,
-                &quot;end time&quot;: &lt;end_time_of_task_in_Worker&gt;,
+                &quot;start_time&quot;: &lt;arrival_time_of_task_at_Worker&gt;,
+                &quot;end_time&quot;: &lt;end_time_of_task_in_Worker&gt;,
             }
 }
 </code></pre></div>
@@ -383,8 +471,8 @@ def createMessageToMaster(job_ID, task_family, task_ID, start_time,
         &#34;task family&#34;: &lt;(&#34;map&#34;|&#34;reduce&#34;)&gt;,
         &#34;task&#34;: {
                     &#34;task_id&#34;: &#34;&lt;task_id&gt;&#34;,
-                    &#34;start time&#34;: &lt;arrival_time_of_task_at_Worker&gt;,
-                    &#34;end time&#34;: &lt;end_time_of_task_in_Worker&gt;,
+                    &#34;start_time&#34;: &lt;arrival_time_of_task_at_Worker&gt;,
+                    &#34;end_time&#34;: &lt;end_time_of_task_in_Worker&gt;,
                 }
     }
     ```
@@ -400,8 +488,8 @@ def createMessageToMaster(job_ID, task_family, task_ID, start_time,
     msg_dict[&#34;task family&#34;] = task_family
     msg_dict[&#34;task&#34;] = {
                             &#34;task_id&#34;: task_ID,
-                            &#34;start time&#34;: start_time,
-                            &#34;end time&#34;: end_time,
+                            &#34;start_time&#34;: start_time,
+                            &#34;end_time&#34;: end_time,
                         }
 
     return json.dumps(msg_dict)</code></pre>
@@ -471,8 +559,8 @@ def createMessageToWorker(job_ID, task_family, task_ID, duration,
     &quot;task family&quot;: &lt;(&quot;map&quot;|&quot;reduce&quot;)&gt;,
     &quot;task&quot;: {
                 &quot;task_id&quot;: &quot;&lt;task_id&gt;&quot;,
-                &quot;start time&quot;: &lt;arrival_time_of_task_at_Worker&gt;,
-                &quot;end time&quot;: &lt;end_time_of_task_in_Worker&gt;
+                &quot;start_time&quot;: &lt;arrival_time_of_task_at_Worker&gt;,
+                &quot;end_time&quot;: &lt;end_time_of_task_in_Worker&gt;
             }
 }
 </code></pre></div>
@@ -493,8 +581,8 @@ def prettyPrintMessageToMaster(job_ID, task_family, task_ID, start_time,
         &#34;task family&#34;: &lt;(&#34;map&#34;|&#34;reduce&#34;)&gt;,
         &#34;task&#34;: {
                     &#34;task_id&#34;: &#34;&lt;task_id&gt;&#34;,
-                    &#34;start time&#34;: &lt;arrival_time_of_task_at_Worker&gt;,
-                    &#34;end time&#34;: &lt;end_time_of_task_in_Worker&gt;
+                    &#34;start_time&#34;: &lt;arrival_time_of_task_at_Worker&gt;,
+                    &#34;end_time&#34;: &lt;end_time_of_task_in_Worker&gt;
                 }
     }
     ```
@@ -510,8 +598,8 @@ def prettyPrintMessageToMaster(job_ID, task_family, task_ID, start_time,
     msg_dict[&#34;task family&#34;] = task_family
     msg_dict[&#34;task&#34;] = {
                             &#34;task_id&#34;: task_ID,
-                            &#34;start time&#34;: start_time,
-                            &#34;end time&#34;: end_time,
+                            &#34;start_time&#34;: start_time,
+                            &#34;end_time&#34;: end_time,
                         }
 
     master.PRINT_LOCK.acquire()
@@ -581,6 +669,191 @@ def prettyPrintMessageToWorker(job_ID, task_family, task_ID, duration,
 </dd>
 </dl>
 </dd>
+<dt id="src.Communication.protocol.messageToMasterTaskType"><code class="flex name class">
+<span>class <span class="ident">messageToMasterTaskType</span></span>
+<span>(</span><span>*args, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>dict() -&gt; new empty dictionary
+dict(mapping) -&gt; new dictionary initialized from a mapping object's
+(key, value) pairs
+dict(iterable) -&gt; new dictionary initialized as if via:
+d = {}
+for k, v in iterable:
+d[k] = v
+dict(**kwargs) -&gt; new dictionary initialized with the name=value pairs
+in the keyword argument list.
+For example:
+dict(one=1, two=2)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class messageToMasterTaskType(TypedDict):
+    task_id: str
+    start_time: float
+    end_time: float</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.dict</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="src.Communication.protocol.messageToMasterTaskType.end_time"><code class="name">var <span class="ident">end_time</span> : float</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="src.Communication.protocol.messageToMasterTaskType.start_time"><code class="name">var <span class="ident">start_time</span> : float</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="src.Communication.protocol.messageToMasterTaskType.task_id"><code class="name">var <span class="ident">task_id</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="src.Communication.protocol.messageToMasterType"><code class="flex name class">
+<span>class <span class="ident">messageToMasterType</span></span>
+<span>(</span><span>*args, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>dict() -&gt; new empty dictionary
+dict(mapping) -&gt; new dictionary initialized from a mapping object's
+(key, value) pairs
+dict(iterable) -&gt; new dictionary initialized as if via:
+d = {}
+for k, v in iterable:
+d[k] = v
+dict(**kwargs) -&gt; new dictionary initialized with the name=value pairs
+in the keyword argument list.
+For example:
+dict(one=1, two=2)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class messageToMasterType(TypedDict):
+    worker_id: int
+    job_ID: str
+    task_family: str
+    task: messageToMasterTaskType</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.dict</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="src.Communication.protocol.messageToMasterType.job_ID"><code class="name">var <span class="ident">job_ID</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="src.Communication.protocol.messageToMasterType.task"><code class="name">var <span class="ident">task</span> : <a title="src.Communication.protocol.messageToMasterTaskType" href="#src.Communication.protocol.messageToMasterTaskType">messageToMasterTaskType</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="src.Communication.protocol.messageToMasterType.task_family"><code class="name">var <span class="ident">task_family</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="src.Communication.protocol.messageToMasterType.worker_id"><code class="name">var <span class="ident">worker_id</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="src.Communication.protocol.messageToWorkerTaskType"><code class="flex name class">
+<span>class <span class="ident">messageToWorkerTaskType</span></span>
+<span>(</span><span>*args, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>dict() -&gt; new empty dictionary
+dict(mapping) -&gt; new dictionary initialized from a mapping object's
+(key, value) pairs
+dict(iterable) -&gt; new dictionary initialized as if via:
+d = {}
+for k, v in iterable:
+d[k] = v
+dict(**kwargs) -&gt; new dictionary initialized with the name=value pairs
+in the keyword argument list.
+For example:
+dict(one=1, two=2)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class messageToWorkerTaskType(TypedDict):
+    task_id: str
+    duration: int
+    worker_id: int</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.dict</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="src.Communication.protocol.messageToWorkerTaskType.duration"><code class="name">var <span class="ident">duration</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="src.Communication.protocol.messageToWorkerTaskType.task_id"><code class="name">var <span class="ident">task_id</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="src.Communication.protocol.messageToWorkerTaskType.worker_id"><code class="name">var <span class="ident">worker_id</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="src.Communication.protocol.messageToWorkerType"><code class="flex name class">
+<span>class <span class="ident">messageToWorkerType</span></span>
+<span>(</span><span>*args, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>dict() -&gt; new empty dictionary
+dict(mapping) -&gt; new dictionary initialized from a mapping object's
+(key, value) pairs
+dict(iterable) -&gt; new dictionary initialized as if via:
+d = {}
+for k, v in iterable:
+d[k] = v
+dict(**kwargs) -&gt; new dictionary initialized with the name=value pairs
+in the keyword argument list.
+For example:
+dict(one=1, two=2)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class messageToWorkerType(TypedDict):
+    job_id: str
+    task_family: str
+    task: messageToWorkerTaskType</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.dict</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="src.Communication.protocol.messageToWorkerType.job_id"><code class="name">var <span class="ident">job_id</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="src.Communication.protocol.messageToWorkerType.task"><code class="name">var <span class="ident">task</span> : <a title="src.Communication.protocol.messageToWorkerTaskType" href="#src.Communication.protocol.messageToWorkerTaskType">messageToWorkerTaskType</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="src.Communication.protocol.messageToWorkerType.task_family"><code class="name">var <span class="ident">task_family</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
 </dl>
 </section>
 </article>
@@ -600,10 +873,45 @@ def prettyPrintMessageToWorker(job_ID, task_family, task_ID, duration,
 <li>
 <h4><code><a title="src.Communication.protocol.YACS_Protocol" href="#src.Communication.protocol.YACS_Protocol">YACS_Protocol</a></code></h4>
 <ul class="">
+<li><code><a title="src.Communication.protocol.YACS_Protocol.connectBackMessage" href="#src.Communication.protocol.YACS_Protocol.connectBackMessage">connectBackMessage</a></code></li>
+<li><code><a title="src.Communication.protocol.YACS_Protocol.connectBackResponse" href="#src.Communication.protocol.YACS_Protocol.connectBackResponse">connectBackResponse</a></code></li>
 <li><code><a title="src.Communication.protocol.YACS_Protocol.createMessageToMaster" href="#src.Communication.protocol.YACS_Protocol.createMessageToMaster">createMessageToMaster</a></code></li>
 <li><code><a title="src.Communication.protocol.YACS_Protocol.createMessageToWorker" href="#src.Communication.protocol.YACS_Protocol.createMessageToWorker">createMessageToWorker</a></code></li>
 <li><code><a title="src.Communication.protocol.YACS_Protocol.prettyPrintMessageToMaster" href="#src.Communication.protocol.YACS_Protocol.prettyPrintMessageToMaster">prettyPrintMessageToMaster</a></code></li>
 <li><code><a title="src.Communication.protocol.YACS_Protocol.prettyPrintMessageToWorker" href="#src.Communication.protocol.YACS_Protocol.prettyPrintMessageToWorker">prettyPrintMessageToWorker</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="src.Communication.protocol.messageToMasterTaskType" href="#src.Communication.protocol.messageToMasterTaskType">messageToMasterTaskType</a></code></h4>
+<ul class="">
+<li><code><a title="src.Communication.protocol.messageToMasterTaskType.end_time" href="#src.Communication.protocol.messageToMasterTaskType.end_time">end_time</a></code></li>
+<li><code><a title="src.Communication.protocol.messageToMasterTaskType.start_time" href="#src.Communication.protocol.messageToMasterTaskType.start_time">start_time</a></code></li>
+<li><code><a title="src.Communication.protocol.messageToMasterTaskType.task_id" href="#src.Communication.protocol.messageToMasterTaskType.task_id">task_id</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="src.Communication.protocol.messageToMasterType" href="#src.Communication.protocol.messageToMasterType">messageToMasterType</a></code></h4>
+<ul class="">
+<li><code><a title="src.Communication.protocol.messageToMasterType.job_ID" href="#src.Communication.protocol.messageToMasterType.job_ID">job_ID</a></code></li>
+<li><code><a title="src.Communication.protocol.messageToMasterType.task" href="#src.Communication.protocol.messageToMasterType.task">task</a></code></li>
+<li><code><a title="src.Communication.protocol.messageToMasterType.task_family" href="#src.Communication.protocol.messageToMasterType.task_family">task_family</a></code></li>
+<li><code><a title="src.Communication.protocol.messageToMasterType.worker_id" href="#src.Communication.protocol.messageToMasterType.worker_id">worker_id</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="src.Communication.protocol.messageToWorkerTaskType" href="#src.Communication.protocol.messageToWorkerTaskType">messageToWorkerTaskType</a></code></h4>
+<ul class="">
+<li><code><a title="src.Communication.protocol.messageToWorkerTaskType.duration" href="#src.Communication.protocol.messageToWorkerTaskType.duration">duration</a></code></li>
+<li><code><a title="src.Communication.protocol.messageToWorkerTaskType.task_id" href="#src.Communication.protocol.messageToWorkerTaskType.task_id">task_id</a></code></li>
+<li><code><a title="src.Communication.protocol.messageToWorkerTaskType.worker_id" href="#src.Communication.protocol.messageToWorkerTaskType.worker_id">worker_id</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="src.Communication.protocol.messageToWorkerType" href="#src.Communication.protocol.messageToWorkerType">messageToWorkerType</a></code></h4>
+<ul class="">
+<li><code><a title="src.Communication.protocol.messageToWorkerType.job_id" href="#src.Communication.protocol.messageToWorkerType.job_id">job_id</a></code></li>
+<li><code><a title="src.Communication.protocol.messageToWorkerType.task" href="#src.Communication.protocol.messageToWorkerType.task">task</a></code></li>
+<li><code><a title="src.Communication.protocol.messageToWorkerType.task_family" href="#src.Communication.protocol.messageToWorkerType.task_family">task_family</a></code></li>
 </ul>
 </li>
 </ul>
@@ -612,7 +920,7 @@ def prettyPrintMessageToWorker(job_ID, task_family, task_ID, duration,
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.1</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
 </footer>
 </body>
 </html>
