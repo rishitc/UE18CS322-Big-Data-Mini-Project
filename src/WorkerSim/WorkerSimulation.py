@@ -153,7 +153,7 @@ class Worker:
                                                         [task_id]["job_id"]),
                                                        (self.tasks[job_id]
                                                         [task_id]
-                                                        ["task family"]),
+                                                        ["task_family"]),
                                                        (self.tasks[job_id]
                                                         [task_id]["task"]
                                                         ["task_id"]),
