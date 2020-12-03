@@ -72,16 +72,16 @@ UE18CS322 Big Data Mini Project Repository
     SUCCESS: All job updates have been received!
     ```
     Then it means that the **master has completed all the jobs and corresponding tasks**, requested by the client.
-11. Now that the code has completed execution, it's time to create the **logs**!... It's not as boring as you think :smile:
+11. Now that the code has completed execution, it's time to create the **logs**!... It's not as boring as you think! :smile:
     1.  Remember to **note down the number of tasks sent by the client code**. This value can be found in the output line of the client code (i.e. ```Copy_of_requests.py```) as:
     ```bash
     Total number of tasks sent by client are: <TOTAL_NO_OF_TASKS_SENT_BY_CLIENT>
     ```
 12. To visualize the logged data regarding tasks, jobs and workers move to the Analytics folder and run the file analysis.py as
-    ```
+    ```bash
     $ python3 analysis.py
     ```
-    The mean, median statistics for jobs and tasks is displayed. Heat Maps and Line Plots are generated on separate windows to visualise workloads of the worker.
+    The *mean, median statistics* for jobs and tasks is displayed. **Heat Maps** and **Line Plots** are generated on separate windows to visualise workloads of the worker.
 ## How to store logs?
 1. Create a directory under the folder ```Logs/Without Training Wheels``` following the naming convention:
    ```bash
