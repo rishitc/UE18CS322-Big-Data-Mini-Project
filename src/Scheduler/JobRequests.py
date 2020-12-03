@@ -55,8 +55,8 @@ class JobRequestHandler:
         2. Return None as there is no assignable task available
         ```
 
-        :return: Task meta-data and the task-dictionary
-        :rtype: Optional[Tuple[Optional[int], Optional[str], Optional[dict]]]
+        **return** Task meta-data and the task-dictionary
+        **rtype** Optional[Tuple[Optional[int], Optional[str], Optional[dict]]]
         """
         # If there are no pending tasks and hence no pending jobs
         # then return None
@@ -115,8 +115,8 @@ class JobRequestHandler:
         """```isEmpty``` checks if the ```jobRequests``` dictionary is
         of the handler is empty.
 
-        :return: Return True if the ```jobRequests``` dictionary is
+        **return** Return True if the ```jobRequests``` dictionary is
         empty else it returns False
-        :rtype: bool
+        **rtype** bool
         """
         return not self.jobRequests
