@@ -187,7 +187,7 @@ Format for how the master sends the task (i.e. a single task) to the worker: (``
 }
 ```
 **Note points:**
-- "task": [] can only contain one task
+- "task": can only contain one task
 - task_family can only have 2 values "map_tasks" or "reduce_tasks"
 - job_id has to be an integer
 - worker_id has to be an integer only
@@ -208,7 +208,7 @@ Format for how the worker responds to the completion of the task (i.e. a single 
 }
 ```
 **Note points:**
-- "task": [] can only contain one task
+- "task": can only contain one task
 - job_id has to be an integer
 - Worker_id has to be an integer only
 - task_family can only have 2 values "map_tasks" or "reduce_tasks"
