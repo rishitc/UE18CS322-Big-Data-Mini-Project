@@ -77,7 +77,11 @@ UE18CS322 Big Data Mini Project Repository
     ```bash
     Total number of tasks sent by client are: <TOTAL_NO_OF_TASKS_SENT_BY_CLIENT>
     ```
-
+12. To visualize the logged data regarding tasks, jobs and workers move to the Analytics folder and run the file analysis.py as
+    ```
+    $ python3 analysis.py
+    ```
+    The mean, median statistics for jobs and tasks is displayed. Heat Maps and Line Plots are generated on separate windows to visualise workloads of the worker.
 ## How to store logs?
 1. Create a directory under the folder ```Logs/Without Training Wheels``` following the naming convention:
    ```bash
@@ -125,7 +129,7 @@ UE18CS322 Big Data Mini Project Repository
 * Rishit C
   * SRN: PES1201800316
 * Akhil E
-  * SRN:
+  * SRN: PES1201802026
 * Varun T
   * SRN:
 * Saran P
