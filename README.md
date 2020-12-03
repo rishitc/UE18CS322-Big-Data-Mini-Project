@@ -4,7 +4,7 @@ UE18CS322 Big Data Mini Project Repository
 ## Running Instructions
 1. Make sure that you have **Python 3.8.5 or above** installed on your system
    1. In the following ```README.md```, we assume that you are using **Python 3.8.5 or above**
-   2. We use this version of **Python** in the terminal, using the command  ```python3``` 
+   2. We use the required version of **Python** in the terminal, using the command  ```python3``` 
 2. Installing all the packages mentioned in ```requirements.txt```
     ```bash
     $ pip install -r requirements.txt
