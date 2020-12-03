@@ -71,7 +71,7 @@ class Worker:
 
             # Preprocess the received JSON data. This helps prevent
             # JSON parsing errors when more then one message has been
-            # received at once at the master
+            # received at once at the worker
             taskRequest = "[" + taskRequest.replace("}{", "},{") + "]"
 
             # For logging purposes
