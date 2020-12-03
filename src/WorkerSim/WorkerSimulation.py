@@ -44,6 +44,7 @@ class Worker:
         i.e the dictionary obtained from **createMessageToWorker()** method.
         """
         dec_obj = Fernet(WORKER_KEY)
+<<<<<<< Updated upstream
 
         _exec_pool_poller_thread = threading\
             .Thread(name="Task Pool Poller Thread",
@@ -54,6 +55,9 @@ class Worker:
         print(Worker.info_text("Created the Task Pool Poller thread!"))
         worker.PRINT_LOCK.release()
 
+=======
+        # Fernet uses a key for symmetric encryption/decryption
+>>>>>>> Stashed changes
         while True:
             # To extract the message sent from master
             taskRequest = taskRequestSocket.recv(MESSAGE_BUFFER_SIZE).decode()
@@ -71,6 +75,7 @@ class Worker:
             # received at once at the master
             taskRequest = "[" + taskRequest.replace("}{", "},{") + "]"
 
+            # For logging purposes
             worker.PRINT_LOCK.acquire()
             print(f"Task received at worker: {taskRequest}")
             worker.PRINT_LOCK.release()
@@ -81,7 +86,7 @@ class Worker:
             # Acquiring lock as shared object is accessed
             self.LOCK.acquire()
 
-            # request: messageToWorkerType
+            # request: messageToWorker() type
             for request in python_protocol_message:
                 # To obtain key for addition to task exec pool
                 job_in_message = request["job_id"]
@@ -96,10 +101,13 @@ class Worker:
                 worker.PRINT_LOCK.release()
                 if self.tasks.get(job_in_message) is None:
                     self.tasks[job_in_message] = dict()
-
+                # The dictionary that stores the incoming task requests is a
+                # nested dictionary with first level key as job_id and the
+                # value being another dictionary with task_id as the key for
+                # this nested dictionary and value being the actual response
+                # to the master
                 self.tasks[job_in_message][task_in_message] = request
 
-            #  Value for the tasks dictionary will be all the info
             self.LOCK.release()  # Release lock as CS code is complete
 
             worker.PRINT_LOCK.acquire()
