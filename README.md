@@ -65,6 +65,7 @@ UE18CS322 Big Data Mini Project Repository
     ```
     - Enter ```y```
     - Now wait for **~2 seconds** and you will notice that the 3 workers have connected to the master
+    - Entering ```n```, will just cause the *same question/prompt* seen above to be asked again, on a new line
 8. Now, start a new terminal and run the below command to start the client code:
     ```bash
     $ python3 "Copy_of_requests.py" <number_of_(job)_requests>
@@ -77,17 +78,17 @@ UE18CS322 Big Data Mini Project Repository
     ```
     Then it means that the **master has completed all the jobs and corresponding tasks**, requested by the client.
 11. Now that the code has completed execution, it's time to create the **logs**!... It's not as boring as you think! :smile:
-    1.  Remember to **note down the number of tasks sent by the client code**. This value can be found in the output line of the client code (i.e. ```Copy_of_requests.py```) as:
+    1.  Remember to **note down the number of tasks sent by the client** code. This value can be found in the last line of the output of the client code (i.e. ```Copy_of_requests.py```) as:
     ```bash
     Total number of tasks sent by client are: <TOTAL_NO_OF_TASKS_SENT_BY_CLIENT>
     ```
-12. To visualize the logged data regarding tasks, jobs and workers move to the Analytics folder and run the file analysis.py as
+12. To visualize the logged data regarding tasks, jobs and workers move to the Analytics folder and run the file ```analysis.py``` as
     ```bash
     $ python3 analysis.py
     ```
     The *mean, median statistics* for jobs and tasks is displayed. **Heat Maps** and **Line Plots** are generated on separate windows to visualise workloads of the worker.
 ## How to store logs?
-1. Create a directory under the folder ```Logs/Without Training Wheels``` following the naming convention:
+1. Create a directory under the folder ```"Logs/Without Training Wheels"``` following the naming convention:
    ```bash
    Run_<TestNumber>_<Scheduling_Algorithm_Used>
    ```
@@ -102,7 +103,7 @@ UE18CS322 Big Data Mini Project Repository
 4. Once you have populated the 4 files with their respective log outputs from the terminal output, then we move on to analysing the output
 
 ## How to check logs?
-1. Go to the ```Logs/Without Training Wheels``` directory and execute the **log analysis script** using the command below:
+1. Go to the ```"Logs/Without Training Wheels"``` directory and execute the **log analysis script** using the command below:
     ```bash
     $ python3 "check_logs.py" <Run_TestNumber_Scheduling Algorithm>
     ```
@@ -170,11 +171,17 @@ on that machine
 ### Rishit: (Scheduling and Task execution request)
 1. Finish the 3 Scheduling algorithms to select the worker machine to run the task on
 2. Sending the job to the workers using the message creation as per the ```YACS_Protocol``` class
-3. Thread to store the incoming job requests from port 5000
-4. Object to track the worker states
-5. Object to track the pending job requests and return tasks as per the map-reduce
+3. Adding encryption and key-sharing using the *SSL model* between the master and worker machines
+4. All threads and related methods at the master machine
+5. Threads to handle the task updates from the workers
+6. Thread to store the incoming job requests from port 5000
+7. Object to track the worker states
+8. Thread to monitor and print out when all the tasks of all pending jobs have been dispatched to the workers and when all the updates for the same have been received at the master
+9. Thread to monitor and print out when the task execution pool is empty at the worker machine
+10. Create the scripts to check the logs
+11. Object to track the pending job requests and return tasks as per the map-reduce
    dependency
-6. Create the Communication protocol (JSON based) between master and worker nodes which will take the various parameters of the message as input
+11. Create the Communication protocol (JSON based) between master and worker nodes which will take the various parameters of the message as input
 and create the json message as per the protocol format below
     - The class-methods of the class to create the message can be called as createMessageToWorker() and createMessageToMaster()
         - This method returns the required JSON string
@@ -263,3 +270,4 @@ Format for how the worker responds to the completion of the task (i.e. a single 
 1. [Setting up your PYTHONPATH](https://bic-berkeley.github.io/psych-214-fall-2016/using_pythonpath.html)
 1. [Working with Threading module in Python](https://docs.python.org/3/library/threading.html)
 1. [Jupyter Widgets installation](https://ipywidgets.readthedocs.io/en/latest/user_install.html)
+1. [Using queues](https://docs.python.org/3/library/queue.html#queue.Queue.join)
