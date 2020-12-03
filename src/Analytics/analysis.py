@@ -282,6 +282,7 @@ def get_analytics():
     plt.legend()
     plt.show()
 
+
 def main():
     get_analytics()
 
