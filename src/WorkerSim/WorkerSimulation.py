@@ -212,6 +212,19 @@ class Worker:
 
     @staticmethod
     def info_text(text):
+        """```info_text``` returns a modified version of the input ```text``` such
+        that it looks like an *information message* when printed on the CLI.
+
+        **param** ```text```: The input string that will be modified to look
+        like an *information message* when printed on the CLI
+
+        **type** ```text```: str
+
+        **return**: The modified version of the input ```text``` such
+        that it looks like an *information message* when printed on the CLI
+
+        **rtype**: str
+        """
         return f"{TC.fg(6) + TC.attr(1)}INFO:{TC.attr(0)} {text}"
 
     def tasksPoolPoller(self):
