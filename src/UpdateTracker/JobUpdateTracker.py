@@ -165,7 +165,7 @@ class Tracker:
                 flag = 0
                 break
         if flag == 1:
-            self.jobs_time[job_id][1] = time.time()
+            self.jobs_time[job_id][1] = task_stats[1]  # time.time()
             self.writeJobsCSV(job_id)
 
     def isMapComplete(self, jobID) -> bool:
