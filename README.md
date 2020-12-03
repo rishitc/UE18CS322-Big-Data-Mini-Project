@@ -6,7 +6,7 @@ UE18CS322 Big Data Mini Project Repository
     ```bash
     $ pip install -r requirements.txt
     ```
-1. Add the src folder to your ```PYTHONPATH``` environment variable by following steps:
+2. Add the src folder to your ```PYTHONPATH``` environment variable by following steps:
    1. Open your terminal and in that, navigate into the ```src``` folder of the project
    2. Once in the ```src``` folder run the command
         ```bash
@@ -37,6 +37,34 @@ UE18CS322 Big Data Mini Project Repository
     7. **NOTE:** The same steps can also be done using the ```~/.bashrc``` file instead of the file ```~/.bash_profile```
        1. Using ```~/.bash_profile``` is recommended for systems running MacOS
        2. Any of the 2 files can used for Linux systems
+3. Make sure you are in the ```src``` folder of the project. If not, then use the ```cd``` command to navigate into the ```src``` folder.
+4. Run the below command in a new terminal, to start the **master**:
+    ```bash
+    $ python3 master.py "../setup/Copy of config.json" (RR|LL|RANDOM)
+    ```
+5. To start the **3 workers**, run the below commands, each in a new terminal:
+    ```bash
+    $ python3 worker.py 4000 1
+    ```
+    ```bash
+    $ python3 worker.py 4001 2
+    ```
+    ```bash
+    $ python3 worker.py 4002 3
+    ```
+6. Now, on the terminal in which you started the **master**, you should see the prompt:
+    ```bash
+    Have the 3 workers been started, yet? [y/n] 
+    ```
+    - Enter ```y```
+    - Now wait for **~2 seconds** and you will notice that the workers have connected to the master
+7. Now, start a new terminal and run the below command to start the client code:
+    ```bash
+    $ python3 "Copy of requests.py" <number_of_(job)_requests>
+    ```
+8. Now, you'll notice that terminals in which the client, workers and master programs are running; there will be a **lot of debug information being output**. That's fine and it's the expected behaviour as well.
+   1. If you notice **any exceptions or errors** being raised during the execution on any of the above mentioned terminals, then please do consider opening an issue on our [project repository](https://github.com/rishitc/UE18CS322-Big-Data-Mini-Project)
+9. 
 
 ## How to generate the documentation?
 1. Make sure the BASH script called ```build_docs.sh``` has **execute permission** set for the user you
