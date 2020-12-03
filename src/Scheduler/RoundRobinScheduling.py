@@ -57,9 +57,9 @@ class RoundRobinScheduler:
                 jobID_family_task = requestHandler.getWaitingTask()
             requestHandler.LOCK.release()
 
-            # PRINT_LOCK.acquire()
+            # master.PRINT_LOCK.acquire()
             # print(requestHandler.jobRequests)
-            # PRINT_LOCK.release()
+            # master.PRINT_LOCK.release()
 
             # If there is a Task that needs to be executed
             if jobID_family_task is not None:

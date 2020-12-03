@@ -276,7 +276,6 @@ def workerUpdates(workerSocket: socket.socket,
 
         # master.PRINT_LOCK.acquire()
         # workerStateTracker.showWorkerStates()
-
         # master.PRINT_LOCK.release()
 
 

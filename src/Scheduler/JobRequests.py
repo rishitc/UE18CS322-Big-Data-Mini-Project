@@ -2,6 +2,7 @@ from threading import Lock
 from typing import Optional, Tuple
 
 from UpdateTracker.JobUpdateTracker import Tracker as JobUpdateTracker
+from Locks.MasterPrintLock import master
 
 
 class JobRequestHandler:
@@ -85,14 +86,21 @@ class JobRequestHandler:
                 self.workerUpdatesTracker.LOCK.release()
 
                 # if jobID:
-                #   print(f"Have all map tasks completed {_temp} for {jobID}")
+                #     master.PRINT_LOCK.acquire()
+                #     print(("Have all map tasks completed "
+                #           f"{_temp} for {jobID}"))
+                #     master.PRINT_LOCK.release()
 
                 if _temp:  # If the map tasks of the job have completed
                     if self.jobRequests[jobID]["reduce"]:
                         # Check for a pending reduce task
                         _SELECTED_TASK = self.jobRequests[jobID]["reduce"]\
                             .pop(0)
+
+                        # master.PRINT_LOCK.acquire()
                         # print(f"{_SELECTED_TASK=}")
+                        # master.PRINT_LOCK.release()
+
                         _TASK_TYPE = "reduce"
                         _JOB_ID = jobID
 
@@ -110,7 +118,9 @@ class JobRequestHandler:
             del self.jobRequests[_JOB_ID]
             # self.priorityOrder.remove(_JOB_ID)
 
+        master.PRINT_LOCK.acquire()
         print("Selected tuple:", (_JOB_ID, _TASK_TYPE, _SELECTED_TASK))
+        master.PRINT_LOCK.release()
         return (_JOB_ID, _TASK_TYPE, _SELECTED_TASK)
 
     def isEmpty(self) -> bool:

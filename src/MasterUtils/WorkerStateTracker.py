@@ -3,6 +3,7 @@ from threading import Lock
 from typing import List, Optional
 
 from Communication.protocol import YACS_Protocol
+# from Locks.MasterPrintLock import master
 
 
 class StateTracker:
@@ -20,12 +21,18 @@ class StateTracker:
         self.LOCK = Lock()
 
         for worker in confObj["workers"]:
+            # master.PRINT_LOCK.acquire()
             # print(f"{worker['worker_id']=}")
+            # master.PRINT_LOCK.release()
+
             workerConnSocket = socket.socket(socket.AF_INET,
                                              socket.SOCK_STREAM)
             workerConnSocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR,
                                         1)
+            # master.PRINT_LOCK.acquire()
             # print(f'{worker["port"]=}')
+            # master.PRINT_LOCK.release()
+
             workerConnSocket.connect((socket.gethostname(), worker["port"]))
             self.workerState[worker["worker_id"]] = {
                 "slots": worker["slots"],
@@ -59,8 +66,11 @@ class StateTracker:
 
         **rtype**: bool
         """
+        # master.PRINT_LOCK.acquire()
         # print(f"{workerID=}")
         # print(f"{workerID in self.workerIDs}")
+        # master.PRINT_LOCK.release()
+
         return True if self.workerState[workerID]["free slots"] >= demand \
             else False
 
