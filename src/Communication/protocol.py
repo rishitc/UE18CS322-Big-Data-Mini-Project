@@ -192,24 +192,44 @@ class YACS_Protocol:
 
 
 class messageToWorkerTaskType(TypedDict):
+    """```messageToWorkerTaskType``` class is used to help in creating the
+    *type hint* for the dictionary that will contain the
+    **parsed JSON message** that is sent to the worker.
+
+    This class is essentially the *type hint* for the ```"task"``` field of the
+    **parsed JSON message** that is sent to the worker.
+    """
     task_id: str
     duration: int
-    worker_id: int
 
 
 class messageToWorkerType(TypedDict):
+    """```messageToWorkerType``` class is the *type hint* for the dictionary
+    that will contain the **parsed JSON message** that is sent to the worker.
+    """
+    worker_id: int
     job_id: str
     task_family: str
     task: messageToWorkerTaskType
 
 
 class messageToMasterTaskType(TypedDict):
+    """```messageToMasterTaskType``` class is used to help in creating the
+    *type hint* for the dictionary that will contain the
+    **parsed JSON message** that is sent to the master.
+
+    This class is essentially the *type hint* for the ```"task"``` field of the
+    **parsed JSON message** that is sent to the master.
+    """
     task_id: str
     start_time: float
     end_time: float
 
 
 class messageToMasterType(TypedDict):
+    """```messageToMasterType``` class is the *type hint* for the dictionary
+    that will contain the **parsed JSON message** that is sent to the master.
+    """
     worker_id: int
     job_ID: str
     task_family: str

@@ -22,6 +22,7 @@ from Scheduler.LeastLoadedScheduling import LeastLoadedScheduler
 from Communication.protocol import messageToMasterType
 
 
+# The maximum amount of data to be received at once is specified by BUFFER_SIZE
 BUFFER_SIZE: int = 4096
 
 # Error codes to return to the shell

@@ -220,24 +220,44 @@ class YACS_Protocol:
 
 
 class messageToWorkerTaskType(TypedDict):
+    &#34;&#34;&#34;```messageToWorkerTaskType``` class is used to help in creating the
+    *type hint* for the dictionary that will contain the
+    **parsed JSON message** that is sent to the worker.
+
+    This class is essentially the *type hint* for the ```&#34;task&#34;``` field of the
+    **parsed JSON message** that is sent to the worker.
+    &#34;&#34;&#34;
     task_id: str
     duration: int
-    worker_id: int
 
 
 class messageToWorkerType(TypedDict):
+    &#34;&#34;&#34;```messageToWorkerType``` class is the *type hint* for the dictionary
+    that will contain the **parsed JSON message** that is sent to the worker.
+    &#34;&#34;&#34;
+    worker_id: int
     job_id: str
     task_family: str
     task: messageToWorkerTaskType
 
 
 class messageToMasterTaskType(TypedDict):
+    &#34;&#34;&#34;```messageToMasterTaskType``` class is used to help in creating the
+    *type hint* for the dictionary that will contain the
+    **parsed JSON message** that is sent to the master.
+
+    This class is essentially the *type hint* for the ```&#34;task&#34;``` field of the
+    **parsed JSON message** that is sent to the master.
+    &#34;&#34;&#34;
     task_id: str
     start_time: float
     end_time: float
 
 
 class messageToMasterType(TypedDict):
+    &#34;&#34;&#34;```messageToMasterType``` class is the *type hint* for the dictionary
+    that will contain the **parsed JSON message** that is sent to the master.
+    &#34;&#34;&#34;
     worker_id: int
     job_ID: str
     task_family: str
@@ -750,22 +770,23 @@ def prettyPrintMessageToWorker(job_ID, task_family, task_ID, duration,
 <span>(</span><span>*args, **kwargs)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>dict() -&gt; new empty dictionary
-dict(mapping) -&gt; new dictionary initialized from a mapping object's
-(key, value) pairs
-dict(iterable) -&gt; new dictionary initialized as if via:
-d = {}
-for k, v in iterable:
-d[k] = v
-dict(**kwargs) -&gt; new dictionary initialized with the name=value pairs
-in the keyword argument list.
-For example:
-dict(one=1, two=2)</p></div>
+<div class="desc"><p><code>messageToMasterTaskType</code> class is used to help in creating the
+<em>type hint</em> for the dictionary that will contain the
+<strong>parsed JSON message</strong> that is sent to the master.</p>
+<p>This class is essentially the <em>type hint</em> for the <code>"task"</code> field of the
+<strong>parsed JSON message</strong> that is sent to the master.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class messageToMasterTaskType(TypedDict):
+    &#34;&#34;&#34;```messageToMasterTaskType``` class is used to help in creating the
+    *type hint* for the dictionary that will contain the
+    **parsed JSON message** that is sent to the master.
+
+    This class is essentially the *type hint* for the ```&#34;task&#34;``` field of the
+    **parsed JSON message** that is sent to the master.
+    &#34;&#34;&#34;
     task_id: str
     start_time: float
     end_time: float</code></pre>
@@ -795,22 +816,16 @@ dict(one=1, two=2)</p></div>
 <span>(</span><span>*args, **kwargs)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>dict() -&gt; new empty dictionary
-dict(mapping) -&gt; new dictionary initialized from a mapping object's
-(key, value) pairs
-dict(iterable) -&gt; new dictionary initialized as if via:
-d = {}
-for k, v in iterable:
-d[k] = v
-dict(**kwargs) -&gt; new dictionary initialized with the name=value pairs
-in the keyword argument list.
-For example:
-dict(one=1, two=2)</p></div>
+<div class="desc"><p><code>messageToMasterType</code> class is the <em>type hint</em> for the dictionary
+that will contain the <strong>parsed JSON message</strong> that is sent to the master.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class messageToMasterType(TypedDict):
+    &#34;&#34;&#34;```messageToMasterType``` class is the *type hint* for the dictionary
+    that will contain the **parsed JSON message** that is sent to the master.
+    &#34;&#34;&#34;
     worker_id: int
     job_ID: str
     task_family: str
@@ -845,25 +860,25 @@ dict(one=1, two=2)</p></div>
 <span>(</span><span>*args, **kwargs)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>dict() -&gt; new empty dictionary
-dict(mapping) -&gt; new dictionary initialized from a mapping object's
-(key, value) pairs
-dict(iterable) -&gt; new dictionary initialized as if via:
-d = {}
-for k, v in iterable:
-d[k] = v
-dict(**kwargs) -&gt; new dictionary initialized with the name=value pairs
-in the keyword argument list.
-For example:
-dict(one=1, two=2)</p></div>
+<div class="desc"><p><code>messageToWorkerTaskType</code> class is used to help in creating the
+<em>type hint</em> for the dictionary that will contain the
+<strong>parsed JSON message</strong> that is sent to the worker.</p>
+<p>This class is essentially the <em>type hint</em> for the <code>"task"</code> field of the
+<strong>parsed JSON message</strong> that is sent to the worker.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class messageToWorkerTaskType(TypedDict):
+    &#34;&#34;&#34;```messageToWorkerTaskType``` class is used to help in creating the
+    *type hint* for the dictionary that will contain the
+    **parsed JSON message** that is sent to the worker.
+
+    This class is essentially the *type hint* for the ```&#34;task&#34;``` field of the
+    **parsed JSON message** that is sent to the worker.
+    &#34;&#34;&#34;
     task_id: str
-    duration: int
-    worker_id: int</code></pre>
+    duration: int</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -879,10 +894,6 @@ dict(one=1, two=2)</p></div>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="src.Communication.protocol.messageToWorkerTaskType.worker_id"><code class="name">var <span class="ident">worker_id</span> : int</code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
 </dl>
 </dd>
 <dt id="src.Communication.protocol.messageToWorkerType"><code class="flex name class">
@@ -890,22 +901,17 @@ dict(one=1, two=2)</p></div>
 <span>(</span><span>*args, **kwargs)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>dict() -&gt; new empty dictionary
-dict(mapping) -&gt; new dictionary initialized from a mapping object's
-(key, value) pairs
-dict(iterable) -&gt; new dictionary initialized as if via:
-d = {}
-for k, v in iterable:
-d[k] = v
-dict(**kwargs) -&gt; new dictionary initialized with the name=value pairs
-in the keyword argument list.
-For example:
-dict(one=1, two=2)</p></div>
+<div class="desc"><p><code>messageToWorkerType</code> class is the <em>type hint</em> for the dictionary
+that will contain the <strong>parsed JSON message</strong> that is sent to the worker.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class messageToWorkerType(TypedDict):
+    &#34;&#34;&#34;```messageToWorkerType``` class is the *type hint* for the dictionary
+    that will contain the **parsed JSON message** that is sent to the worker.
+    &#34;&#34;&#34;
+    worker_id: int
     job_id: str
     task_family: str
     task: messageToWorkerTaskType</code></pre>
@@ -925,6 +931,10 @@ dict(one=1, two=2)</p></div>
 <div class="desc"></div>
 </dd>
 <dt id="src.Communication.protocol.messageToWorkerType.task_family"><code class="name">var <span class="ident">task_family</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="src.Communication.protocol.messageToWorkerType.worker_id"><code class="name">var <span class="ident">worker_id</span> : int</code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -979,7 +989,6 @@ dict(one=1, two=2)</p></div>
 <ul class="">
 <li><code><a title="src.Communication.protocol.messageToWorkerTaskType.duration" href="#src.Communication.protocol.messageToWorkerTaskType.duration">duration</a></code></li>
 <li><code><a title="src.Communication.protocol.messageToWorkerTaskType.task_id" href="#src.Communication.protocol.messageToWorkerTaskType.task_id">task_id</a></code></li>
-<li><code><a title="src.Communication.protocol.messageToWorkerTaskType.worker_id" href="#src.Communication.protocol.messageToWorkerTaskType.worker_id">worker_id</a></code></li>
 </ul>
 </li>
 <li>
@@ -988,6 +997,7 @@ dict(one=1, two=2)</p></div>
 <li><code><a title="src.Communication.protocol.messageToWorkerType.job_id" href="#src.Communication.protocol.messageToWorkerType.job_id">job_id</a></code></li>
 <li><code><a title="src.Communication.protocol.messageToWorkerType.task" href="#src.Communication.protocol.messageToWorkerType.task">task</a></code></li>
 <li><code><a title="src.Communication.protocol.messageToWorkerType.task_family" href="#src.Communication.protocol.messageToWorkerType.task_family">task_family</a></code></li>
+<li><code><a title="src.Communication.protocol.messageToWorkerType.worker_id" href="#src.Communication.protocol.messageToWorkerType.worker_id">worker_id</a></code></li>
 </ul>
 </li>
 </ul>
