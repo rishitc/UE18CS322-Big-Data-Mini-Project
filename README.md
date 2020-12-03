@@ -112,8 +112,7 @@ UE18CS322 Big Data Mini Project Repository
    2. If they are not the same then please do consider **opening an issue** on our [project repository](https://github.com/rishitc/UE18CS322-Big-Data-Mini-Project). Make sure to include all the **4 log files** and the **scheduling algorithm used** as well as other information that would be useful in *replicating the issue*
 
 ## How to generate the documentation?
-1. Make sure the BASH script called ```build_docs.sh``` has **execute permission** set for the user you
-   are running as
+1. Make sure the BASH script called ```build_docs.sh``` has **execute permission** set for the user (or user-level) you are running as, so that you can run the script successfully
     - If not then you can easily add it using the ```chmod``` command
     - Preferably the command you can run to give permissions as well as maintain system security is:
     ```bash
@@ -130,6 +129,21 @@ UE18CS322 Big Data Mini Project Repository
    - In the output you may notice *PEP-224 UserWarnings*, please ignore them
    - Other than this, **no other warnings or errors** should show up. If they do then please consider **opening an issue** on our [project repository](https://github.com/rishitc/UE18CS322-Big-Data-Mini-Project)
 
+## How do I stop the program?
+1. To stop the program, simply run the script:
+    ```bash
+    $ ./stop-all.sh 
+    ```
+    - Make sure that the **execute permission** is set for the user (or user-level) you are running as, so that you can run the script successfully
+    - If not then you can easily add it using the ```chmod``` command
+    - Preferably the command you can run to give permissions as well as maintain system security is:
+    ```bash
+    $ sudo chmod 764 ./stop-all.sh
+    ```
+    ### or
+    ```bash
+    $ sudo chmod 774 ./stop-all.sh
+    ```
 ## Contributors
 * Rishit C
   * SRN: PES1201800316
