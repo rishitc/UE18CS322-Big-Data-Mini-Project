@@ -70,10 +70,6 @@ if __name__ == "__main__":
     worker_instance = Worker(worker_id)  # Instance of Worker class
     workerPortConnSocket = createWorkerSocket(_TASK_REQUEST_ADDR)
     workerPortConnSocket.listen()
-    # workerPortConnSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    # workerPortConnSocket.bind(_TASK_REQUEST_ADDR) # Binding the socket
-    # to the socket tuple created above
-    # workerPortConnSocket.listen()  # Listens for any connections
     masterConn, masterAddr = workerPortConnSocket.accept()  # Accepts the
     # connection with return value being (new socket object usable to send and
     # recv data, address bound to the socket on the other end of the connection
