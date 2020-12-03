@@ -31,6 +31,7 @@ from threading import Lock
 from typing import List, Optional
 
 from Communication.protocol import YACS_Protocol
+# from Locks.MasterPrintLock import master
 
 
 class StateTracker:
@@ -48,12 +49,18 @@ class StateTracker:
         self.LOCK = Lock()
 
         for worker in confObj[&#34;workers&#34;]:
+            # master.PRINT_LOCK.acquire()
             # print(f&#34;{worker[&#39;worker_id&#39;]=}&#34;)
+            # master.PRINT_LOCK.release()
+
             workerConnSocket = socket.socket(socket.AF_INET,
                                              socket.SOCK_STREAM)
             workerConnSocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR,
                                         1)
+            # master.PRINT_LOCK.acquire()
             # print(f&#39;{worker[&#34;port&#34;]=}&#39;)
+            # master.PRINT_LOCK.release()
+
             workerConnSocket.connect((socket.gethostname(), worker[&#34;port&#34;]))
             self.workerState[worker[&#34;worker_id&#34;]] = {
                 &#34;slots&#34;: worker[&#34;slots&#34;],
@@ -87,8 +94,11 @@ class StateTracker:
 
         **rtype**: bool
         &#34;&#34;&#34;
+        # master.PRINT_LOCK.acquire()
         # print(f&#34;{workerID=}&#34;)
         # print(f&#34;{workerID in self.workerIDs}&#34;)
+        # master.PRINT_LOCK.release()
+
         return True if self.workerState[workerID][&#34;free slots&#34;] &gt;= demand \
             else False
 
@@ -244,12 +254,18 @@ data stored in the worker configuration file</p>
         self.LOCK = Lock()
 
         for worker in confObj[&#34;workers&#34;]:
+            # master.PRINT_LOCK.acquire()
             # print(f&#34;{worker[&#39;worker_id&#39;]=}&#34;)
+            # master.PRINT_LOCK.release()
+
             workerConnSocket = socket.socket(socket.AF_INET,
                                              socket.SOCK_STREAM)
             workerConnSocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR,
                                         1)
+            # master.PRINT_LOCK.acquire()
             # print(f&#39;{worker[&#34;port&#34;]=}&#39;)
+            # master.PRINT_LOCK.release()
+
             workerConnSocket.connect((socket.gethostname(), worker[&#34;port&#34;]))
             self.workerState[worker[&#34;worker_id&#34;]] = {
                 &#34;slots&#34;: worker[&#34;slots&#34;],
@@ -283,8 +299,11 @@ data stored in the worker configuration file</p>
 
         **rtype**: bool
         &#34;&#34;&#34;
+        # master.PRINT_LOCK.acquire()
         # print(f&#34;{workerID=}&#34;)
         # print(f&#34;{workerID in self.workerIDs}&#34;)
+        # master.PRINT_LOCK.release()
+
         return True if self.workerState[workerID][&#34;free slots&#34;] &gt;= demand \
             else False
 
@@ -630,8 +649,11 @@ defaults to 1</p>
 
     **rtype**: bool
     &#34;&#34;&#34;
+    # master.PRINT_LOCK.acquire()
     # print(f&#34;{workerID=}&#34;)
     # print(f&#34;{workerID in self.workerIDs}&#34;)
+    # master.PRINT_LOCK.release()
+
     return True if self.workerState[workerID][&#34;free slots&#34;] &gt;= demand \
         else False</code></pre>
 </details>
