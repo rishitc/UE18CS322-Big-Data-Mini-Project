@@ -46,6 +46,7 @@ class Worker:
         dec_obj = Fernet(WORKER_KEY)
         # Fernet uses a key for symmetric encryption/decryption
 
+        # Thread to log when the worker task pool is empty
         _exec_pool_poller_thread = threading\
             .Thread(name="Task Pool Poller Thread",
                     target=self.tasksPoolPoller)
@@ -101,15 +102,16 @@ class Worker:
                     self.tasks[job_in_message] = dict()
                 # The dictionary that stores the incoming task requests is a
                 # nested dictionary with first level key as job_id and the
-                # value being another dictionary with task_id as the key for
-                # this nested dictionary and value being the actual response
-                # to the master
+                # value being another dictionary with task_id(unique for a job)
+                # as the key for this nested dictionary and value being the
+                # actual response to the master
+
                 self.tasks[job_in_message][task_in_message] = request
 
             self.LOCK.release()  # Release lock as CS code is complete
 
             worker.PRINT_LOCK.acquire()
-            print(self.tasks)
+            print(self.tasks)  # Print the task exec pool
             worker.PRINT_LOCK.release()
 
         _exec_pool_poller_thread.join()
@@ -119,14 +121,14 @@ class Worker:
         while True:
             # Get the number of tasks in the Task pool
             self.LOCK.acquire()  # Acquiring lock as shared object is accessed
-            tasksInExecutionPool_Count = len(self.tasks)
+            tasksInExecutionPool_Count = len(self.tasks)  # Returns no_of_jobs
             self.LOCK.release()  # Release lock as CS code is complete
 
             # If there are tasks to execute in the task pool
             if tasksInExecutionPool_Count != 0:
                 self.LOCK.acquire()  # Lock as shared object is accessed
-                _temp_1 = list(self.tasks)
-                for job_id in _temp_1:
+                _temp_1 = list(self.tasks)  # Need to store as list for
+                for job_id in _temp_1:      # correct iterating
                     """Durations (i.e. the value in the dictionary) will be
                     positive(non-zero) integers."""
                     _temp_2 = list(self.tasks[job_id])
@@ -167,6 +169,8 @@ class Worker:
                             # YACS Protocol based response to master
                             self.updates_q.put(response_message_to_master)
                             # Adding the task in the completed tasks queue
+                            # The queue is a shared object that can be accessed
+                            # between separate threads
                             del self.tasks[job_id][task_id]
                             # Remove the task entry from the task exec pool
                             if len(self.tasks[job_id]) == 0:
@@ -197,6 +201,8 @@ class Worker:
             if not self.updates_q.empty():
                 response_msg: str = self.updates_q.get()
                 self.updates_q.task_done()
+                # get() and task_done() are similar to lock()
+                # and release() for the queue
                 # Sending to master
                 reply_socket.sendall(enc_obj.encrypt(response_msg.encode()))
                 worker.PRINT_LOCK.acquire()
@@ -211,7 +217,7 @@ class Worker:
     def tasksPoolPoller(self):
         isTaskPoolEmpty: bool = False
         wasTaskPoolEmpty: bool = False
-
+        # Prints when the task pool is empty
         while True:
             self.LOCK.acquire()
             isTaskPoolEmpty = not self.tasks
