@@ -76,8 +76,8 @@ class YACS_Protocol:
 
         ```json
         {
-            &#34;worker_id&#34;:&lt;worker_id&gt;,
-            &#34;job_id&#34;:&lt;job_id&gt;,
+            &#34;worker_id&#34;: &lt;worker_id&gt;,
+            &#34;job_id&#34;: &lt;job_id&gt;,
             &#34;task family&#34;: &lt;(&#34;map&#34;|&#34;reduce&#34;)&gt;,
             &#34;task&#34;: {
                         &#34;task_id&#34;: &#34;&lt;task_id&gt;&#34;,
@@ -150,8 +150,8 @@ class YACS_Protocol:
 
         ```json
         {
-            &#34;worker_id&#34;:&lt;worker_id&gt;,
-            &#34;job_id&#34;:&lt;job_id&gt;,
+            &#34;worker_id&#34;: &lt;worker_id&gt;,
+            &#34;job_id&#34;: &lt;job_id&gt;,
             &#34;task family&#34;: &lt;(&#34;map&#34;|&#34;reduce&#34;)&gt;,
             &#34;task&#34;: {
                         &#34;task_id&#34;: &#34;&lt;task_id&gt;&#34;,
@@ -184,6 +184,17 @@ class YACS_Protocol:
 
     @staticmethod
     def connectBackMessage(back_off_time, public_key):
+        &#34;&#34;&#34;
+        The final JSON string will be as follows:
+
+        ```json
+        {
+            &#34;back_off_time&#34;: &lt;Time_In_Seconds&gt;,
+            &#34;public_key&#34;: &lt;Public_key_for_key_sharing&gt;
+        }
+        ```
+
+        &#34;&#34;&#34;
         msg_dict = {}
         msg_dict[&#34;back_off_time&#34;] = back_off_time
         msg_dict[&#34;public_key&#34;] = public_key.decode()
@@ -191,6 +202,17 @@ class YACS_Protocol:
 
     @staticmethod
     def connectBackResponse(worker_id, enc_pri_key):
+        &#34;&#34;&#34;
+        The final JSON string will be as follows:
+
+        ```json
+        {
+            &#34;worker_id&#34;: &lt;worker_id&gt;,
+            &#34;enc_pri_key&#34;: &lt;Encrypted_private_key_for_key_sharing&gt;
+        }
+        ```
+
+        &#34;&#34;&#34;
         msg_dict = {}
         msg_dict[&#34;worker_id&#34;] = worker_id
         msg_dict[&#34;enc_pri_key&#34;] = enc_pri_key.decode()
@@ -282,8 +304,8 @@ class messageToMasterType(TypedDict):
 
         ```json
         {
-            &#34;worker_id&#34;:&lt;worker_id&gt;,
-            &#34;job_id&#34;:&lt;job_id&gt;,
+            &#34;worker_id&#34;: &lt;worker_id&gt;,
+            &#34;job_id&#34;: &lt;job_id&gt;,
             &#34;task family&#34;: &lt;(&#34;map&#34;|&#34;reduce&#34;)&gt;,
             &#34;task&#34;: {
                         &#34;task_id&#34;: &#34;&lt;task_id&gt;&#34;,
@@ -356,8 +378,8 @@ class messageToMasterType(TypedDict):
 
         ```json
         {
-            &#34;worker_id&#34;:&lt;worker_id&gt;,
-            &#34;job_id&#34;:&lt;job_id&gt;,
+            &#34;worker_id&#34;: &lt;worker_id&gt;,
+            &#34;job_id&#34;: &lt;job_id&gt;,
             &#34;task family&#34;: &lt;(&#34;map&#34;|&#34;reduce&#34;)&gt;,
             &#34;task&#34;: {
                         &#34;task_id&#34;: &#34;&lt;task_id&gt;&#34;,
@@ -390,6 +412,17 @@ class messageToMasterType(TypedDict):
 
     @staticmethod
     def connectBackMessage(back_off_time, public_key):
+        &#34;&#34;&#34;
+        The final JSON string will be as follows:
+
+        ```json
+        {
+            &#34;back_off_time&#34;: &lt;Time_In_Seconds&gt;,
+            &#34;public_key&#34;: &lt;Public_key_for_key_sharing&gt;
+        }
+        ```
+
+        &#34;&#34;&#34;
         msg_dict = {}
         msg_dict[&#34;back_off_time&#34;] = back_off_time
         msg_dict[&#34;public_key&#34;] = public_key.decode()
@@ -397,6 +430,17 @@ class messageToMasterType(TypedDict):
 
     @staticmethod
     def connectBackResponse(worker_id, enc_pri_key):
+        &#34;&#34;&#34;
+        The final JSON string will be as follows:
+
+        ```json
+        {
+            &#34;worker_id&#34;: &lt;worker_id&gt;,
+            &#34;enc_pri_key&#34;: &lt;Encrypted_private_key_for_key_sharing&gt;
+        }
+        ```
+
+        &#34;&#34;&#34;
         msg_dict = {}
         msg_dict[&#34;worker_id&#34;] = worker_id
         msg_dict[&#34;enc_pri_key&#34;] = enc_pri_key.decode()
@@ -408,13 +452,29 @@ class messageToMasterType(TypedDict):
 <span>def <span class="ident">connectBackMessage</span></span>(<span>back_off_time, public_key)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>The final JSON string will be as follows:</p>
+<pre><code class="language-json">{
+    &quot;back_off_time&quot;: &lt;Time_In_Seconds&gt;,
+    &quot;public_key&quot;: &lt;Public_key_for_key_sharing&gt;
+}
+</code></pre></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@staticmethod
 def connectBackMessage(back_off_time, public_key):
+    &#34;&#34;&#34;
+    The final JSON string will be as follows:
+
+    ```json
+    {
+        &#34;back_off_time&#34;: &lt;Time_In_Seconds&gt;,
+        &#34;public_key&#34;: &lt;Public_key_for_key_sharing&gt;
+    }
+    ```
+
+    &#34;&#34;&#34;
     msg_dict = {}
     msg_dict[&#34;back_off_time&#34;] = back_off_time
     msg_dict[&#34;public_key&#34;] = public_key.decode()
@@ -425,13 +485,29 @@ def connectBackMessage(back_off_time, public_key):
 <span>def <span class="ident">connectBackResponse</span></span>(<span>worker_id, enc_pri_key)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>The final JSON string will be as follows:</p>
+<pre><code class="language-json">{
+    &quot;worker_id&quot;: &lt;worker_id&gt;,
+    &quot;enc_pri_key&quot;: &lt;Encrypted_private_key_for_key_sharing&gt;
+}
+</code></pre></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@staticmethod
 def connectBackResponse(worker_id, enc_pri_key):
+    &#34;&#34;&#34;
+    The final JSON string will be as follows:
+
+    ```json
+    {
+        &#34;worker_id&#34;: &lt;worker_id&gt;,
+        &#34;enc_pri_key&#34;: &lt;Encrypted_private_key_for_key_sharing&gt;
+    }
+    ```
+
+    &#34;&#34;&#34;
     msg_dict = {}
     msg_dict[&#34;worker_id&#34;] = worker_id
     msg_dict[&#34;enc_pri_key&#34;] = enc_pri_key.decode()
@@ -444,8 +520,8 @@ def connectBackResponse(worker_id, enc_pri_key):
 <dd>
 <div class="desc"><p>The final JSON string will be as follows:</p>
 <pre><code class="language-json">{
-    &quot;worker_id&quot;:&lt;worker_id&gt;,
-    &quot;job_id&quot;:&lt;job_id&gt;,
+    &quot;worker_id&quot;: &lt;worker_id&gt;,
+    &quot;job_id&quot;: &lt;job_id&gt;,
     &quot;task family&quot;: &lt;(&quot;map&quot;|&quot;reduce&quot;)&gt;,
     &quot;task&quot;: {
                 &quot;task_id&quot;: &quot;&lt;task_id&gt;&quot;,
@@ -466,8 +542,8 @@ def createMessageToMaster(job_ID, task_family, task_ID, start_time,
 
     ```json
     {
-        &#34;worker_id&#34;:&lt;worker_id&gt;,
-        &#34;job_id&#34;:&lt;job_id&gt;,
+        &#34;worker_id&#34;: &lt;worker_id&gt;,
+        &#34;job_id&#34;: &lt;job_id&gt;,
         &#34;task family&#34;: &lt;(&#34;map&#34;|&#34;reduce&#34;)&gt;,
         &#34;task&#34;: {
                     &#34;task_id&#34;: &#34;&lt;task_id&gt;&#34;,
@@ -554,8 +630,8 @@ def createMessageToWorker(job_ID, task_family, task_ID, duration,
 <dd>
 <div class="desc"><p>The final JSON string will be as follows:</p>
 <pre><code class="language-json">{
-    &quot;worker_id&quot;:&lt;worker_id&gt;,
-    &quot;job_id&quot;:&lt;job_id&gt;,
+    &quot;worker_id&quot;: &lt;worker_id&gt;,
+    &quot;job_id&quot;: &lt;job_id&gt;,
     &quot;task family&quot;: &lt;(&quot;map&quot;|&quot;reduce&quot;)&gt;,
     &quot;task&quot;: {
                 &quot;task_id&quot;: &quot;&lt;task_id&gt;&quot;,
@@ -576,8 +652,8 @@ def prettyPrintMessageToMaster(job_ID, task_family, task_ID, start_time,
 
     ```json
     {
-        &#34;worker_id&#34;:&lt;worker_id&gt;,
-        &#34;job_id&#34;:&lt;job_id&gt;,
+        &#34;worker_id&#34;: &lt;worker_id&gt;,
+        &#34;job_id&#34;: &lt;job_id&gt;,
         &#34;task family&#34;: &lt;(&#34;map&#34;|&#34;reduce&#34;)&gt;,
         &#34;task&#34;: {
                     &#34;task_id&#34;: &#34;&lt;task_id&gt;&#34;,

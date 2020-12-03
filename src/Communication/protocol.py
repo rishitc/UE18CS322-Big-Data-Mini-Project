@@ -48,8 +48,8 @@ class YACS_Protocol:
 
         ```json
         {
-            "worker_id":<worker_id>,
-            "job_id":<job_id>,
+            "worker_id": <worker_id>,
+            "job_id": <job_id>,
             "task family": <("map"|"reduce")>,
             "task": {
                         "task_id": "<task_id>",
@@ -122,8 +122,8 @@ class YACS_Protocol:
 
         ```json
         {
-            "worker_id":<worker_id>,
-            "job_id":<job_id>,
+            "worker_id": <worker_id>,
+            "job_id": <job_id>,
             "task family": <("map"|"reduce")>,
             "task": {
                         "task_id": "<task_id>",
@@ -156,6 +156,17 @@ class YACS_Protocol:
 
     @staticmethod
     def connectBackMessage(back_off_time, public_key):
+        """
+        The final JSON string will be as follows:
+
+        ```json
+        {
+            "back_off_time": <Time_In_Seconds>,
+            "public_key": <Public_key_for_key_sharing>
+        }
+        ```
+
+        """
         msg_dict = {}
         msg_dict["back_off_time"] = back_off_time
         msg_dict["public_key"] = public_key.decode()
@@ -163,6 +174,17 @@ class YACS_Protocol:
 
     @staticmethod
     def connectBackResponse(worker_id, enc_pri_key):
+        """
+        The final JSON string will be as follows:
+
+        ```json
+        {
+            "worker_id": <worker_id>,
+            "enc_pri_key": <Encrypted_private_key_for_key_sharing>
+        }
+        ```
+
+        """
         msg_dict = {}
         msg_dict["worker_id"] = worker_id
         msg_dict["enc_pri_key"] = enc_pri_key.decode()
