@@ -1,0 +1,225 @@
+1 generated the key b'Fc75RnHxoinWyXs1XgP0IxWL8SFKYvGQmcXNvqDBVa4='
+Sleeping for 0.5s
+INFO: The task execution pool is empty!
+INFO: Created the Task Execution Pool Poller thread!
+Task received at worker: [{"worker_id": 1, "job_id": "0", "task family": "map", "task": {"task_id": "0_M0", "duration": 4}}]
+{'worker_id': 1, 'job_id': '0', 'task family': 'map', 'task': {'task_id': '0_M0', 'duration': 4, 'start_time': 1607014527.946917, 'end_time': 0}}
+{'0': {'0_M0': {'worker_id': 1, 'job_id': '0', 'task family': 'map', 'task': {'task_id': '0_M0', 'duration': 4, 'start_time': 1607014527.946917, 'end_time': 0}}}}
+<class 'int'>
+4
+<class 'int'>
+3
+<class 'int'>
+2
+<class 'int'>
+1
+INFO: The task execution pool is empty!
+Task sent: {"worker_id": 1, "job_id": "0", "task family": "map", "task": {"task_id": "0_M0", "start_time": 1607014527.946917, "end_time": 1607014531.2833774}}!
+Task received at worker: [{"worker_id": 1, "job_id": "0", "task family": "reduce", "task": {"task_id": "0_R1", "duration": 4}}]
+{'worker_id': 1, 'job_id': '0', 'task family': 'reduce', 'task': {'task_id': '0_R1', 'duration': 4, 'start_time': 1607014532.0865254, 'end_time': 0}}
+{'0': {'0_R1': {'worker_id': 1, 'job_id': '0', 'task family': 'reduce', 'task': {'task_id': '0_R1', 'duration': 4, 'start_time': 1607014532.0865254, 'end_time': 0}}}}
+<class 'int'>
+4
+<class 'int'>
+3
+<class 'int'>
+2
+<class 'int'>
+1
+INFO: The task execution pool is empty!
+Task sent: {"worker_id": 1, "job_id": "0", "task family": "reduce", "task": {"task_id": "0_R1", "start_time": 1607014532.0865254, "end_time": 1607014535.4857802}}!
+Task received at worker: [{"worker_id": 1, "job_id": "1", "task family": "map", "task": {"task_id": "1_M1", "duration": 4}}]
+{'worker_id': 1, 'job_id': '1', 'task family': 'map', 'task': {'task_id': '1_M1', 'duration': 4, 'start_time': 1607014536.7226064, 'end_time': 0}}
+{'1': {'1_M1': {'worker_id': 1, 'job_id': '1', 'task family': 'map', 'task': {'task_id': '1_M1', 'duration': 4, 'start_time': 1607014536.7226064, 'end_time': 0}}}}
+<class 'int'>
+4
+<class 'int'>
+3
+<class 'int'>
+2
+<class 'int'>
+1
+INFO: The task execution pool is empty!
+Task sent: {"worker_id": 1, "job_id": "1", "task family": "map", "task": {"task_id": "1_M1", "start_time": 1607014536.7226064, "end_time": 1607014539.962529}}!
+Task received at worker: [{"worker_id": 1, "job_id": "1", "task family": "reduce", "task": {"task_id": "1_R2", "duration": 4}}]
+{'worker_id': 1, 'job_id': '1', 'task family': 'reduce', 'task': {'task_id': '1_R2', 'duration': 4, 'start_time': 1607014540.2966175, 'end_time': 0}}
+{'1': {'1_R2': {'worker_id': 1, 'job_id': '1', 'task family': 'reduce', 'task': {'task_id': '1_R2', 'duration': 4, 'start_time': 1607014540.2966175, 'end_time': 0}}}}
+<class 'int'>
+4
+<class 'int'>
+3
+<class 'int'>
+2
+<class 'int'>
+1
+INFO: The task execution pool is empty!
+Task sent: {"worker_id": 1, "job_id": "1", "task family": "reduce", "task": {"task_id": "1_R2", "start_time": 1607014540.2966175, "end_time": 1607014544.464885}}!
+Task received at worker: [{"worker_id": 1, "job_id": "2", "task family": "reduce", "task": {"task_id": "2_R0", "duration": 4}}]
+{'worker_id': 1, 'job_id': '2', 'task family': 'reduce', 'task': {'task_id': '2_R0', 'duration': 4, 'start_time': 1607014548.5984473, 'end_time': 0}}
+{'2': {'2_R0': {'worker_id': 1, 'job_id': '2', 'task family': 'reduce', 'task': {'task_id': '2_R0', 'duration': 4, 'start_time': 1607014548.5984473, 'end_time': 0}}}}
+<class 'int'>
+4
+<class 'int'>
+3
+<class 'int'>
+2
+<class 'int'>
+1
+INFO: The task execution pool is empty!
+Task sent: {"worker_id": 1, "job_id": "2", "task family": "reduce", "task": {"task_id": "2_R0", "start_time": 1607014548.5984473, "end_time": 1607014551.9909508}}!
+Task received at worker: [{"worker_id": 1, "job_id": "3", "task family": "map", "task": {"task_id": "3_M0", "duration": 4}}]
+{'worker_id': 1, 'job_id': '3', 'task family': 'map', 'task': {'task_id': '3_M0', 'duration': 4, 'start_time': 1607014553.1658952, 'end_time': 0}}
+{'3': {'3_M0': {'worker_id': 1, 'job_id': '3', 'task family': 'map', 'task': {'task_id': '3_M0', 'duration': 4, 'start_time': 1607014553.1658952, 'end_time': 0}}}}
+<class 'int'>
+4
+<class 'int'>
+3
+<class 'int'>
+2
+<class 'int'>
+1
+INFO: The task execution pool is empty!
+Task sent: {"worker_id": 1, "job_id": "3", "task family": "map", "task": {"task_id": "3_M0", "start_time": 1607014553.1658952, "end_time": 1607014556.5286748}}!
+Task received at worker: [{"worker_id": 1, "job_id": "3", "task family": "reduce", "task": {"task_id": "3_R1", "duration": 4}}]
+{'worker_id': 1, 'job_id': '3', 'task family': 'reduce', 'task': {'task_id': '3_R1', 'duration': 4, 'start_time': 1607014557.2078955, 'end_time': 0}}
+{'3': {'3_R1': {'worker_id': 1, 'job_id': '3', 'task family': 'reduce', 'task': {'task_id': '3_R1', 'duration': 4, 'start_time': 1607014557.2078955, 'end_time': 0}}}}
+<class 'int'>
+4
+<class 'int'>
+3
+<class 'int'>
+2
+<class 'int'>
+1
+INFO: The task execution pool is empty!
+Task sent: {"worker_id": 1, "job_id": "3", "task family": "reduce", "task": {"task_id": "3_R1", "start_time": 1607014557.2078955, "end_time": 1607014561.1227484}}!
+Task received at worker: [{"worker_id": 1, "job_id": "4", "task family": "map", "task": {"task_id": "4_M1", "duration": 4}}]
+{'worker_id': 1, 'job_id': '4', 'task family': 'map', 'task': {'task_id': '4_M1', 'duration': 4, 'start_time': 1607014561.9018135, 'end_time': 0}}
+{'4': {'4_M1': {'worker_id': 1, 'job_id': '4', 'task family': 'map', 'task': {'task_id': '4_M1', 'duration': 4, 'start_time': 1607014561.9018135, 'end_time': 0}}}}
+<class 'int'>
+4
+<class 'int'>
+3
+<class 'int'>
+2
+<class 'int'>
+1
+INFO: The task execution pool is empty!
+Task sent: {"worker_id": 1, "job_id": "4", "task family": "map", "task": {"task_id": "4_M1", "start_time": 1607014561.9018135, "end_time": 1607014565.5045998}}!
+Task received at worker: [{"worker_id": 1, "job_id": "4", "task family": "reduce", "task": {"task_id": "4_R2", "duration": 4}}]
+{'worker_id': 1, 'job_id': '4', 'task family': 'reduce', 'task': {'task_id': '4_R2', 'duration': 4, 'start_time': 1607014565.9503639, 'end_time': 0}}
+{'4': {'4_R2': {'worker_id': 1, 'job_id': '4', 'task family': 'reduce', 'task': {'task_id': '4_R2', 'duration': 4, 'start_time': 1607014565.9503639, 'end_time': 0}}}}
+<class 'int'>
+4
+<class 'int'>
+3
+<class 'int'>
+2
+<class 'int'>
+1
+INFO: The task execution pool is empty!
+Task sent: {"worker_id": 1, "job_id": "4", "task family": "reduce", "task": {"task_id": "4_R2", "start_time": 1607014565.9503639, "end_time": 1607014569.8582234}}!
+Task received at worker: [{"worker_id": 1, "job_id": "5", "task family": "reduce", "task": {"task_id": "5_R0", "duration": 4}}]
+{'worker_id': 1, 'job_id': '5', 'task family': 'reduce', 'task': {'task_id': '5_R0', 'duration': 4, 'start_time': 1607014574.0825865, 'end_time': 0}}
+{'5': {'5_R0': {'worker_id': 1, 'job_id': '5', 'task family': 'reduce', 'task': {'task_id': '5_R0', 'duration': 4, 'start_time': 1607014574.0825865, 'end_time': 0}}}}
+<class 'int'>
+4
+<class 'int'>
+3
+<class 'int'>
+2
+<class 'int'>
+1
+INFO: The task execution pool is empty!
+Task sent: {"worker_id": 1, "job_id": "5", "task family": "reduce", "task": {"task_id": "5_R0", "start_time": 1607014574.0825865, "end_time": 1607014577.4578137}}!
+Task received at worker: [{"worker_id": 1, "job_id": "6", "task family": "map", "task": {"task_id": "6_M0", "duration": 4}}]
+{'worker_id': 1, 'job_id': '6', 'task family': 'map', 'task': {'task_id': '6_M0', 'duration': 4, 'start_time': 1607014578.4733946, 'end_time': 0}}
+{'6': {'6_M0': {'worker_id': 1, 'job_id': '6', 'task family': 'map', 'task': {'task_id': '6_M0', 'duration': 4, 'start_time': 1607014578.4733946, 'end_time': 0}}}}
+<class 'int'>
+4
+<class 'int'>
+3
+<class 'int'>
+2
+<class 'int'>
+1
+INFO: The task execution pool is empty!
+Task sent: {"worker_id": 1, "job_id": "6", "task family": "map", "task": {"task_id": "6_M0", "start_time": 1607014578.4733946, "end_time": 1607014581.7859745}}!
+Task received at worker: [{"worker_id": 1, "job_id": "6", "task family": "reduce", "task": {"task_id": "6_R1", "duration": 4}}]
+{'worker_id': 1, 'job_id': '6', 'task family': 'reduce', 'task': {'task_id': '6_R1', 'duration': 4, 'start_time': 1607014582.593214, 'end_time': 0}}
+{'6': {'6_R1': {'worker_id': 1, 'job_id': '6', 'task family': 'reduce', 'task': {'task_id': '6_R1', 'duration': 4, 'start_time': 1607014582.593214, 'end_time': 0}}}}
+<class 'int'>
+4
+<class 'int'>
+3
+<class 'int'>
+2
+<class 'int'>
+1
+INFO: The task execution pool is empty!
+Task sent: {"worker_id": 1, "job_id": "6", "task family": "reduce", "task": {"task_id": "6_R1", "start_time": 1607014582.593214, "end_time": 1607014586.325578}}!
+Task received at worker: [{"worker_id": 1, "job_id": "7", "task family": "map", "task": {"task_id": "7_M1", "duration": 4}}]
+{'worker_id': 1, 'job_id': '7', 'task family': 'map', 'task': {'task_id': '7_M1', 'duration': 4, 'start_time': 1607014587.0378976, 'end_time': 0}}
+{'7': {'7_M1': {'worker_id': 1, 'job_id': '7', 'task family': 'map', 'task': {'task_id': '7_M1', 'duration': 4, 'start_time': 1607014587.0378976, 'end_time': 0}}}}
+<class 'int'>
+4
+<class 'int'>
+3
+<class 'int'>
+2
+<class 'int'>
+1
+INFO: The task execution pool is empty!
+Task sent: {"worker_id": 1, "job_id": "7", "task family": "map", "task": {"task_id": "7_M1", "start_time": 1607014587.0378976, "end_time": 1607014590.679743}}!
+Task received at worker: [{"worker_id": 1, "job_id": "7", "task family": "reduce", "task": {"task_id": "7_R2", "duration": 4}}]
+{'worker_id': 1, 'job_id': '7', 'task family': 'reduce', 'task': {'task_id': '7_R2', 'duration': 4, 'start_time': 1607014591.1254907, 'end_time': 0}}
+{'7': {'7_R2': {'worker_id': 1, 'job_id': '7', 'task family': 'reduce', 'task': {'task_id': '7_R2', 'duration': 4, 'start_time': 1607014591.1254907, 'end_time': 0}}}}
+<class 'int'>
+4
+<class 'int'>
+3
+<class 'int'>
+2
+<class 'int'>
+1
+INFO: The task execution pool is empty!
+Task sent: {"worker_id": 1, "job_id": "7", "task family": "reduce", "task": {"task_id": "7_R2", "start_time": 1607014591.1254907, "end_time": 1607014595.111334}}!
+Task received at worker: [{"worker_id": 1, "job_id": "8", "task family": "reduce", "task": {"task_id": "8_R0", "duration": 4}}]
+{'worker_id': 1, 'job_id': '8', 'task family': 'reduce', 'task': {'task_id': '8_R0', 'duration': 4, 'start_time': 1607014599.4195702, 'end_time': 0}}
+{'8': {'8_R0': {'worker_id': 1, 'job_id': '8', 'task family': 'reduce', 'task': {'task_id': '8_R0', 'duration': 4, 'start_time': 1607014599.4195702, 'end_time': 0}}}}
+<class 'int'>
+4
+<class 'int'>
+3
+<class 'int'>
+2
+<class 'int'>
+1
+INFO: The task execution pool is empty!
+Task sent: {"worker_id": 1, "job_id": "8", "task family": "reduce", "task": {"task_id": "8_R0", "start_time": 1607014599.4195702, "end_time": 1607014602.7292898}}!
+Task received at worker: [{"worker_id": 1, "job_id": "9", "task family": "map", "task": {"task_id": "9_M0", "duration": 4}}]
+{'worker_id': 1, 'job_id': '9', 'task family': 'map', 'task': {'task_id': '9_M0', 'duration': 4, 'start_time': 1607014604.0309641, 'end_time': 0}}
+{'9': {'9_M0': {'worker_id': 1, 'job_id': '9', 'task family': 'map', 'task': {'task_id': '9_M0', 'duration': 4, 'start_time': 1607014604.0309641, 'end_time': 0}}}}
+<class 'int'>
+4
+<class 'int'>
+3
+<class 'int'>
+2
+<class 'int'>
+1
+INFO: The task execution pool is empty!
+Task sent: {"worker_id": 1, "job_id": "9", "task family": "map", "task": {"task_id": "9_M0", "start_time": 1607014604.0309641, "end_time": 1607014607.5252812}}!
+Task received at worker: [{"worker_id": 1, "job_id": "9", "task family": "reduce", "task": {"task_id": "9_R1", "duration": 4}}]
+{'worker_id': 1, 'job_id': '9', 'task family': 'reduce', 'task': {'task_id': '9_R1', 'duration': 4, 'start_time': 1607014608.3471963, 'end_time': 0}}
+{'9': {'9_R1': {'worker_id': 1, 'job_id': '9', 'task family': 'reduce', 'task': {'task_id': '9_R1', 'duration': 4, 'start_time': 1607014608.3471963, 'end_time': 0}}}}
+<class 'int'>
+4
+<class 'int'>
+3
+<class 'int'>
+2
+<class 'int'>
+1
+INFO: The task execution pool is empty!
+Task sent: {"worker_id": 1, "job_id": "9", "task family": "reduce", "task": {"task_id": "9_R1", "start_time": 1607014608.3471963, "end_time": 1607014611.7651532}}!
