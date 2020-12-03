@@ -39,9 +39,9 @@ class StateTracker:
         self.workerIDs.sort()
 
     def isWorkerFree(self, workerID: int, demand: int = 1) -> bool:
-        """Checks if the worker whose ```worker_id``` key is equal to
-         ```workerID```, has ```demand``` number of free slots or not.
-         By default ```demand``` is set to 1.
+        """```isWorkerFree``` checks if the worker whose ```worker_id``` key
+        is equal to ```workerID```, has ```demand``` number of free slots or
+        not. By default ```demand``` is set to 1.
 
         **param** ```workerID```: ```worker_id``` value of the worker node
         we are checking for free slots
@@ -65,14 +65,17 @@ class StateTracker:
             else False
 
     def showWorkerStates(self) -> None:
+        """```showWorkerStates``` displays the contents of the workerState dictionary
+        onto the standard output (here, CLI), for *debugging purposes*.
+        """
         print(f"{self.workerState=}")
 
     def getWorkerSocket(self, workerID):
         return self.workerState[workerID]["socket"]
 
     def allocateSlot(self, workerID: int, task_count: int = 1) -> None:
-        """Allocates the task to the worker and decrements the number of
-         free slots in that worker.
+        """```allocateSlot``` allocates the task to the worker and decrements
+        the number of free slots in that worker.
 
         **param** ```workerID```: Specifies the worker to which we are
         allocating the task to
@@ -89,7 +92,7 @@ class StateTracker:
         self.workerState[workerID]["free slots"] -= task_count
 
     def freeSlot(self, workerID: int, task_count: int = 1) -> None:
-        """Updates the state of the worker to indicate task completion
+        """```freeSlot``` updates the state of the worker to indicate task completion
         by incrementing the number of free slots on that worker.
 
         **param** ```workerID```: Specifies the worker which has completed its
@@ -108,6 +111,16 @@ class StateTracker:
         self.workerState[workerID]["free slots"] += task_count
 
     def getLeastLoadedWorkerID(self) -> Optional[int]:
+        """```getLeastLoadedWorkerID``` this methods check all the worker
+        states and returns the worker ID of the **least loaded worker**. In the
+        case where there are **no workers with free slots**, then it returns
+        ```None```.
+
+        **return**: Worker ID of the least loaded worker or ```None``` if all
+        the workers are **fully loaded**
+
+        **rtype**: Optional[int]
+        """
         # Variables used to track the least loaded worker
         _least_loaded_workerID = None
         _least_loaded_workerFreeSlots = 0
@@ -125,6 +138,17 @@ class StateTracker:
         return _least_loaded_workerID
 
     def connectBackRequest(self, public_key):
+        """```connectBackRequest``` is used to send a message to all the workers on
+        their *socket for receiving tasks from the master* with the public key
+        information as well as the time after which the individual worker
+        should attempt to connect back to the master.
+
+        **param** ```public_key```: This is the encryption key which is shared
+        with the worker so that they can encrypt their private keys and later
+        send it back to the master, in encrypted format using this public key
+
+        **type** ```public_key```: bytes
+        """
         back_off_time = 0.5
         for workerID in self.workerIDs:
             message = YACS_Protocol \
