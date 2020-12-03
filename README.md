@@ -60,11 +60,23 @@ UE18CS322 Big Data Mini Project Repository
     - Now wait for **~2 seconds** and you will notice that the workers have connected to the master
 7. Now, start a new terminal and run the below command to start the client code:
     ```bash
-    $ python3 "Copy of requests.py" <number_of_(job)_requests>
+    $ python3 "Copy_of_requests.py" <number_of_(job)_requests>
     ```
 8. Now, you'll notice that terminals in which the client, workers and master programs are running; there will be a **lot of debug information being output**. That's fine and it's the expected behaviour as well.
    1. If you notice **any exceptions or errors** being raised during the execution on any of the above mentioned terminals, then please do consider opening an issue on our [project repository](https://github.com/rishitc/UE18CS322-Big-Data-Mini-Project)
 9. 
+
+## How to store logs?
+1. Create a directory under Logs/Without Training Wheels under the naming convention Run_TestNumber_Scheduling Algorithm
+2. Create 4 files having .log extension(Master.log, Worker_1.log,Worker_2.log and Worker_3.log)
+3. Copy the terminal outputs under the respective files
+
+## How to check logs?
+1. Go to the Logs directory and to the Without Training Wheels directory and execute the following task
+2. ```bash
+   $ python3 "check_logs.py" Folder (Run_TestNumber_Scheduling Algorithm)
+   ```
+3. Compare the task count and the individual worker counts
 
 ## How to generate the documentation?
 1. Make sure the BASH script called ```build_docs.sh``` has **execute permission** set for the user you
