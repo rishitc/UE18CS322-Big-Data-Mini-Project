@@ -70,7 +70,14 @@ class StateTracker:
         """
         print(f"{self.workerState=}")
 
-    def getWorkerSocket(self, workerID):
+    def getWorkerSocket(self, workerID) -> socket.socket:
+        """getWorkerSocket [summary]
+
+        :param workerID: [description]
+        :type workerID: [type]
+        :return: [description]
+        :rtype: socket.socket
+        """
         return self.workerState[workerID]["socket"]
 
     def allocateSlot(self, workerID: int, task_count: int = 1) -> None:
