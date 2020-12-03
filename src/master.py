@@ -41,6 +41,40 @@ def error_text(text):
     return f"{TC.fg(1) + TC.attr(1)}ERROR:{TC.attr(0)} {text}"
 
 
+def success_text(text):
+    return f"{TC.fg(2) + TC.attr(1)}SUCCESS:{TC.attr(0)} {text}"
+
+
+def checkJobPoller(jobRequestHandler: JobRequestHandler,
+                   jobUpdateTracker: JobUpdateTracker):
+    isJobDispatchComplete: bool = False
+    _isPrint_1: bool = False
+    isJobUpdatesComplete: bool = False
+    _isPrint_2: bool = False
+
+    while (isJobDispatchComplete and isJobUpdatesComplete) is False:
+        jobRequestHandler.LOCK.acquire()
+        isJobDispatchComplete = not jobRequestHandler.jobRequests
+        jobRequestHandler.LOCK.release()
+
+        if isJobDispatchComplete and not _isPrint_1:
+            master.PRINT_LOCK.acquire()
+            print(success_text("All jobs have been dispatched to the workers!")
+                  )
+            master.PRINT_LOCK.release()
+            _isPrint_1 = True
+
+        jobUpdateTracker.LOCK.acquire()
+        isJobUpdatesComplete = not jobUpdateTracker.jobs_time
+        jobUpdateTracker.LOCK.release()
+
+        if isJobUpdatesComplete and not _isPrint_2:
+            master.PRINT_LOCK.acquire()
+            print(success_text("All job updates have been received!"))
+            master.PRINT_LOCK.release()
+            _isPrint_2 = True
+
+
 def listenForJobRequests(jobRequestHandler: JobRequestHandler,
                          jobUpdateTracker: JobUpdateTracker):
     """```listenForJobRequests``` listens for new job requests from the client
@@ -60,7 +94,7 @@ def listenForJobRequests(jobRequestHandler: JobRequestHandler,
     # Older version of address tuple used: (socket.gethostname(), 5000)
 
     master.PRINT_LOCK.acquire()
-    print("Inside listenForJobRequests")
+    print(info_text("Inside listenForJobRequests"))
     master.PRINT_LOCK.release()
 
     # Setup the master socket to listen for job requests
@@ -103,7 +137,25 @@ def listenForJobRequests(jobRequestHandler: JobRequestHandler,
             print(f"{jobRequestHandler.jobRequests=}")
             master.PRINT_LOCK.release()
 
+            # Close the client connection as we have finished receiving the job
+            # request from the client
             clientConn.close()
+
+            _job_poller_thread = threading.Thread(name="Job Poller Thread",
+                                                  target=checkJobPoller,
+                                                  args=(jobRequestHandler,
+                                                        jobUpdateTracker)
+                                                  )
+            _job_poller_thread.daemon = True
+            _job_poller_thread.start()
+
+            master.PRINT_LOCK.acquire()
+            print(info_text("Created the job poller thread!"))
+            print("You have reached the bottom of the '__main__'")
+            print(threading.enumerate())
+            master.PRINT_LOCK.release()
+
+            _job_poller_thread.join()
 
 
 def workerUpdates(workerSocket: socket.socket,
@@ -359,10 +411,14 @@ if __name__ == "__main__":
             # Store the thread object in a list
             workerUpdateThreads.append(_temp)
 
+        master.PRINT_LOCK.acquire()
         print(f"{workerUpdateThreads=}")
+        master.PRINT_LOCK.release()
 
+    master.PRINT_LOCK.acquire()
     print("You have reached the bottom of the '__main__'")
     print(threading.enumerate())
+    master.PRINT_LOCK.release()
 
     """ Wait for all the threads to finish.
     """
