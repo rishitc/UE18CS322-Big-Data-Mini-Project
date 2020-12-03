@@ -4,6 +4,7 @@ import threading  # For locks
 import socket  # For function parameters
 import queue  # For storing the completed tasks
 from cryptography.fernet import Fernet
+import colored as TC
 
 from Locks.WorkerPrintLock import worker
 from Communication.protocol import YACS_Protocol
@@ -43,6 +44,16 @@ class Worker:
         i.e the dictionary obtained from **createMessageToWorker()** method.
         """
         dec_obj = Fernet(WORKER_KEY)
+
+        _exec_pool_poller_thread = threading\
+            .Thread(name="Task Pool Poller Thread",
+                    target=self.tasksPoolPoller)
+        _exec_pool_poller_thread.daemon = True
+        _exec_pool_poller_thread.start()
+        worker.PRINT_LOCK.acquire()
+        print(Worker.info_text("Created the Task Pool Poller thread!"))
+        worker.PRINT_LOCK.release()
+
         while True:
             # To extract the message sent from master
             taskRequest = taskRequestSocket.recv(MESSAGE_BUFFER_SIZE).decode()
@@ -94,6 +105,8 @@ class Worker:
             worker.PRINT_LOCK.acquire()
             print(self.tasks)
             worker.PRINT_LOCK.release()
+
+        _exec_pool_poller_thread.join()
 
     def simulateWorker(self):
         # While there is a task to execute in the task exec pool
@@ -184,6 +197,27 @@ class Worker:
                 print(f"Task sent: {response_msg}!")
                 worker.PRINT_LOCK.release()
                 # time.sleep(0.01)
+
+    @staticmethod
+    def info_text(text):
+        return f"{TC.fg(6) + TC.attr(1)}INFO:{TC.attr(0)} {text}"
+
+    def tasksPoolPoller(self):
+        isTaskPoolEmpty: bool = False
+        wasTaskPoolEmpty: bool = False
+
+        while True:
+            self.LOCK.acquire()
+            isTaskPoolEmpty = not self.tasks
+            self.LOCK.release()
+
+            if isTaskPoolEmpty and not wasTaskPoolEmpty:
+                worker.PRINT_LOCK.acquire()
+                print(Worker.info_text("The task pool is empty!")
+                      )
+                worker.PRINT_LOCK.release()
+
+            wasTaskPoolEmpty = isTaskPoolEmpty
 
     def __del__(self):
         self.updates_q.join()
