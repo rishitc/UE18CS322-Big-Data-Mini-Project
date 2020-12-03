@@ -11,7 +11,7 @@ from cryptography.fernet import Fernet
 # This lock is used to get access to print onto the standard output
 from Locks.MasterPrintLock import master
 
-from WorkerUtils.WorkerStateTracker import StateTracker
+from MasterUtils.WorkerStateTracker import StateTracker
 from UpdateTracker.JobUpdateTracker import Tracker as JobUpdateTracker
 
 from Scheduler.JobRequests import JobRequestHandler

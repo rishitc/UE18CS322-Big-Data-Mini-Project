@@ -8,7 +8,7 @@ from cryptography.fernet import Fernet
 from Locks.MasterPrintLock import master
 from Communication.protocol import YACS_Protocol
 from Scheduler.JobRequests import JobRequestHandler
-from WorkerUtils.WorkerStateTracker import StateTracker
+from MasterUtils.WorkerStateTracker import StateTracker
 
 
 class RandomScheduler:
