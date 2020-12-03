@@ -193,8 +193,8 @@ Format for how the master sends the task (i.e. a single task) to the worker: (``
 ```
 {
     "worker_id": <worker_id>,
-    "job_id": <job_id>,
-    "task_family": <("map_tasks"|"reduce_tasks")>,
+    "job_id": "<job_id>",
+    "task_family": <("map"|"reduce")>,
     "task": {
                 "task_id": "<task_id>",
                 "duration": <in seconds>
@@ -202,36 +202,34 @@ Format for how the master sends the task (i.e. a single task) to the worker: (``
 }
 ```
 **Note points:**
-- "task": can only contain one task
-- task_family can only have 2 values "map_tasks" or "reduce_tasks"
-- job_id has to be an integer
-- worker_id has to be an integer only
-- task_id has to be a string
+- ```task``` can only contain one task
+- ```task_family``` can only have 2 values "map" or "reduce"
+- ```job_id``` has to be a string
+- ```worker_id``` has to be an integer
+- ```task_id``` has to be a string
 
 
 Format for how the worker responds to the completion of the task (i.e. a single task): (```createMessageToMaster()```)
 ```
 {
-    "worker_id":<worker_id>,
-    "job_id":<job_id>,
-    "task_family": <("map_tasks"|"reduce_tasks")>,
+    "worker_id": <worker_id>,
+    "job_id": "<job_id>",
+    "task_family": <("map"|"reduce")>,
     "task": {
                 "task_id": "<task_id>",
                 "start_time": <arrival_time_of_task_at_Worker>,
-                "end_time": <end_time_of_task_in_Worker>
+                "end_time": <end_time_of_task_at_Worker>
              }
 }
 ```
 **Note points:**
-- "task": can only contain one task
-- job_id has to be an integer
-- Worker_id has to be an integer only
-- task_family can only have 2 values "map_tasks" or "reduce_tasks"
-- "task completion time" has to be an float type
-- "start time":<arrival_time_of_task_at_Worker> has to be a timestamp,
-- "end time":<end_time_of_task_in_Worker>, has to be to be a timestamp
-- "job completion time" has to be a float type
--  task_id has to be a string
+- ```task``` can only contain one task
+- ```job_id``` has to be a string
+- ```worker_id``` has to be an integer
+- ```task_id``` has to be a string
+- ```task_family``` can only have 2 values "map" or "reduce"
+- ```"start_time": <arrival_time_of_task_at_Worker>``` is the time as a floating point number expressed in seconds since the epoch, in UTC
+- ```"end_time": <end_time_of_task_at_Worker>``` is the time as a floating point number expressed in seconds since the epoch, in UTC
 
 ---
 
