@@ -213,7 +213,7 @@ class Worker:
 
             if isTaskPoolEmpty and not wasTaskPoolEmpty:
                 worker.PRINT_LOCK.acquire()
-                print(Worker.info_text("The task pool is empty!")
+                print(Worker.info_text("The task execution pool is empty!")
                       )
                 worker.PRINT_LOCK.release()
 
