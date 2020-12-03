@@ -40,5 +40,5 @@ for ind, workerFile in enumerate(workerFileList):
                 _temp = line.lstrip("Task received at worker:").strip()
                 workerStats[ind]["tasks received"] += len(json.loads(_temp))
 
-for workerStat in workerStats:
-    print(json.dumps(workerStat, indent=4))
+for ind, workerStat in enumerate(workerStats, start=1):
+    print(f"Worker-{ind} Stats:", json.dumps(workerStat, indent=4), sep='\n')
