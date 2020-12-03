@@ -280,7 +280,7 @@ def get_analytics():
     plt.ylabel('Median task and job completion time')
     plt.xticks([r + barWidth for r in range(len(x1))], x1)
     plt.legend()
-
+    plt.show()
 
 def main():
     get_analytics()
