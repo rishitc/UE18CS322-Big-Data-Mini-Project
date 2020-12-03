@@ -92,6 +92,14 @@ class Tracker:
         print(&#34;Job Tracker Initialized&#34;)
 
     def flush(self):
+        &#34;&#34;&#34;```flush``` clears the internal buffer of the *data logging files*.
+        Normally, the files are automatically flushed while closing them.
+        However, a programmer can flush the *data logging files* before
+        closing it by using this ```flush()``` method.
+
+        This method does not require any parameters and it does not return
+        anything.
+        &#34;&#34;&#34;
         self.f_jobs.flush()
         self.f_tasks.flush()
         self.f_workers.flush()
@@ -405,6 +413,14 @@ if __name__ == &#34;__main__&#34;:
         print(&#34;Job Tracker Initialized&#34;)
 
     def flush(self):
+        &#34;&#34;&#34;```flush``` clears the internal buffer of the *data logging files*.
+        Normally, the files are automatically flushed while closing them.
+        However, a programmer can flush the *data logging files* before
+        closing it by using this ```flush()``` method.
+
+        This method does not require any parameters and it does not return
+        anything.
+        &#34;&#34;&#34;
         self.f_jobs.flush()
         self.f_tasks.flush()
         self.f_workers.flush()
@@ -666,12 +682,25 @@ response message</li>
 <span>def <span class="ident">flush</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p><code>flush</code> clears the internal buffer of the <em>data logging files</em>.
+Normally, the files are automatically flushed while closing them.
+However, a programmer can flush the <em>data logging files</em> before
+closing it by using this <code>flush()</code> method.</p>
+<p>This method does not require any parameters and it does not return
+anything.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def flush(self):
+    &#34;&#34;&#34;```flush``` clears the internal buffer of the *data logging files*.
+    Normally, the files are automatically flushed while closing them.
+    However, a programmer can flush the *data logging files* before
+    closing it by using this ```flush()``` method.
+
+    This method does not require any parameters and it does not return
+    anything.
+    &#34;&#34;&#34;
     self.f_jobs.flush()
     self.f_tasks.flush()
     self.f_workers.flush()</code></pre>

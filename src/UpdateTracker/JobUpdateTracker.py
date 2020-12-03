@@ -64,6 +64,14 @@ class Tracker:
         print("Job Tracker Initialized")
 
     def flush(self):
+        """```flush``` clears the internal buffer of the *data logging files*.
+        Normally, the files are automatically flushed while closing them.
+        However, a programmer can flush the *data logging files* before
+        closing it by using this ```flush()``` method.
+
+        This method does not require any parameters and it does not return
+        anything.
+        """
         self.f_jobs.flush()
         self.f_tasks.flush()
         self.f_workers.flush()
