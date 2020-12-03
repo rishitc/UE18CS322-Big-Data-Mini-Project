@@ -8,7 +8,7 @@ from Communication.protocol import YACS_Protocol
 class StateTracker:
     def __init__(self, confObj: dict) -> None:
         """Store the list of the worker dictionaries in a new dictionary
-         indexed by the ```worker_id``` key.
+         indexed using the ```worker_id``` as key.
 
         **param** ```configObj```: Dictionary got from loading in the json
         data stored in the worker configuration file
@@ -70,13 +70,19 @@ class StateTracker:
         """
         print(f"{self.workerState=}")
 
-    def getWorkerSocket(self, workerID) -> socket.socket:
-        """getWorkerSocket [summary]
+    def getWorkerSocket(self, workerID: int) -> socket.socket:
+        """```getWorkerSocket``` returns the socket which is used to send tasks to
+        the worker with ID ```workerID```.
 
-        :param workerID: [description]
-        :type workerID: [type]
-        :return: [description]
-        :rtype: socket.socket
+        **param** ```workerID```: ID of the worker for whom the socket is
+        desired
+
+        **type** ```workerID```: int
+
+        **return** The socket which is used to send tasks to
+        the worker with ID ```workerID```
+
+        **rtype** socket.socket
         """
         return self.workerState[workerID]["socket"]
 
@@ -166,7 +172,7 @@ class StateTracker:
             back_off_time += 0.5
 
     def __del__(self):
-        """```__del__``` Closes all task dispatch sockets to the workers.
+        """```__del__``` closes all task dispatch sockets to the workers.
         """
         for workerID in self.workerIDs:
             self.workerState[workerID]["socket"].close()
