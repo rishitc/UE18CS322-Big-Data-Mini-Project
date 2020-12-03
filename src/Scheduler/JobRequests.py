@@ -24,9 +24,10 @@ class JobRequestHandler:
         ```addJobRequest``` adds the job request's specification to
         the handler object's ```jobRequests``` dictionary.
 
-        :param requestSpecs: Dictionary got after converting the incoming
-        JSON request string into a dictionary
-        :type requestSpecs: dict
+        **param** ```requestSpecs```: Dictionary got after converting the
+        incoming JSON request string into a dictionary
+
+        **type** ```requestSpecs```: dict
         """
         _JOB_ID: int = requestSpecs["job_id"]
         self.jobRequests[_JOB_ID] = {
