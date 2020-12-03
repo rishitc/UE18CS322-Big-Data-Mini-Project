@@ -9,6 +9,10 @@ UE18CS322 Big Data Mini Project Repository
     ```bash
     $ pip install -r requirements.txt
     ```
+    - After running this command, run the below command as well. This is needed so that the analytics plots display properly:
+        ```bash
+        $ jupyter nbextension enable --py widgetsnbextension
+        ```
 3. Add the src folder to your ```PYTHONPATH``` environment variable by following steps:
    1. Open your terminal and in that, navigate into the ```src``` folder of the project
    2. Once in the ```src``` folder run the command
@@ -258,3 +262,4 @@ Format for how the worker responds to the completion of the task (i.e. a single 
 1. [Socket library, Python Docs](https://docs.python.org/3/library/socket.html)
 1. [Setting up your PYTHONPATH](https://bic-berkeley.github.io/psych-214-fall-2016/using_pythonpath.html)
 1. [Working with Threading module in Python](https://docs.python.org/3/library/threading.html)
+1. [Jupyter Widgets installation](https://ipywidgets.readthedocs.io/en/latest/user_install.html)
