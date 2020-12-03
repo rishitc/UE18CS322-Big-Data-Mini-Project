@@ -36,6 +36,11 @@ def createWorkerSocket(task_request_addr):
     to connect worker to its designated port in order to listen for
     task requests from the master.
 
+    **param** ```task_request_addr```: Tuple containing the address to which
+    the socket object should bind to
+
+    **type** ```task_request_addr```: Tuple
+
     ```return```: Socket object
 
     ```rtype```: socket.socket
@@ -49,6 +54,11 @@ def createWorkerSocket(task_request_addr):
 def createMasterSocket(task_complete_addr):
     """ ```createSocket``` returns a socket that will be used
     to connect to the master.
+
+    **param** ```task_complete_addr```: Tuple containing the address to which
+    the socket object should connect to
+
+    **type** ```task_complete_addr```: Tuple
 
     ```return```: Socket object
 
