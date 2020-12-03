@@ -17,7 +17,7 @@ class YACS_Protocol:
         {
             "worker_id": <worker_id>,
             "job_id": <job_id>,
-            "task family": <("map"|"reduce")>,
+            "task_family": <("map"|"reduce")>,
             "task": {
                         "task_id": "<task_id>",
                         "duration": <in seconds>
@@ -33,7 +33,7 @@ class YACS_Protocol:
         msg_dict = {}
         msg_dict["worker_id"] = worker_ID
         msg_dict["job_id"] = job_ID
-        msg_dict["task family"] = task_family
+        msg_dict["task_family"] = task_family
         msg_dict["task"] = {
                                 "task_id": task_ID,
                                 "duration": duration
@@ -50,7 +50,7 @@ class YACS_Protocol:
         {
             "worker_id": <worker_id>,
             "job_id": <job_id>,
-            "task family": <("map"|"reduce")>,
+            "task_family": <("map"|"reduce")>,
             "task": {
                         "task_id": "<task_id>",
                         "start_time": <arrival_time_of_task_at_Worker>,
@@ -67,7 +67,7 @@ class YACS_Protocol:
         msg_dict = {}
         msg_dict["worker_id"] = worker_ID
         msg_dict["job_id"] = job_ID
-        msg_dict["task family"] = task_family
+        msg_dict["task_family"] = task_family
         msg_dict["task"] = {
                                 "task_id": task_ID,
                                 "start_time": start_time,
@@ -86,7 +86,7 @@ class YACS_Protocol:
         {
             "worker_id": <worker_id>,
             "job_id": <job_id>,
-            "task family": <("map"|"reduce")>,
+            "task_family": <("map"|"reduce")>,
             "task": {
                         "task_id": "<task_id>",
                         "duration": <in seconds>
@@ -102,7 +102,7 @@ class YACS_Protocol:
         msg_dict = {}
         msg_dict["worker_id"] = worker_ID
         msg_dict["job_id"] = job_ID
-        msg_dict["task family"] = task_family
+        msg_dict["task_family"] = task_family
         msg_dict["task"] = {
                                 "task_id": task_ID,
                                 "duration": duration
@@ -124,7 +124,7 @@ class YACS_Protocol:
         {
             "worker_id": <worker_id>,
             "job_id": <job_id>,
-            "task family": <("map"|"reduce")>,
+            "task_family": <("map"|"reduce")>,
             "task": {
                         "task_id": "<task_id>",
                         "start_time": <arrival_time_of_task_at_Worker>,
@@ -141,7 +141,7 @@ class YACS_Protocol:
         msg_dict = {}
         msg_dict["worker_id"] = worker_ID
         msg_dict["job_id"] = job_ID
-        msg_dict["task family"] = task_family
+        msg_dict["task_family"] = task_family
         msg_dict["task"] = {
                                 "task_id": task_ID,
                                 "start_time": start_time,
