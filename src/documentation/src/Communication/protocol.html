@@ -45,7 +45,7 @@ class YACS_Protocol:
         {
             &#34;worker_id&#34;: &lt;worker_id&gt;,
             &#34;job_id&#34;: &lt;job_id&gt;,
-            &#34;task family&#34;: &lt;(&#34;map&#34;|&#34;reduce&#34;)&gt;,
+            &#34;task_family&#34;: &lt;(&#34;map&#34;|&#34;reduce&#34;)&gt;,
             &#34;task&#34;: {
                         &#34;task_id&#34;: &#34;&lt;task_id&gt;&#34;,
                         &#34;duration&#34;: &lt;in seconds&gt;
@@ -61,7 +61,7 @@ class YACS_Protocol:
         msg_dict = {}
         msg_dict[&#34;worker_id&#34;] = worker_ID
         msg_dict[&#34;job_id&#34;] = job_ID
-        msg_dict[&#34;task family&#34;] = task_family
+        msg_dict[&#34;task_family&#34;] = task_family
         msg_dict[&#34;task&#34;] = {
                                 &#34;task_id&#34;: task_ID,
                                 &#34;duration&#34;: duration
@@ -78,7 +78,7 @@ class YACS_Protocol:
         {
             &#34;worker_id&#34;: &lt;worker_id&gt;,
             &#34;job_id&#34;: &lt;job_id&gt;,
-            &#34;task family&#34;: &lt;(&#34;map&#34;|&#34;reduce&#34;)&gt;,
+            &#34;task_family&#34;: &lt;(&#34;map&#34;|&#34;reduce&#34;)&gt;,
             &#34;task&#34;: {
                         &#34;task_id&#34;: &#34;&lt;task_id&gt;&#34;,
                         &#34;start_time&#34;: &lt;arrival_time_of_task_at_Worker&gt;,
@@ -95,7 +95,7 @@ class YACS_Protocol:
         msg_dict = {}
         msg_dict[&#34;worker_id&#34;] = worker_ID
         msg_dict[&#34;job_id&#34;] = job_ID
-        msg_dict[&#34;task family&#34;] = task_family
+        msg_dict[&#34;task_family&#34;] = task_family
         msg_dict[&#34;task&#34;] = {
                                 &#34;task_id&#34;: task_ID,
                                 &#34;start_time&#34;: start_time,
@@ -114,7 +114,7 @@ class YACS_Protocol:
         {
             &#34;worker_id&#34;: &lt;worker_id&gt;,
             &#34;job_id&#34;: &lt;job_id&gt;,
-            &#34;task family&#34;: &lt;(&#34;map&#34;|&#34;reduce&#34;)&gt;,
+            &#34;task_family&#34;: &lt;(&#34;map&#34;|&#34;reduce&#34;)&gt;,
             &#34;task&#34;: {
                         &#34;task_id&#34;: &#34;&lt;task_id&gt;&#34;,
                         &#34;duration&#34;: &lt;in seconds&gt;
@@ -130,7 +130,7 @@ class YACS_Protocol:
         msg_dict = {}
         msg_dict[&#34;worker_id&#34;] = worker_ID
         msg_dict[&#34;job_id&#34;] = job_ID
-        msg_dict[&#34;task family&#34;] = task_family
+        msg_dict[&#34;task_family&#34;] = task_family
         msg_dict[&#34;task&#34;] = {
                                 &#34;task_id&#34;: task_ID,
                                 &#34;duration&#34;: duration
@@ -152,7 +152,7 @@ class YACS_Protocol:
         {
             &#34;worker_id&#34;: &lt;worker_id&gt;,
             &#34;job_id&#34;: &lt;job_id&gt;,
-            &#34;task family&#34;: &lt;(&#34;map&#34;|&#34;reduce&#34;)&gt;,
+            &#34;task_family&#34;: &lt;(&#34;map&#34;|&#34;reduce&#34;)&gt;,
             &#34;task&#34;: {
                         &#34;task_id&#34;: &#34;&lt;task_id&gt;&#34;,
                         &#34;start_time&#34;: &lt;arrival_time_of_task_at_Worker&gt;,
@@ -169,7 +169,7 @@ class YACS_Protocol:
         msg_dict = {}
         msg_dict[&#34;worker_id&#34;] = worker_ID
         msg_dict[&#34;job_id&#34;] = job_ID
-        msg_dict[&#34;task family&#34;] = task_family
+        msg_dict[&#34;task_family&#34;] = task_family
         msg_dict[&#34;task&#34;] = {
                                 &#34;task_id&#34;: task_ID,
                                 &#34;start_time&#34;: start_time,
@@ -293,7 +293,7 @@ class messageToMasterType(TypedDict):
         {
             &#34;worker_id&#34;: &lt;worker_id&gt;,
             &#34;job_id&#34;: &lt;job_id&gt;,
-            &#34;task family&#34;: &lt;(&#34;map&#34;|&#34;reduce&#34;)&gt;,
+            &#34;task_family&#34;: &lt;(&#34;map&#34;|&#34;reduce&#34;)&gt;,
             &#34;task&#34;: {
                         &#34;task_id&#34;: &#34;&lt;task_id&gt;&#34;,
                         &#34;duration&#34;: &lt;in seconds&gt;
@@ -309,7 +309,7 @@ class messageToMasterType(TypedDict):
         msg_dict = {}
         msg_dict[&#34;worker_id&#34;] = worker_ID
         msg_dict[&#34;job_id&#34;] = job_ID
-        msg_dict[&#34;task family&#34;] = task_family
+        msg_dict[&#34;task_family&#34;] = task_family
         msg_dict[&#34;task&#34;] = {
                                 &#34;task_id&#34;: task_ID,
                                 &#34;duration&#34;: duration
@@ -326,7 +326,7 @@ class messageToMasterType(TypedDict):
         {
             &#34;worker_id&#34;: &lt;worker_id&gt;,
             &#34;job_id&#34;: &lt;job_id&gt;,
-            &#34;task family&#34;: &lt;(&#34;map&#34;|&#34;reduce&#34;)&gt;,
+            &#34;task_family&#34;: &lt;(&#34;map&#34;|&#34;reduce&#34;)&gt;,
             &#34;task&#34;: {
                         &#34;task_id&#34;: &#34;&lt;task_id&gt;&#34;,
                         &#34;start_time&#34;: &lt;arrival_time_of_task_at_Worker&gt;,
@@ -343,7 +343,7 @@ class messageToMasterType(TypedDict):
         msg_dict = {}
         msg_dict[&#34;worker_id&#34;] = worker_ID
         msg_dict[&#34;job_id&#34;] = job_ID
-        msg_dict[&#34;task family&#34;] = task_family
+        msg_dict[&#34;task_family&#34;] = task_family
         msg_dict[&#34;task&#34;] = {
                                 &#34;task_id&#34;: task_ID,
                                 &#34;start_time&#34;: start_time,
@@ -362,7 +362,7 @@ class messageToMasterType(TypedDict):
         {
             &#34;worker_id&#34;: &lt;worker_id&gt;,
             &#34;job_id&#34;: &lt;job_id&gt;,
-            &#34;task family&#34;: &lt;(&#34;map&#34;|&#34;reduce&#34;)&gt;,
+            &#34;task_family&#34;: &lt;(&#34;map&#34;|&#34;reduce&#34;)&gt;,
             &#34;task&#34;: {
                         &#34;task_id&#34;: &#34;&lt;task_id&gt;&#34;,
                         &#34;duration&#34;: &lt;in seconds&gt;
@@ -378,7 +378,7 @@ class messageToMasterType(TypedDict):
         msg_dict = {}
         msg_dict[&#34;worker_id&#34;] = worker_ID
         msg_dict[&#34;job_id&#34;] = job_ID
-        msg_dict[&#34;task family&#34;] = task_family
+        msg_dict[&#34;task_family&#34;] = task_family
         msg_dict[&#34;task&#34;] = {
                                 &#34;task_id&#34;: task_ID,
                                 &#34;duration&#34;: duration
@@ -400,7 +400,7 @@ class messageToMasterType(TypedDict):
         {
             &#34;worker_id&#34;: &lt;worker_id&gt;,
             &#34;job_id&#34;: &lt;job_id&gt;,
-            &#34;task family&#34;: &lt;(&#34;map&#34;|&#34;reduce&#34;)&gt;,
+            &#34;task_family&#34;: &lt;(&#34;map&#34;|&#34;reduce&#34;)&gt;,
             &#34;task&#34;: {
                         &#34;task_id&#34;: &#34;&lt;task_id&gt;&#34;,
                         &#34;start_time&#34;: &lt;arrival_time_of_task_at_Worker&gt;,
@@ -417,7 +417,7 @@ class messageToMasterType(TypedDict):
         msg_dict = {}
         msg_dict[&#34;worker_id&#34;] = worker_ID
         msg_dict[&#34;job_id&#34;] = job_ID
-        msg_dict[&#34;task family&#34;] = task_family
+        msg_dict[&#34;task_family&#34;] = task_family
         msg_dict[&#34;task&#34;] = {
                                 &#34;task_id&#34;: task_ID,
                                 &#34;start_time&#34;: start_time,
@@ -542,7 +542,7 @@ def connectBackResponse(worker_id, enc_pri_key):
 <pre><code class="language-json">{
     &quot;worker_id&quot;: &lt;worker_id&gt;,
     &quot;job_id&quot;: &lt;job_id&gt;,
-    &quot;task family&quot;: &lt;(&quot;map&quot;|&quot;reduce&quot;)&gt;,
+    &quot;task_family&quot;: &lt;(&quot;map&quot;|&quot;reduce&quot;)&gt;,
     &quot;task&quot;: {
                 &quot;task_id&quot;: &quot;&lt;task_id&gt;&quot;,
                 &quot;start_time&quot;: &lt;arrival_time_of_task_at_Worker&gt;,
@@ -564,7 +564,7 @@ def createMessageToMaster(job_ID, task_family, task_ID, start_time,
     {
         &#34;worker_id&#34;: &lt;worker_id&gt;,
         &#34;job_id&#34;: &lt;job_id&gt;,
-        &#34;task family&#34;: &lt;(&#34;map&#34;|&#34;reduce&#34;)&gt;,
+        &#34;task_family&#34;: &lt;(&#34;map&#34;|&#34;reduce&#34;)&gt;,
         &#34;task&#34;: {
                     &#34;task_id&#34;: &#34;&lt;task_id&gt;&#34;,
                     &#34;start_time&#34;: &lt;arrival_time_of_task_at_Worker&gt;,
@@ -581,7 +581,7 @@ def createMessageToMaster(job_ID, task_family, task_ID, start_time,
     msg_dict = {}
     msg_dict[&#34;worker_id&#34;] = worker_ID
     msg_dict[&#34;job_id&#34;] = job_ID
-    msg_dict[&#34;task family&#34;] = task_family
+    msg_dict[&#34;task_family&#34;] = task_family
     msg_dict[&#34;task&#34;] = {
                             &#34;task_id&#34;: task_ID,
                             &#34;start_time&#34;: start_time,
@@ -599,7 +599,7 @@ def createMessageToMaster(job_ID, task_family, task_ID, start_time,
 <pre><code class="language-json">{
     &quot;worker_id&quot;: &lt;worker_id&gt;,
     &quot;job_id&quot;: &lt;job_id&gt;,
-    &quot;task family&quot;: &lt;(&quot;map&quot;|&quot;reduce&quot;)&gt;,
+    &quot;task_family&quot;: &lt;(&quot;map&quot;|&quot;reduce&quot;)&gt;,
     &quot;task&quot;: {
                 &quot;task_id&quot;: &quot;&lt;task_id&gt;&quot;,
                 &quot;duration&quot;: &lt;in seconds&gt;
@@ -620,7 +620,7 @@ def createMessageToWorker(job_ID, task_family, task_ID, duration,
     {
         &#34;worker_id&#34;: &lt;worker_id&gt;,
         &#34;job_id&#34;: &lt;job_id&gt;,
-        &#34;task family&#34;: &lt;(&#34;map&#34;|&#34;reduce&#34;)&gt;,
+        &#34;task_family&#34;: &lt;(&#34;map&#34;|&#34;reduce&#34;)&gt;,
         &#34;task&#34;: {
                     &#34;task_id&#34;: &#34;&lt;task_id&gt;&#34;,
                     &#34;duration&#34;: &lt;in seconds&gt;
@@ -636,7 +636,7 @@ def createMessageToWorker(job_ID, task_family, task_ID, duration,
     msg_dict = {}
     msg_dict[&#34;worker_id&#34;] = worker_ID
     msg_dict[&#34;job_id&#34;] = job_ID
-    msg_dict[&#34;task family&#34;] = task_family
+    msg_dict[&#34;task_family&#34;] = task_family
     msg_dict[&#34;task&#34;] = {
                             &#34;task_id&#34;: task_ID,
                             &#34;duration&#34;: duration
@@ -652,7 +652,7 @@ def createMessageToWorker(job_ID, task_family, task_ID, duration,
 <pre><code class="language-json">{
     &quot;worker_id&quot;: &lt;worker_id&gt;,
     &quot;job_id&quot;: &lt;job_id&gt;,
-    &quot;task family&quot;: &lt;(&quot;map&quot;|&quot;reduce&quot;)&gt;,
+    &quot;task_family&quot;: &lt;(&quot;map&quot;|&quot;reduce&quot;)&gt;,
     &quot;task&quot;: {
                 &quot;task_id&quot;: &quot;&lt;task_id&gt;&quot;,
                 &quot;start_time&quot;: &lt;arrival_time_of_task_at_Worker&gt;,
@@ -674,7 +674,7 @@ def prettyPrintMessageToMaster(job_ID, task_family, task_ID, start_time,
     {
         &#34;worker_id&#34;: &lt;worker_id&gt;,
         &#34;job_id&#34;: &lt;job_id&gt;,
-        &#34;task family&#34;: &lt;(&#34;map&#34;|&#34;reduce&#34;)&gt;,
+        &#34;task_family&#34;: &lt;(&#34;map&#34;|&#34;reduce&#34;)&gt;,
         &#34;task&#34;: {
                     &#34;task_id&#34;: &#34;&lt;task_id&gt;&#34;,
                     &#34;start_time&#34;: &lt;arrival_time_of_task_at_Worker&gt;,
@@ -691,7 +691,7 @@ def prettyPrintMessageToMaster(job_ID, task_family, task_ID, start_time,
     msg_dict = {}
     msg_dict[&#34;worker_id&#34;] = worker_ID
     msg_dict[&#34;job_id&#34;] = job_ID
-    msg_dict[&#34;task family&#34;] = task_family
+    msg_dict[&#34;task_family&#34;] = task_family
     msg_dict[&#34;task&#34;] = {
                             &#34;task_id&#34;: task_ID,
                             &#34;start_time&#34;: start_time,
@@ -713,7 +713,7 @@ def prettyPrintMessageToMaster(job_ID, task_family, task_ID, start_time,
 <pre><code class="language-json">{
     &quot;worker_id&quot;: &lt;worker_id&gt;,
     &quot;job_id&quot;: &lt;job_id&gt;,
-    &quot;task family&quot;: &lt;(&quot;map&quot;|&quot;reduce&quot;)&gt;,
+    &quot;task_family&quot;: &lt;(&quot;map&quot;|&quot;reduce&quot;)&gt;,
     &quot;task&quot;: {
                 &quot;task_id&quot;: &quot;&lt;task_id&gt;&quot;,
                 &quot;duration&quot;: &lt;in seconds&gt;
@@ -734,7 +734,7 @@ def prettyPrintMessageToWorker(job_ID, task_family, task_ID, duration,
     {
         &#34;worker_id&#34;: &lt;worker_id&gt;,
         &#34;job_id&#34;: &lt;job_id&gt;,
-        &#34;task family&#34;: &lt;(&#34;map&#34;|&#34;reduce&#34;)&gt;,
+        &#34;task_family&#34;: &lt;(&#34;map&#34;|&#34;reduce&#34;)&gt;,
         &#34;task&#34;: {
                     &#34;task_id&#34;: &#34;&lt;task_id&gt;&#34;,
                     &#34;duration&#34;: &lt;in seconds&gt;
@@ -750,7 +750,7 @@ def prettyPrintMessageToWorker(job_ID, task_family, task_ID, duration,
     msg_dict = {}
     msg_dict[&#34;worker_id&#34;] = worker_ID
     msg_dict[&#34;job_id&#34;] = job_ID
-    msg_dict[&#34;task family&#34;] = task_family
+    msg_dict[&#34;task_family&#34;] = task_family
     msg_dict[&#34;task&#34;] = {
                             &#34;task_id&#34;: task_ID,
                             &#34;duration&#34;: duration

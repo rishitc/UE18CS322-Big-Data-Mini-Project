@@ -169,7 +169,7 @@ class Tracker:
         # Get the worker id from the response message
         worker_id = parsed_json_request[&#34;worker_id&#34;]
         # Get the task family from the response message
-        task_fam = parsed_json_request[&#34;task family&#34;]
+        task_fam = parsed_json_request[&#34;task_family&#34;]
 
         # Get task start and end time on worker
         task_stats = [parsed_json_request[&#34;task&#34;][&#34;start_time&#34;],
@@ -490,7 +490,7 @@ if __name__ == &#34;__main__&#34;:
         # Get the worker id from the response message
         worker_id = parsed_json_request[&#34;worker_id&#34;]
         # Get the task family from the response message
-        task_fam = parsed_json_request[&#34;task family&#34;]
+        task_fam = parsed_json_request[&#34;task_family&#34;]
 
         # Get task start and end time on worker
         task_stats = [parsed_json_request[&#34;task&#34;][&#34;start_time&#34;],
@@ -793,7 +793,7 @@ tasks:</p>
     # Get the worker id from the response message
     worker_id = parsed_json_request[&#34;worker_id&#34;]
     # Get the task family from the response message
-    task_fam = parsed_json_request[&#34;task family&#34;]
+    task_fam = parsed_json_request[&#34;task_family&#34;]
 
     # Get task start and end time on worker
     task_stats = [parsed_json_request[&#34;task&#34;][&#34;start_time&#34;],
