@@ -44,7 +44,7 @@ class Worker:
         i.e the dictionary obtained from **createMessageToWorker()** method.
         """
         dec_obj = Fernet(WORKER_KEY)
-<<<<<<< Updated upstream
+        # Fernet uses a key for symmetric encryption/decryption
 
         _exec_pool_poller_thread = threading\
             .Thread(name="Task Pool Poller Thread",
@@ -55,9 +55,6 @@ class Worker:
         print(Worker.info_text("Created the Task Pool Poller thread!"))
         worker.PRINT_LOCK.release()
 
-=======
-        # Fernet uses a key for symmetric encryption/decryption
->>>>>>> Stashed changes
         while True:
             # To extract the message sent from master
             taskRequest = taskRequestSocket.recv(MESSAGE_BUFFER_SIZE).decode()
