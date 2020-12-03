@@ -83,7 +83,7 @@ class Worker:
             # Acquiring lock as shared object is accessed
             self.LOCK.acquire()
 
-            # request: messageToWorker() type
+            # request: messageToWorker type
             for request in python_protocol_message:
                 # To obtain key for addition to task exec pool
                 job_in_message = request["job_id"]
