@@ -203,47 +203,70 @@ and create the json message as per the protocol format below
 
 **What format does the protocol implement?**
 
-Format for how the master sends the task (i.e. a single task) to the worker: (```createMessageToWorker()```)
-```
-{
-    "worker_id": <worker_id>,
-    "job_id": "<job_id>",
-    "task_family": <("map"|"reduce")>,
-    "task": {
-                "task_id": "<task_id>",
-                "duration": <in seconds>
-             }
-}
-```
-**Note points:**
-- ```task``` can only contain one task
-- ```task_family``` can only have 2 values "map" or "reduce"
-- ```job_id``` has to be a string
-- ```worker_id``` has to be an integer
-- ```task_id``` has to be a string
+1. Format for how the master sends the *"connect back"* request to the worker: (```connectBackMessage()```)
+    ```json
+            {
+                "back_off_time": <Time_In_Seconds>,
+                "public_key": <Public_key_for_key_sharing>
+            }
+    ```
+    **Note points:**
+    - ```back_off_time``` has to be either a float or an integer
+      - It specifies the time delay after which the worker must try connecting back to the master; namely to the socket for sending *task updates* to the master (here, **port 5001**)
+    - ```public_key``` has to be of string type
+
+2. Format for how the workers send the *"connect back"* response to the master: (```connectBackResponse()```)
+    ```json
+            {
+                "worker_id": <worker_id>,
+                "enc_pri_key": <Encrypted_private_key_for_key_sharing>
+            }
+    ```
+    **Note points:**
+    - ```worker_id``` has to be an integer
+    - ```enc_pri_key``` has to be of string type
+
+3. Format for how the master sends the task (i.e. a single task) to the worker: (```createMessageToWorker()```)
+    ```json
+    {
+        "worker_id": <worker_id>,
+        "job_id": "<job_id>",
+        "task_family": <("map"|"reduce")>,
+        "task": {
+                    "task_id": "<task_id>",
+                    "duration": <in seconds>
+                }
+    }
+    ```
+    **Note points:**
+    - ```task``` can only contain one task
+    - ```task_family``` can only have 2 values "map" or "reduce"
+    - ```job_id``` has to be a string
+    - ```worker_id``` has to be an integer
+    - ```task_id``` has to be a string
 
 
-Format for how the worker responds to the completion of the task (i.e. a single task): (```createMessageToMaster()```)
-```
-{
-    "worker_id": <worker_id>,
-    "job_id": "<job_id>",
-    "task_family": <("map"|"reduce")>,
-    "task": {
-                "task_id": "<task_id>",
-                "start_time": <arrival_time_of_task_at_Worker>,
-                "end_time": <end_time_of_task_at_Worker>
-             }
-}
-```
-**Note points:**
-- ```task``` can only contain one task
-- ```job_id``` has to be a string
-- ```worker_id``` has to be an integer
-- ```task_id``` has to be a string
-- ```task_family``` can only have 2 values "map" or "reduce"
-- ```"start_time": <arrival_time_of_task_at_Worker>``` is the time as a floating point number expressed in seconds since the epoch, in UTC
-- ```"end_time": <end_time_of_task_at_Worker>``` is the time as a floating point number expressed in seconds since the epoch, in UTC
+4. Format for how the worker responds to the completion of the task (i.e. a single task): (```createMessageToMaster()```)
+    ```json
+    {
+        "worker_id": <worker_id>,
+        "job_id": "<job_id>",
+        "task_family": <("map"|"reduce")>,
+        "task": {
+                    "task_id": "<task_id>",
+                    "start_time": <arrival_time_of_task_at_Worker>,
+                    "end_time": <end_time_of_task_at_Worker>
+                }
+    }
+    ```
+    **Note points:**
+    - ```task``` can only contain one task
+    - ```job_id``` has to be a string
+    - ```worker_id``` has to be an integer
+    - ```task_id``` has to be a string
+    - ```task_family``` can only have 2 values "map" or "reduce"
+    - ```"start_time": <arrival_time_of_task_at_Worker>``` is the time as a floating point number expressed in seconds since the epoch, in UTC
+    - ```"end_time": <end_time_of_task_at_Worker>``` is the time as a floating point number expressed in seconds since the epoch, in UTC
 
 ---
 
@@ -252,7 +275,7 @@ Format for how the worker responds to the completion of the task (i.e. a single 
     - A for-loop with ```time.sleep()``` for one second will make sure the loop progresses for 1 iteration per second and every iteration decrease the remaining_duration value of each executing task in the execution pool by 1 until it reaches 0
     - This is essentially the workflow (d) in the slide 19
 1. Send message using the ```YACS_Protocol``` of the details of the task completion
-1. Other useful slides while creating the worker code: 8, 9, 18, 21, 24, 25'
+1. Other useful slides while creating the worker code: 8, 9, 18, 21, 24, 25
 1. Connect to the master to share updates of on going tasks
 1. Wait for the master to connect to worker, so that the master can start sending tasks to it
 
