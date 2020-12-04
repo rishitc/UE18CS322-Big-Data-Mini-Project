@@ -35,6 +35,11 @@ from Locks.WorkerPrintLock import worker
 
 
 class YACS_Protocol:
+    &#34;&#34;&#34;**The Communication protocol** (```JSON``` based) between the master and
+    the worker which will take the various parameters of the message as input
+    and create the JSON message as per the protocol format described in our
+    project specifications on our [GitHub Page](https://bit.ly/3lHP1sZ).
+    &#34;&#34;&#34;
     @staticmethod
     def createMessageToWorker(job_ID, task_family, task_ID, duration,
                               worker_ID):
@@ -321,12 +326,20 @@ class messageToMasterType(TypedDict):
 <span>class <span class="ident">YACS_Protocol</span></span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p><strong>The Communication protocol</strong> (<code>JSON</code> based) between the master and
+the worker which will take the various parameters of the message as input
+and create the JSON message as per the protocol format described in our
+project specifications on our <a href="https://bit.ly/3lHP1sZ">GitHub Page</a>.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class YACS_Protocol:
+    &#34;&#34;&#34;**The Communication protocol** (```JSON``` based) between the master and
+    the worker which will take the various parameters of the message as input
+    and create the JSON message as per the protocol format described in our
+    project specifications on our [GitHub Page](https://bit.ly/3lHP1sZ).
+    &#34;&#34;&#34;
     @staticmethod
     def createMessageToWorker(job_ID, task_family, task_ID, duration,
                               worker_ID):

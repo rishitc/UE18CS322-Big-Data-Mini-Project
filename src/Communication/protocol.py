@@ -7,6 +7,11 @@ from Locks.WorkerPrintLock import worker
 
 
 class YACS_Protocol:
+    """**The Communication protocol** (```JSON``` based) between the master and
+    the worker which will take the various parameters of the message as input
+    and create the JSON message as per the protocol format described in our
+    project specifications on our [GitHub Page](https://bit.ly/3lHP1sZ).
+    """
     @staticmethod
     def createMessageToWorker(job_ID, task_family, task_ID, duration,
                               worker_ID):

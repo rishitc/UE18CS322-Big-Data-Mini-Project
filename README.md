@@ -182,7 +182,7 @@ on that machine
 
 ---
 
-### Rishit: (Scheduling and Task execution request)
+### Rishit: (Scheduling, Communication protocol and Task execution request)
 1. Finish the 3 Scheduling algorithms to select the worker machine to run the task on
 2. Sending the job to the workers using the message creation as per the ```YACS_Protocol``` class
 3. Adding encryption and key-sharing using the *SSL model* between the master and worker machines
@@ -195,8 +195,7 @@ on that machine
 10. Create the scripts to check the logs
 11. Object to track the pending job requests and return tasks as per the map-reduce
    dependency
-11. Create the Communication protocol (JSON based) between master and worker nodes which will take the various parameters of the message as input
-and create the json message as per the protocol format below
+11. Create the Communication protocol (JSON based) between the master and the worker nodes which will take the various parameters of the message as input and create the JSON message as per the protocol format given below
     - The class-methods of the class to create the message can be called as createMessageToWorker() and createMessageToMaster()
         - This method returns the required JSON string
     - Call the class as ```YACS_Protocol```
@@ -281,7 +280,7 @@ and create the json message as per the protocol format below
 
 ---
 
-### Akhil: (Logging and Communication protocol)
+### Akhil: (Logging and Analysis)
 1. Work on the job tracker (i.e. ```JobTracker``` object) for tracking job completions time stamps
    1. ```isMapComplete(jobID)``` to check if all the map tasks of a job have been completed
    2. ```isReduceComplete(jobID)``` to check if all the reduce tasks of a job have been completed
