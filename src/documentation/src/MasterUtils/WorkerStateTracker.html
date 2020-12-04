@@ -103,14 +103,15 @@ class StateTracker:
             else False
 
     def showWorkerStates(self) -&gt; None:
-        &#34;&#34;&#34;```showWorkerStates``` displays the contents of the workerState dictionary
-        onto the standard output (here, CLI), for *debugging purposes*.
+        &#34;&#34;&#34;```showWorkerStates``` displays the contents of the workerState
+        dictionary onto the standard output (here, CLI), for *debugging
+        purposes*.
         &#34;&#34;&#34;
         print(f&#34;{self.workerState=}&#34;)
 
     def getWorkerSocket(self, workerID: int) -&gt; socket.socket:
-        &#34;&#34;&#34;```getWorkerSocket``` returns the socket which is used to send tasks to
-        the worker with ID ```workerID```.
+        &#34;&#34;&#34;```getWorkerSocket``` returns the socket which is used to send
+        tasks to the worker with ID ```workerID```.
 
         **param** ```workerID```: ID of the worker for whom the socket is
         desired
@@ -143,8 +144,8 @@ class StateTracker:
         self.workerState[workerID][&#34;free slots&#34;] -= task_count
 
     def freeSlot(self, workerID: int, task_count: int = 1) -&gt; None:
-        &#34;&#34;&#34;```freeSlot``` updates the state of the worker to indicate task completion
-        by incrementing the number of free slots on that worker.
+        &#34;&#34;&#34;```freeSlot``` updates the state of the worker to indicate task
+        completion by incrementing the number of free slots on that worker.
 
         **param** ```workerID```: Specifies the worker which has completed its
         task
@@ -189,10 +190,10 @@ class StateTracker:
         return _least_loaded_workerID
 
     def connectBackRequest(self, public_key):
-        &#34;&#34;&#34;```connectBackRequest``` is used to send a message to all the workers on
-        their *socket for receiving tasks from the master* with the public key
-        information as well as the time after which the individual worker
-        should attempt to connect back to the master.
+        &#34;&#34;&#34;```connectBackRequest``` is used to send a message to all the
+        workers on their *socket for receiving tasks from the master* with
+        the public key information as well as the time after which the
+        individual worker should attempt to connect back to the master.
 
         **param** ```public_key```: This is the encryption key which is shared
         with the worker so that they can encrypt their private keys and later
@@ -308,14 +309,15 @@ data stored in the worker configuration file</p>
             else False
 
     def showWorkerStates(self) -&gt; None:
-        &#34;&#34;&#34;```showWorkerStates``` displays the contents of the workerState dictionary
-        onto the standard output (here, CLI), for *debugging purposes*.
+        &#34;&#34;&#34;```showWorkerStates``` displays the contents of the workerState
+        dictionary onto the standard output (here, CLI), for *debugging
+        purposes*.
         &#34;&#34;&#34;
         print(f&#34;{self.workerState=}&#34;)
 
     def getWorkerSocket(self, workerID: int) -&gt; socket.socket:
-        &#34;&#34;&#34;```getWorkerSocket``` returns the socket which is used to send tasks to
-        the worker with ID ```workerID```.
+        &#34;&#34;&#34;```getWorkerSocket``` returns the socket which is used to send
+        tasks to the worker with ID ```workerID```.
 
         **param** ```workerID```: ID of the worker for whom the socket is
         desired
@@ -348,8 +350,8 @@ data stored in the worker configuration file</p>
         self.workerState[workerID][&#34;free slots&#34;] -= task_count
 
     def freeSlot(self, workerID: int, task_count: int = 1) -&gt; None:
-        &#34;&#34;&#34;```freeSlot``` updates the state of the worker to indicate task completion
-        by incrementing the number of free slots on that worker.
+        &#34;&#34;&#34;```freeSlot``` updates the state of the worker to indicate task
+        completion by incrementing the number of free slots on that worker.
 
         **param** ```workerID```: Specifies the worker which has completed its
         task
@@ -394,10 +396,10 @@ data stored in the worker configuration file</p>
         return _least_loaded_workerID
 
     def connectBackRequest(self, public_key):
-        &#34;&#34;&#34;```connectBackRequest``` is used to send a message to all the workers on
-        their *socket for receiving tasks from the master* with the public key
-        information as well as the time after which the individual worker
-        should attempt to connect back to the master.
+        &#34;&#34;&#34;```connectBackRequest``` is used to send a message to all the
+        workers on their *socket for receiving tasks from the master* with
+        the public key information as well as the time after which the
+        individual worker should attempt to connect back to the master.
 
         **param** ```public_key```: This is the encryption key which is shared
         with the worker so that they can encrypt their private keys and later
@@ -461,10 +463,10 @@ allocated the worker, defaults to 1</p>
 <span>def <span class="ident">connectBackRequest</span></span>(<span>self, public_key)</span>
 </code></dt>
 <dd>
-<div class="desc"><p><code>connectBackRequest</code> is used to send a message to all the workers on
-their <em>socket for receiving tasks from the master</em> with the public key
-information as well as the time after which the individual worker
-should attempt to connect back to the master.</p>
+<div class="desc"><p><code>connectBackRequest</code> is used to send a message to all the
+workers on their <em>socket for receiving tasks from the master</em> with
+the public key information as well as the time after which the
+individual worker should attempt to connect back to the master.</p>
 <p><strong>param</strong> <code>public_key</code>: This is the encryption key which is shared
 with the worker so that they can encrypt their private keys and later
 send it back to the master, in encrypted format using this public key</p>
@@ -474,10 +476,10 @@ send it back to the master, in encrypted format using this public key</p>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def connectBackRequest(self, public_key):
-    &#34;&#34;&#34;```connectBackRequest``` is used to send a message to all the workers on
-    their *socket for receiving tasks from the master* with the public key
-    information as well as the time after which the individual worker
-    should attempt to connect back to the master.
+    &#34;&#34;&#34;```connectBackRequest``` is used to send a message to all the
+    workers on their *socket for receiving tasks from the master* with
+    the public key information as well as the time after which the
+    individual worker should attempt to connect back to the master.
 
     **param** ```public_key```: This is the encryption key which is shared
     with the worker so that they can encrypt their private keys and later
@@ -499,8 +501,8 @@ send it back to the master, in encrypted format using this public key</p>
 <span>def <span class="ident">freeSlot</span></span>(<span>self, workerID: int, task_count: int = 1) ‑> NoneType</span>
 </code></dt>
 <dd>
-<div class="desc"><p><code>freeSlot</code> updates the state of the worker to indicate task completion
-by incrementing the number of free slots on that worker.</p>
+<div class="desc"><p><code>freeSlot</code> updates the state of the worker to indicate task
+completion by incrementing the number of free slots on that worker.</p>
 <p><strong>param</strong> <code>workerID</code>: Specifies the worker which has completed its
 task</p>
 <p><strong>type</strong> <code>workerID</code>: int</p>
@@ -512,8 +514,8 @@ the worker, defaults to 1</p>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def freeSlot(self, workerID: int, task_count: int = 1) -&gt; None:
-    &#34;&#34;&#34;```freeSlot``` updates the state of the worker to indicate task completion
-    by incrementing the number of free slots on that worker.
+    &#34;&#34;&#34;```freeSlot``` updates the state of the worker to indicate task
+    completion by incrementing the number of free slots on that worker.
 
     **param** ```workerID```: Specifies the worker which has completed its
     task
@@ -578,8 +580,8 @@ the workers are <strong>fully loaded</strong></p>
 <span>def <span class="ident">getWorkerSocket</span></span>(<span>self, workerID: int) ‑> socket.socket</span>
 </code></dt>
 <dd>
-<div class="desc"><p><code>getWorkerSocket</code> returns the socket which is used to send tasks to
-the worker with ID <code>workerID</code>.</p>
+<div class="desc"><p><code>getWorkerSocket</code> returns the socket which is used to send
+tasks to the worker with ID <code>workerID</code>.</p>
 <p><strong>param</strong> <code>workerID</code>: ID of the worker for whom the socket is
 desired</p>
 <p><strong>type</strong> <code>workerID</code>: int</p>
@@ -591,8 +593,8 @@ the worker with ID <code>workerID</code></p>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def getWorkerSocket(self, workerID: int) -&gt; socket.socket:
-    &#34;&#34;&#34;```getWorkerSocket``` returns the socket which is used to send tasks to
-    the worker with ID ```workerID```.
+    &#34;&#34;&#34;```getWorkerSocket``` returns the socket which is used to send
+    tasks to the worker with ID ```workerID```.
 
     **param** ```workerID```: ID of the worker for whom the socket is
     desired
@@ -662,15 +664,17 @@ defaults to 1</p>
 <span>def <span class="ident">showWorkerStates</span></span>(<span>self) ‑> NoneType</span>
 </code></dt>
 <dd>
-<div class="desc"><p><code>showWorkerStates</code> displays the contents of the workerState dictionary
-onto the standard output (here, CLI), for <em>debugging purposes</em>.</p></div>
+<div class="desc"><p><code>showWorkerStates</code> displays the contents of the workerState
+dictionary onto the standard output (here, CLI), for <em>debugging
+purposes</em>.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def showWorkerStates(self) -&gt; None:
-    &#34;&#34;&#34;```showWorkerStates``` displays the contents of the workerState dictionary
-    onto the standard output (here, CLI), for *debugging purposes*.
+    &#34;&#34;&#34;```showWorkerStates``` displays the contents of the workerState
+    dictionary onto the standard output (here, CLI), for *debugging
+    purposes*.
     &#34;&#34;&#34;
     print(f&#34;{self.workerState=}&#34;)</code></pre>
 </details>

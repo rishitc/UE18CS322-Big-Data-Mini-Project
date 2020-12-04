@@ -75,14 +75,15 @@ class StateTracker:
             else False
 
     def showWorkerStates(self) -> None:
-        """```showWorkerStates``` displays the contents of the workerState dictionary
-        onto the standard output (here, CLI), for *debugging purposes*.
+        """```showWorkerStates``` displays the contents of the workerState
+        dictionary onto the standard output (here, CLI), for *debugging
+        purposes*.
         """
         print(f"{self.workerState=}")
 
     def getWorkerSocket(self, workerID: int) -> socket.socket:
-        """```getWorkerSocket``` returns the socket which is used to send tasks to
-        the worker with ID ```workerID```.
+        """```getWorkerSocket``` returns the socket which is used to send
+        tasks to the worker with ID ```workerID```.
 
         **param** ```workerID```: ID of the worker for whom the socket is
         desired
@@ -115,8 +116,8 @@ class StateTracker:
         self.workerState[workerID]["free slots"] -= task_count
 
     def freeSlot(self, workerID: int, task_count: int = 1) -> None:
-        """```freeSlot``` updates the state of the worker to indicate task completion
-        by incrementing the number of free slots on that worker.
+        """```freeSlot``` updates the state of the worker to indicate task
+        completion by incrementing the number of free slots on that worker.
 
         **param** ```workerID```: Specifies the worker which has completed its
         task
@@ -161,10 +162,10 @@ class StateTracker:
         return _least_loaded_workerID
 
     def connectBackRequest(self, public_key):
-        """```connectBackRequest``` is used to send a message to all the workers on
-        their *socket for receiving tasks from the master* with the public key
-        information as well as the time after which the individual worker
-        should attempt to connect back to the master.
+        """```connectBackRequest``` is used to send a message to all the
+        workers on their *socket for receiving tasks from the master* with
+        the public key information as well as the time after which the
+        individual worker should attempt to connect back to the master.
 
         **param** ```public_key```: This is the encryption key which is shared
         with the worker so that they can encrypt their private keys and later
