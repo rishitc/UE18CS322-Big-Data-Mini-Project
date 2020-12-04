@@ -204,7 +204,7 @@ and create the json message as per the protocol format below
 **What format does the protocol implement?**
 
 1. Format for how the master sends the *"connect back"* request to the worker: (```connectBackMessage()```)
-    ```json
+    ```
             {
                 "back_off_time": <Time_In_Seconds>,
                 "public_key": <Public_key_for_key_sharing>
@@ -216,7 +216,7 @@ and create the json message as per the protocol format below
     - ```public_key``` has to be of string type
 
 2. Format for how the workers send the *"connect back"* response to the master: (```connectBackResponse()```)
-    ```json
+    ```
             {
                 "worker_id": <worker_id>,
                 "enc_pri_key": <Encrypted_private_key_for_key_sharing>
@@ -227,7 +227,7 @@ and create the json message as per the protocol format below
     - ```enc_pri_key``` has to be of string type
 
 3. Format for how the master sends the task (i.e. a single task) to the worker: (```createMessageToWorker()```)
-    ```json
+    ```
     {
         "worker_id": <worker_id>,
         "job_id": "<job_id>",
@@ -247,7 +247,7 @@ and create the json message as per the protocol format below
 
 
 4. Format for how the worker responds to the completion of the task (i.e. a single task): (```createMessageToMaster()```)
-    ```json
+    ```
     {
         "worker_id": <worker_id>,
         "job_id": "<job_id>",
