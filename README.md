@@ -306,3 +306,4 @@ and create the json message as per the protocol format below
 1. [Working with Threading module in Python](https://docs.python.org/3/library/threading.html)
 1. [Jupyter Widgets installation](https://ipywidgets.readthedocs.io/en/latest/user_install.html)
 1. [Using queues](https://docs.python.org/3/library/queue.html#queue.Queue.join)
+1. [Python Type Hints](https://mypy.readthedocs.io/en/stable/cheat_sheet_py3.html)
