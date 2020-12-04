@@ -173,6 +173,28 @@ class YACS_Protocol:
         return json.dumps(msg_dict)
 
     @staticmethod
+    def prettyPrintConnectBackMessage(back_off_time, public_key):
+        """
+        The final JSON string will be as follows:
+
+        ```json
+        {
+            "back_off_time": <Time_In_Seconds>,
+            "public_key": <Public_key_for_key_sharing>
+        }
+        ```
+
+        """
+        msg_dict = {}
+        msg_dict["back_off_time"] = back_off_time
+        msg_dict["public_key"] = public_key.decode()
+        master.PRINT_LOCK.acquire()
+        worker.PRINT_LOCK.acquire()
+        print(json.dumps(msg_dict, indent=4))
+        worker.PRINT_LOCK.release()
+        master.PRINT_LOCK.release()
+
+    @staticmethod
     def connectBackResponse(worker_id, enc_pri_key):
         """
         The final JSON string will be as follows:
@@ -189,6 +211,28 @@ class YACS_Protocol:
         msg_dict["worker_id"] = worker_id
         msg_dict["enc_pri_key"] = enc_pri_key.decode()
         return json.dumps(msg_dict)
+
+    @staticmethod
+    def prettyPrintConnectBackResponse(worker_id, enc_pri_key):
+        """
+        The final JSON string will be as follows:
+
+        ```json
+        {
+            "worker_id": <worker_id>,
+            "enc_pri_key": <Encrypted_private_key_for_key_sharing>
+        }
+        ```
+
+        """
+        msg_dict = {}
+        msg_dict["worker_id"] = worker_id
+        msg_dict["enc_pri_key"] = enc_pri_key.decode()
+        master.PRINT_LOCK.acquire()
+        worker.PRINT_LOCK.acquire()
+        print(json.dumps(msg_dict, indent=4))
+        worker.PRINT_LOCK.release()
+        master.PRINT_LOCK.release()
 
 
 class messageToWorkerTaskType(TypedDict):

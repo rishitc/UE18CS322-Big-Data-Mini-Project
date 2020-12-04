@@ -201,6 +201,28 @@ class YACS_Protocol:
         return json.dumps(msg_dict)
 
     @staticmethod
+    def prettyPrintConnectBackMessage(back_off_time, public_key):
+        &#34;&#34;&#34;
+        The final JSON string will be as follows:
+
+        ```json
+        {
+            &#34;back_off_time&#34;: &lt;Time_In_Seconds&gt;,
+            &#34;public_key&#34;: &lt;Public_key_for_key_sharing&gt;
+        }
+        ```
+
+        &#34;&#34;&#34;
+        msg_dict = {}
+        msg_dict[&#34;back_off_time&#34;] = back_off_time
+        msg_dict[&#34;public_key&#34;] = public_key.decode()
+        master.PRINT_LOCK.acquire()
+        worker.PRINT_LOCK.acquire()
+        print(json.dumps(msg_dict, indent=4))
+        worker.PRINT_LOCK.release()
+        master.PRINT_LOCK.release()
+
+    @staticmethod
     def connectBackResponse(worker_id, enc_pri_key):
         &#34;&#34;&#34;
         The final JSON string will be as follows:
@@ -217,6 +239,28 @@ class YACS_Protocol:
         msg_dict[&#34;worker_id&#34;] = worker_id
         msg_dict[&#34;enc_pri_key&#34;] = enc_pri_key.decode()
         return json.dumps(msg_dict)
+
+    @staticmethod
+    def prettyPrintConnectBackResponse(worker_id, enc_pri_key):
+        &#34;&#34;&#34;
+        The final JSON string will be as follows:
+
+        ```json
+        {
+            &#34;worker_id&#34;: &lt;worker_id&gt;,
+            &#34;enc_pri_key&#34;: &lt;Encrypted_private_key_for_key_sharing&gt;
+        }
+        ```
+
+        &#34;&#34;&#34;
+        msg_dict = {}
+        msg_dict[&#34;worker_id&#34;] = worker_id
+        msg_dict[&#34;enc_pri_key&#34;] = enc_pri_key.decode()
+        master.PRINT_LOCK.acquire()
+        worker.PRINT_LOCK.acquire()
+        print(json.dumps(msg_dict, indent=4))
+        worker.PRINT_LOCK.release()
+        master.PRINT_LOCK.release()
 
 
 class messageToWorkerTaskType(TypedDict):
@@ -449,6 +493,28 @@ class messageToMasterType(TypedDict):
         return json.dumps(msg_dict)
 
     @staticmethod
+    def prettyPrintConnectBackMessage(back_off_time, public_key):
+        &#34;&#34;&#34;
+        The final JSON string will be as follows:
+
+        ```json
+        {
+            &#34;back_off_time&#34;: &lt;Time_In_Seconds&gt;,
+            &#34;public_key&#34;: &lt;Public_key_for_key_sharing&gt;
+        }
+        ```
+
+        &#34;&#34;&#34;
+        msg_dict = {}
+        msg_dict[&#34;back_off_time&#34;] = back_off_time
+        msg_dict[&#34;public_key&#34;] = public_key.decode()
+        master.PRINT_LOCK.acquire()
+        worker.PRINT_LOCK.acquire()
+        print(json.dumps(msg_dict, indent=4))
+        worker.PRINT_LOCK.release()
+        master.PRINT_LOCK.release()
+
+    @staticmethod
     def connectBackResponse(worker_id, enc_pri_key):
         &#34;&#34;&#34;
         The final JSON string will be as follows:
@@ -464,7 +530,29 @@ class messageToMasterType(TypedDict):
         msg_dict = {}
         msg_dict[&#34;worker_id&#34;] = worker_id
         msg_dict[&#34;enc_pri_key&#34;] = enc_pri_key.decode()
-        return json.dumps(msg_dict)</code></pre>
+        return json.dumps(msg_dict)
+
+    @staticmethod
+    def prettyPrintConnectBackResponse(worker_id, enc_pri_key):
+        &#34;&#34;&#34;
+        The final JSON string will be as follows:
+
+        ```json
+        {
+            &#34;worker_id&#34;: &lt;worker_id&gt;,
+            &#34;enc_pri_key&#34;: &lt;Encrypted_private_key_for_key_sharing&gt;
+        }
+        ```
+
+        &#34;&#34;&#34;
+        msg_dict = {}
+        msg_dict[&#34;worker_id&#34;] = worker_id
+        msg_dict[&#34;enc_pri_key&#34;] = enc_pri_key.decode()
+        master.PRINT_LOCK.acquire()
+        worker.PRINT_LOCK.acquire()
+        print(json.dumps(msg_dict, indent=4))
+        worker.PRINT_LOCK.release()
+        master.PRINT_LOCK.release()</code></pre>
 </details>
 <h3>Static methods</h3>
 <dl>
@@ -642,6 +730,80 @@ def createMessageToWorker(job_ID, task_family, task_ID, duration,
                             &#34;duration&#34;: duration
                         }
     return json.dumps(msg_dict)</code></pre>
+</details>
+</dd>
+<dt id="src.Communication.protocol.YACS_Protocol.prettyPrintConnectBackMessage"><code class="name flex">
+<span>def <span class="ident">prettyPrintConnectBackMessage</span></span>(<span>back_off_time, public_key)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>The final JSON string will be as follows:</p>
+<pre><code class="language-json">{
+    &quot;back_off_time&quot;: &lt;Time_In_Seconds&gt;,
+    &quot;public_key&quot;: &lt;Public_key_for_key_sharing&gt;
+}
+</code></pre></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def prettyPrintConnectBackMessage(back_off_time, public_key):
+    &#34;&#34;&#34;
+    The final JSON string will be as follows:
+
+    ```json
+    {
+        &#34;back_off_time&#34;: &lt;Time_In_Seconds&gt;,
+        &#34;public_key&#34;: &lt;Public_key_for_key_sharing&gt;
+    }
+    ```
+
+    &#34;&#34;&#34;
+    msg_dict = {}
+    msg_dict[&#34;back_off_time&#34;] = back_off_time
+    msg_dict[&#34;public_key&#34;] = public_key.decode()
+    master.PRINT_LOCK.acquire()
+    worker.PRINT_LOCK.acquire()
+    print(json.dumps(msg_dict, indent=4))
+    worker.PRINT_LOCK.release()
+    master.PRINT_LOCK.release()</code></pre>
+</details>
+</dd>
+<dt id="src.Communication.protocol.YACS_Protocol.prettyPrintConnectBackResponse"><code class="name flex">
+<span>def <span class="ident">prettyPrintConnectBackResponse</span></span>(<span>worker_id, enc_pri_key)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>The final JSON string will be as follows:</p>
+<pre><code class="language-json">{
+    &quot;worker_id&quot;: &lt;worker_id&gt;,
+    &quot;enc_pri_key&quot;: &lt;Encrypted_private_key_for_key_sharing&gt;
+}
+</code></pre></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def prettyPrintConnectBackResponse(worker_id, enc_pri_key):
+    &#34;&#34;&#34;
+    The final JSON string will be as follows:
+
+    ```json
+    {
+        &#34;worker_id&#34;: &lt;worker_id&gt;,
+        &#34;enc_pri_key&#34;: &lt;Encrypted_private_key_for_key_sharing&gt;
+    }
+    ```
+
+    &#34;&#34;&#34;
+    msg_dict = {}
+    msg_dict[&#34;worker_id&#34;] = worker_id
+    msg_dict[&#34;enc_pri_key&#34;] = enc_pri_key.decode()
+    master.PRINT_LOCK.acquire()
+    worker.PRINT_LOCK.acquire()
+    print(json.dumps(msg_dict, indent=4))
+    worker.PRINT_LOCK.release()
+    master.PRINT_LOCK.release()</code></pre>
 </details>
 </dd>
 <dt id="src.Communication.protocol.YACS_Protocol.prettyPrintMessageToMaster"><code class="name flex">
@@ -963,6 +1125,8 @@ that will contain the <strong>parsed JSON message</strong> that is sent to the w
 <li><code><a title="src.Communication.protocol.YACS_Protocol.connectBackResponse" href="#src.Communication.protocol.YACS_Protocol.connectBackResponse">connectBackResponse</a></code></li>
 <li><code><a title="src.Communication.protocol.YACS_Protocol.createMessageToMaster" href="#src.Communication.protocol.YACS_Protocol.createMessageToMaster">createMessageToMaster</a></code></li>
 <li><code><a title="src.Communication.protocol.YACS_Protocol.createMessageToWorker" href="#src.Communication.protocol.YACS_Protocol.createMessageToWorker">createMessageToWorker</a></code></li>
+<li><code><a title="src.Communication.protocol.YACS_Protocol.prettyPrintConnectBackMessage" href="#src.Communication.protocol.YACS_Protocol.prettyPrintConnectBackMessage">prettyPrintConnectBackMessage</a></code></li>
+<li><code><a title="src.Communication.protocol.YACS_Protocol.prettyPrintConnectBackResponse" href="#src.Communication.protocol.YACS_Protocol.prettyPrintConnectBackResponse">prettyPrintConnectBackResponse</a></code></li>
 <li><code><a title="src.Communication.protocol.YACS_Protocol.prettyPrintMessageToMaster" href="#src.Communication.protocol.YACS_Protocol.prettyPrintMessageToMaster">prettyPrintMessageToMaster</a></code></li>
 <li><code><a title="src.Communication.protocol.YACS_Protocol.prettyPrintMessageToWorker" href="#src.Communication.protocol.YACS_Protocol.prettyPrintMessageToWorker">prettyPrintMessageToWorker</a></code></li>
 </ul>
