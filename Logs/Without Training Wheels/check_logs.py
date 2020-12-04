@@ -1,6 +1,7 @@
 import os
 import sys
 import json
+import colored as TC
 
 
 logName = sys.argv[1]
@@ -10,13 +11,16 @@ masterStats = {
                "tasks sent to worker count": 0,
                "updates received from worker count": 0
                }
-
+orderOfTasksSentByMaster = []
 with open(os.path.join(logName, "Master.log")) as f:
     for line in f:
         if line.startswith("Selected tuple:"):
             masterStats["selected tuple count"] += 1
         if line.startswith("Sending task to worker:"):
+            _temp = json.loads(line.lstrip("Sending task to worker:").strip())
             masterStats["tasks sent to worker count"] += 1
+            orderOfTasksSentByMaster.append((f'{_temp["job_id"]} : '
+                                             f'{_temp["task"]["task_id"]}'))
         if line.startswith("Received worker update at master:"):
             _temp = line.lstrip("Received worker update at master:").strip()
             masterStats["updates received from worker count"] += \
@@ -42,3 +46,12 @@ for ind, workerFile in enumerate(workerFileList):
 
 for ind, workerStat in enumerate(workerStats, start=1):
     print(f"Worker-{ind} Stats:", json.dumps(workerStat, indent=4), sep='\n')
+
+print()
+print('-'*80)
+print()
+
+print((f"The {TC.attr(1)}job_id : task_id{TC.attr(0)}, sent by the master to "
+       "the workers are:"))
+for dispatch in orderOfTasksSentByMaster:
+    print(dispatch)
