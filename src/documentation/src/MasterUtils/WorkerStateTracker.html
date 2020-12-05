@@ -36,8 +36,9 @@ from Communication.protocol import YACS_Protocol
 
 class StateTracker:
     def __init__(self, confObj: dict) -&gt; None:
-        &#34;&#34;&#34;Store the list of the worker dictionaries in a new dictionary
-         indexed using the ```worker_id``` as key.
+        &#34;&#34;&#34;Store the list of the worker dictionaries (originally got
+        from the configuration file given to the master) in a new internal
+        dictionary indexed using the ```worker_id``` as key.
 
         **param** ```configObj```: Dictionary got from loading in the json
         data stored in the worker configuration file
@@ -231,8 +232,9 @@ class StateTracker:
 <span>(</span><span>confObj: dict)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Store the list of the worker dictionaries in a new dictionary
-indexed using the <code>worker_id</code> as key.</p>
+<div class="desc"><p>Store the list of the worker dictionaries (originally got
+from the configuration file given to the master) in a new internal
+dictionary indexed using the <code>worker_id</code> as key.</p>
 <p><strong>param</strong> <code>configObj</code>: Dictionary got from loading in the json
 data stored in the worker configuration file</p>
 <p><strong>type</strong> <code>configObj</code>: dict</p></div>
@@ -242,8 +244,9 @@ data stored in the worker configuration file</p>
 </summary>
 <pre><code class="python">class StateTracker:
     def __init__(self, confObj: dict) -&gt; None:
-        &#34;&#34;&#34;Store the list of the worker dictionaries in a new dictionary
-         indexed using the ```worker_id``` as key.
+        &#34;&#34;&#34;Store the list of the worker dictionaries (originally got
+        from the configuration file given to the master) in a new internal
+        dictionary indexed using the ```worker_id``` as key.
 
         **param** ```configObj```: Dictionary got from loading in the json
         data stored in the worker configuration file

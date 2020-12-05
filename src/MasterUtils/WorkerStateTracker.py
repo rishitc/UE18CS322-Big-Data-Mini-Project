@@ -8,8 +8,9 @@ from Communication.protocol import YACS_Protocol
 
 class StateTracker:
     def __init__(self, confObj: dict) -> None:
-        """Store the list of the worker dictionaries in a new dictionary
-         indexed using the ```worker_id``` as key.
+        """Store the list of the worker dictionaries (originally got
+        from the configuration file given to the master) in a new internal
+        dictionary indexed using the ```worker_id``` as key.
 
         **param** ```configObj```: Dictionary got from loading in the json
         data stored in the worker configuration file
