@@ -134,7 +134,7 @@ def checkJobPoller(jobRequestHandler: JobRequestHandler,
             print(success_text("All job updates have been received!"))
             master.PRINT_LOCK.release()
             _isPrint_2 = True
-        
+
         time.sleep(1)
 
 
@@ -203,8 +203,11 @@ def listenForJobRequests(jobRequestHandler: JobRequestHandler,
             jobUpdateTracker.LOCK.release()
             # print("Releasing jobUpdateTracker LOCK")
 
+            jobRequestHandler.LOCK.acquire()
+            _state = jobRequestHandler.jobRequests
+            jobRequestHandler.LOCK.release()
             master.PRINT_LOCK.acquire()
-            print(f"{jobRequestHandler.jobRequests=}")
+            print(f"jobRequestHandler.jobRequests={_state}")
             master.PRINT_LOCK.release()
 
             # Close the client connection as we have finished receiving the job

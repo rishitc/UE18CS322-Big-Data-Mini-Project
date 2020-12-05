@@ -70,9 +70,9 @@ class RoundRobinScheduler:
                 workerFound: bool = False
 
                 while workerFound is False:  # Until a free worker is not found
-                    workerIDsVisited.add(workerStateTracker.workerIDs[_temp])
 
                     workerStateTracker.LOCK.acquire()
+                    workerIDsVisited.add(workerStateTracker.workerIDs[_temp])
 
                     # If the worker has a free slot
                     if workerStateTracker \
@@ -110,8 +110,11 @@ class RoundRobinScheduler:
                         workerStateTracker.showWorkerStates()
                         master.PRINT_LOCK.release()
 
+                        requestHandler.LOCK.acquire()
+                        _state = requestHandler.jobRequests
+                        requestHandler.LOCK.release()
                         master.PRINT_LOCK.acquire()
-                        print(f"{requestHandler.jobRequests=}")
+                        print(f"requestHandler.jobRequests={_state}")
                         master.PRINT_LOCK.release()
 
                         # We have found a worker and hence set this to True
