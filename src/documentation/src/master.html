@@ -30,6 +30,7 @@
 import socket
 import sys
 import threading
+import time
 from typing import List, Optional, Tuple
 import colored as TC
 from colored.colored import attr
@@ -114,12 +115,13 @@ def success_text(text):
 
 
 def checkJobPoller(jobRequestHandler: JobRequestHandler,
-                   jobUpdateTracker: JobUpdateTracker):
+                   jobUpdateTracker: JobUpdateTracker,
+                   job_id: str):
     &#34;&#34;&#34;```checkJobPoller``` continuously checks if all the tasks, for
-    every pending job, have been dispatched to one or the other worker,
-    by the master. It also checks whether the updates from the workers,
-    for every dispatched task, of every running job have been received by
-    the master.
+    the pending job given by ```job_id```, have been dispatched to one
+    or the other worker, by the master. It also checks whether the
+    updates from the workers, for every dispatched task, of the running
+    job given by ```job_id```, have been received by the master.
 
     It prints a ```success message``` once all tasks of all the pending jobs
     have been dispatched as well as once all the tasks&#39; updates for all jobs
@@ -134,33 +136,45 @@ def checkJobPoller(jobRequestHandler: JobRequestHandler,
     workers about the tasks assigned belonging to the different jobs
 
     **type** ```jobUpdateTracker```: JobUpdateTracker
+
+    **param** ```job_id```: This is the ```Job ID``` of the job that this
+    instance of the thread will track, right from the dispatch of the tasks
+    of the job to the workers, to the reception of all the tasks&#39; updates for
+    the job from the workers.
+
+    **type** ```job_id```: str
     &#34;&#34;&#34;
-    isJobDispatchComplete: bool = False
+    isJobDispatchComplete = {}
     _isPrint_1: bool = False
-    isJobUpdatesComplete: bool = False
+    isJobUpdatesComplete = {}
     _isPrint_2: bool = False
 
-    while (isJobDispatchComplete and isJobUpdatesComplete) is False:
+    while (isJobDispatchComplete is not None) or \
+          (isJobUpdatesComplete is not None):
         jobRequestHandler.LOCK.acquire()
-        isJobDispatchComplete = not jobRequestHandler.jobRequests
+        isJobDispatchComplete = jobRequestHandler.jobRequests.get(job_id)
         jobRequestHandler.LOCK.release()
 
-        if isJobDispatchComplete and not _isPrint_1:
+        if (isJobDispatchComplete is None) and (not _isPrint_1):
             master.PRINT_LOCK.acquire()
-            print(success_text(&#34;All jobs have been dispatched to the workers!&#34;)
+            print(success_text((f&#34;All tasks of job-{job_id} have been &#34;
+                                &#34;dispatched to the workers!&#34;))
                   )
             master.PRINT_LOCK.release()
             _isPrint_1 = True
 
         jobUpdateTracker.LOCK.acquire()
-        isJobUpdatesComplete = not jobUpdateTracker.jobs_time
+        isJobUpdatesComplete = jobUpdateTracker.jobs_time.get(job_id)
         jobUpdateTracker.LOCK.release()
 
-        if isJobUpdatesComplete and not _isPrint_2:
+        if (isJobUpdatesComplete is None) and (not _isPrint_2):
             master.PRINT_LOCK.acquire()
-            print(success_text(&#34;All job updates have been received!&#34;))
+            print(success_text((f&#34;All task updates of job-{job_id} have been&#34;
+                                &#34; received!&#34;)))
             master.PRINT_LOCK.release()
             _isPrint_2 = True
+
+        time.sleep(0.01)
 
 
 def listenForJobRequests(jobRequestHandler: JobRequestHandler,
@@ -190,6 +204,9 @@ def listenForJobRequests(jobRequestHandler: JobRequestHandler,
         jobReqSocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         jobReqSocket.bind(_JOB_REQUEST_ADDR)
         while True:
+            master.PRINT_LOCK.acquire()
+            print(info_text(&#34;Listening for incoming job requests&#34;))
+            master.PRINT_LOCK.release()
             jobReqSocket.listen()
             clientConn, clientAddr = jobReqSocket.accept()
 
@@ -207,22 +224,30 @@ def listenForJobRequests(jobRequestHandler: JobRequestHandler,
 
             # Decode and parse the JSON string
             parsedJSON_Msg = json.loads(jobRequest.decode())
+            _recv_job_id: str = parsedJSON_Msg[&#34;job_id&#34;]
 
             # Add new job request to job request handler object
             # for task dispatch
+            # print(&#34;Acquiring jobRequestHandler LOCK&#34;)
             jobRequestHandler.LOCK.acquire()
             jobRequestHandler.addJobRequest(parsedJSON_Msg)
             jobRequestHandler.LOCK.release()
+            # print(&#34;Releasing jobRequestHandler LOCK&#34;)
 
             # Add new job request to job request handler object
             # for tracking dispatched tasks&#39; completion by the
             # workers
+            # print(&#34;Acquiring jobUpdateTracker LOCK&#34;)
             jobUpdateTracker.LOCK.acquire()
             jobUpdateTracker.addJobRequest(parsedJSON_Msg)
             jobUpdateTracker.LOCK.release()
+            # print(&#34;Releasing jobUpdateTracker LOCK&#34;)
 
+            jobRequestHandler.LOCK.acquire()
+            _state = jobRequestHandler.jobRequests
+            jobRequestHandler.LOCK.release()
             master.PRINT_LOCK.acquire()
-            print(f&#34;{jobRequestHandler.jobRequests=}&#34;)
+            print(f&#34;jobRequestHandler.jobRequests={_state}&#34;)
             master.PRINT_LOCK.release()
 
             # Close the client connection as we have finished receiving the job
@@ -232,7 +257,8 @@ def listenForJobRequests(jobRequestHandler: JobRequestHandler,
             _job_poller_thread = threading.Thread(name=&#34;Job Poller Thread&#34;,
                                                   target=checkJobPoller,
                                                   args=(jobRequestHandler,
-                                                        jobUpdateTracker)
+                                                        jobUpdateTracker,
+                                                        _recv_job_id)
                                                   )
             _job_poller_thread.daemon = True
             _job_poller_thread.start()
@@ -243,7 +269,7 @@ def listenForJobRequests(jobRequestHandler: JobRequestHandler,
             print(threading.enumerate())
             master.PRINT_LOCK.release()
 
-            _job_poller_thread.join()
+            # _job_poller_thread.join()
 
 
 def workerUpdates(workerSocket: socket.socket,
@@ -301,10 +327,6 @@ def workerUpdates(workerSocket: socket.socket,
             workerStateTracker.LOCK.acquire()
             workerStateTracker.freeSlot(msg[&#34;worker_id&#34;])
             workerStateTracker.LOCK.release()
-
-        # master.PRINT_LOCK.acquire()
-        # workerStateTracker.showWorkerStates()
-        # master.PRINT_LOCK.release()
 
 
 if __name__ == &#34;__main__&#34;:
@@ -528,14 +550,14 @@ if __name__ == &#34;__main__&#34;:
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
 <dt id="src.master.checkJobPoller"><code class="name flex">
-<span>def <span class="ident">checkJobPoller</span></span>(<span>jobRequestHandler: Scheduler.JobRequests.JobRequestHandler, jobUpdateTracker: UpdateTracker.JobUpdateTracker.Tracker)</span>
+<span>def <span class="ident">checkJobPoller</span></span>(<span>jobRequestHandler: Scheduler.JobRequests.JobRequestHandler, jobUpdateTracker: UpdateTracker.JobUpdateTracker.Tracker, job_id: str)</span>
 </code></dt>
 <dd>
 <div class="desc"><p><code>checkJobPoller</code> continuously checks if all the tasks, for
-every pending job, have been dispatched to one or the other worker,
-by the master. It also checks whether the updates from the workers,
-for every dispatched task, of every running job have been received by
-the master.</p>
+the pending job given by <code>job_id</code>, have been dispatched to one
+or the other worker, by the master. It also checks whether the
+updates from the workers, for every dispatched task, of the running
+job given by <code>job_id</code>, have been received by the master.</p>
 <p>It prints a <code>success message</code> once all tasks of all the pending jobs
 have been dispatched as well as once all the tasks' updates for all jobs
 have been received, by the master.</p>
@@ -544,18 +566,24 @@ of the job</p>
 <p><strong>type</strong> <code>jobRequestHandler</code>: JobRequestHandler</p>
 <p><strong>param</strong> <code>jobUpdateTracker</code>: Used to track the updates from the
 workers about the tasks assigned belonging to the different jobs</p>
-<p><strong>type</strong> <code>jobUpdateTracker</code>: JobUpdateTracker</p></div>
+<p><strong>type</strong> <code>jobUpdateTracker</code>: JobUpdateTracker</p>
+<p><strong>param</strong> <code>job_id</code>: This is the <code>Job ID</code> of the job that this
+instance of the thread will track, right from the dispatch of the tasks
+of the job to the workers, to the reception of all the tasks' updates for
+the job from the workers.</p>
+<p><strong>type</strong> <code>job_id</code>: str</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def checkJobPoller(jobRequestHandler: JobRequestHandler,
-                   jobUpdateTracker: JobUpdateTracker):
+                   jobUpdateTracker: JobUpdateTracker,
+                   job_id: str):
     &#34;&#34;&#34;```checkJobPoller``` continuously checks if all the tasks, for
-    every pending job, have been dispatched to one or the other worker,
-    by the master. It also checks whether the updates from the workers,
-    for every dispatched task, of every running job have been received by
-    the master.
+    the pending job given by ```job_id```, have been dispatched to one
+    or the other worker, by the master. It also checks whether the
+    updates from the workers, for every dispatched task, of the running
+    job given by ```job_id```, have been received by the master.
 
     It prints a ```success message``` once all tasks of all the pending jobs
     have been dispatched as well as once all the tasks&#39; updates for all jobs
@@ -570,33 +598,45 @@ workers about the tasks assigned belonging to the different jobs</p>
     workers about the tasks assigned belonging to the different jobs
 
     **type** ```jobUpdateTracker```: JobUpdateTracker
+
+    **param** ```job_id```: This is the ```Job ID``` of the job that this
+    instance of the thread will track, right from the dispatch of the tasks
+    of the job to the workers, to the reception of all the tasks&#39; updates for
+    the job from the workers.
+
+    **type** ```job_id```: str
     &#34;&#34;&#34;
-    isJobDispatchComplete: bool = False
+    isJobDispatchComplete = {}
     _isPrint_1: bool = False
-    isJobUpdatesComplete: bool = False
+    isJobUpdatesComplete = {}
     _isPrint_2: bool = False
 
-    while (isJobDispatchComplete and isJobUpdatesComplete) is False:
+    while (isJobDispatchComplete is not None) or \
+          (isJobUpdatesComplete is not None):
         jobRequestHandler.LOCK.acquire()
-        isJobDispatchComplete = not jobRequestHandler.jobRequests
+        isJobDispatchComplete = jobRequestHandler.jobRequests.get(job_id)
         jobRequestHandler.LOCK.release()
 
-        if isJobDispatchComplete and not _isPrint_1:
+        if (isJobDispatchComplete is None) and (not _isPrint_1):
             master.PRINT_LOCK.acquire()
-            print(success_text(&#34;All jobs have been dispatched to the workers!&#34;)
+            print(success_text((f&#34;All tasks of job-{job_id} have been &#34;
+                                &#34;dispatched to the workers!&#34;))
                   )
             master.PRINT_LOCK.release()
             _isPrint_1 = True
 
         jobUpdateTracker.LOCK.acquire()
-        isJobUpdatesComplete = not jobUpdateTracker.jobs_time
+        isJobUpdatesComplete = jobUpdateTracker.jobs_time.get(job_id)
         jobUpdateTracker.LOCK.release()
 
-        if isJobUpdatesComplete and not _isPrint_2:
+        if (isJobUpdatesComplete is None) and (not _isPrint_2):
             master.PRINT_LOCK.acquire()
-            print(success_text(&#34;All job updates have been received!&#34;))
+            print(success_text((f&#34;All task updates of job-{job_id} have been&#34;
+                                &#34; received!&#34;)))
             master.PRINT_LOCK.release()
-            _isPrint_2 = True</code></pre>
+            _isPrint_2 = True
+
+        time.sleep(0.01)</code></pre>
 </details>
 </dd>
 <dt id="src.master.error_text"><code class="name flex">
@@ -708,6 +748,9 @@ workers about the tasks assigned belonging to the different jobs</p>
         jobReqSocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         jobReqSocket.bind(_JOB_REQUEST_ADDR)
         while True:
+            master.PRINT_LOCK.acquire()
+            print(info_text(&#34;Listening for incoming job requests&#34;))
+            master.PRINT_LOCK.release()
             jobReqSocket.listen()
             clientConn, clientAddr = jobReqSocket.accept()
 
@@ -725,22 +768,30 @@ workers about the tasks assigned belonging to the different jobs</p>
 
             # Decode and parse the JSON string
             parsedJSON_Msg = json.loads(jobRequest.decode())
+            _recv_job_id: str = parsedJSON_Msg[&#34;job_id&#34;]
 
             # Add new job request to job request handler object
             # for task dispatch
+            # print(&#34;Acquiring jobRequestHandler LOCK&#34;)
             jobRequestHandler.LOCK.acquire()
             jobRequestHandler.addJobRequest(parsedJSON_Msg)
             jobRequestHandler.LOCK.release()
+            # print(&#34;Releasing jobRequestHandler LOCK&#34;)
 
             # Add new job request to job request handler object
             # for tracking dispatched tasks&#39; completion by the
             # workers
+            # print(&#34;Acquiring jobUpdateTracker LOCK&#34;)
             jobUpdateTracker.LOCK.acquire()
             jobUpdateTracker.addJobRequest(parsedJSON_Msg)
             jobUpdateTracker.LOCK.release()
+            # print(&#34;Releasing jobUpdateTracker LOCK&#34;)
 
+            jobRequestHandler.LOCK.acquire()
+            _state = jobRequestHandler.jobRequests
+            jobRequestHandler.LOCK.release()
             master.PRINT_LOCK.acquire()
-            print(f&#34;{jobRequestHandler.jobRequests=}&#34;)
+            print(f&#34;jobRequestHandler.jobRequests={_state}&#34;)
             master.PRINT_LOCK.release()
 
             # Close the client connection as we have finished receiving the job
@@ -750,7 +801,8 @@ workers about the tasks assigned belonging to the different jobs</p>
             _job_poller_thread = threading.Thread(name=&#34;Job Poller Thread&#34;,
                                                   target=checkJobPoller,
                                                   args=(jobRequestHandler,
-                                                        jobUpdateTracker)
+                                                        jobUpdateTracker,
+                                                        _recv_job_id)
                                                   )
             _job_poller_thread.daemon = True
             _job_poller_thread.start()
@@ -759,9 +811,7 @@ workers about the tasks assigned belonging to the different jobs</p>
             print(info_text(&#34;Created the job poller thread!&#34;))
             print(&#34;You have reached the bottom of the &#39;__main__&#39;&#34;)
             print(threading.enumerate())
-            master.PRINT_LOCK.release()
-
-            _job_poller_thread.join()</code></pre>
+            master.PRINT_LOCK.release()</code></pre>
 </details>
 </dd>
 <dt id="src.master.success_text"><code class="name flex">

@@ -108,6 +108,13 @@ def checkJobPoller(jobRequestHandler: JobRequestHandler,
     workers about the tasks assigned belonging to the different jobs
 
     **type** ```jobUpdateTracker```: JobUpdateTracker
+
+    **param** ```job_id```: This is the ```Job ID``` of the job that this
+    instance of the thread will track, right from the dispatch of the tasks
+    of the job to the workers, to the reception of all the tasks' updates for
+    the job from the workers.
+
+    **type** ```job_id```: str
     """
     isJobDispatchComplete = {}
     _isPrint_1: bool = False

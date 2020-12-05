@@ -85,10 +85,6 @@ class RoundRobinScheduler:
                 jobID_family_task = requestHandler.getWaitingTask()
             requestHandler.LOCK.release()
 
-            # master.PRINT_LOCK.acquire()
-            # print(requestHandler.jobRequests)
-            # master.PRINT_LOCK.release()
-
             # If there is a Task that needs to be executed
             if jobID_family_task is not None:
                 # Initially we have not visited any worker
@@ -98,9 +94,9 @@ class RoundRobinScheduler:
                 workerFound: bool = False
 
                 while workerFound is False:  # Until a free worker is not found
-                    workerIDsVisited.add(workerStateTracker.workerIDs[_temp])
 
                     workerStateTracker.LOCK.acquire()
+                    workerIDsVisited.add(workerStateTracker.workerIDs[_temp])
 
                     # If the worker has a free slot
                     if workerStateTracker \
@@ -138,8 +134,11 @@ class RoundRobinScheduler:
                         workerStateTracker.showWorkerStates()
                         master.PRINT_LOCK.release()
 
+                        requestHandler.LOCK.acquire()
+                        _state = requestHandler.jobRequests
+                        requestHandler.LOCK.release()
                         master.PRINT_LOCK.acquire()
-                        print(f&#34;{requestHandler.jobRequests=}&#34;)
+                        print(f&#34;requestHandler.jobRequests={_state}&#34;)
                         master.PRINT_LOCK.release()
 
                         # We have found a worker and hence set this to True
@@ -235,10 +234,6 @@ continues until a free slot is found.</p></div>
                 jobID_family_task = requestHandler.getWaitingTask()
             requestHandler.LOCK.release()
 
-            # master.PRINT_LOCK.acquire()
-            # print(requestHandler.jobRequests)
-            # master.PRINT_LOCK.release()
-
             # If there is a Task that needs to be executed
             if jobID_family_task is not None:
                 # Initially we have not visited any worker
@@ -248,9 +243,9 @@ continues until a free slot is found.</p></div>
                 workerFound: bool = False
 
                 while workerFound is False:  # Until a free worker is not found
-                    workerIDsVisited.add(workerStateTracker.workerIDs[_temp])
 
                     workerStateTracker.LOCK.acquire()
+                    workerIDsVisited.add(workerStateTracker.workerIDs[_temp])
 
                     # If the worker has a free slot
                     if workerStateTracker \
@@ -288,8 +283,11 @@ continues until a free slot is found.</p></div>
                         workerStateTracker.showWorkerStates()
                         master.PRINT_LOCK.release()
 
+                        requestHandler.LOCK.acquire()
+                        _state = requestHandler.jobRequests
+                        requestHandler.LOCK.release()
                         master.PRINT_LOCK.acquire()
-                        print(f&#34;{requestHandler.jobRequests=}&#34;)
+                        print(f&#34;requestHandler.jobRequests={_state}&#34;)
                         master.PRINT_LOCK.release()
 
                         # We have found a worker and hence set this to True
@@ -369,10 +367,6 @@ def jobDispatcher(requestHandler: JobRequestHandler,
             jobID_family_task = requestHandler.getWaitingTask()
         requestHandler.LOCK.release()
 
-        # master.PRINT_LOCK.acquire()
-        # print(requestHandler.jobRequests)
-        # master.PRINT_LOCK.release()
-
         # If there is a Task that needs to be executed
         if jobID_family_task is not None:
             # Initially we have not visited any worker
@@ -382,9 +376,9 @@ def jobDispatcher(requestHandler: JobRequestHandler,
             workerFound: bool = False
 
             while workerFound is False:  # Until a free worker is not found
-                workerIDsVisited.add(workerStateTracker.workerIDs[_temp])
 
                 workerStateTracker.LOCK.acquire()
+                workerIDsVisited.add(workerStateTracker.workerIDs[_temp])
 
                 # If the worker has a free slot
                 if workerStateTracker \
@@ -422,8 +416,11 @@ def jobDispatcher(requestHandler: JobRequestHandler,
                     workerStateTracker.showWorkerStates()
                     master.PRINT_LOCK.release()
 
+                    requestHandler.LOCK.acquire()
+                    _state = requestHandler.jobRequests
+                    requestHandler.LOCK.release()
                     master.PRINT_LOCK.acquire()
-                    print(f&#34;{requestHandler.jobRequests=}&#34;)
+                    print(f&#34;requestHandler.jobRequests={_state}&#34;)
                     master.PRINT_LOCK.release()
 
                     # We have found a worker and hence set this to True

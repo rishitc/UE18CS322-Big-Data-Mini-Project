@@ -124,8 +124,11 @@ class RandomScheduler:
                         workerStateTracker.showWorkerStates()
                         master.PRINT_LOCK.release()
 
+                        requestHandler.LOCK.acquire()
+                        _state = requestHandler.jobRequests
+                        requestHandler.LOCK.release()
                         master.PRINT_LOCK.acquire()
-                        print(f&#34;{requestHandler.jobRequests=}&#34;)
+                        print(f&#34;requestHandler.jobRequests={_state}&#34;)
                         master.PRINT_LOCK.release()
 
                         # We have found a worker and hence set this to True
@@ -258,8 +261,11 @@ random. This process continues until a free slot is found.</p></div>
                         workerStateTracker.showWorkerStates()
                         master.PRINT_LOCK.release()
 
+                        requestHandler.LOCK.acquire()
+                        _state = requestHandler.jobRequests
+                        requestHandler.LOCK.release()
                         master.PRINT_LOCK.acquire()
-                        print(f&#34;{requestHandler.jobRequests=}&#34;)
+                        print(f&#34;requestHandler.jobRequests={_state}&#34;)
                         master.PRINT_LOCK.release()
 
                         # We have found a worker and hence set this to True
@@ -375,8 +381,11 @@ def jobDispatcher(requestHandler: JobRequestHandler,
                     workerStateTracker.showWorkerStates()
                     master.PRINT_LOCK.release()
 
+                    requestHandler.LOCK.acquire()
+                    _state = requestHandler.jobRequests
+                    requestHandler.LOCK.release()
                     master.PRINT_LOCK.acquire()
-                    print(f&#34;{requestHandler.jobRequests=}&#34;)
+                    print(f&#34;requestHandler.jobRequests={_state}&#34;)
                     master.PRINT_LOCK.release()
 
                     # We have found a worker and hence set this to True
