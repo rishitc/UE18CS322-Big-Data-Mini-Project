@@ -2,6 +2,7 @@ import json
 import socket
 import sys
 import threading
+import time
 from typing import List, Optional, Tuple
 import colored as TC
 from colored.colored import attr
@@ -133,6 +134,8 @@ def checkJobPoller(jobRequestHandler: JobRequestHandler,
             print(success_text("All job updates have been received!"))
             master.PRINT_LOCK.release()
             _isPrint_2 = True
+        
+        time.sleep(1)
 
 
 def listenForJobRequests(jobRequestHandler: JobRequestHandler,
@@ -162,6 +165,9 @@ def listenForJobRequests(jobRequestHandler: JobRequestHandler,
         jobReqSocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         jobReqSocket.bind(_JOB_REQUEST_ADDR)
         while True:
+            master.PRINT_LOCK.acquire()
+            print(info_text("Listening for incoming job requests"))
+            master.PRINT_LOCK.release()
             jobReqSocket.listen()
             clientConn, clientAddr = jobReqSocket.accept()
 
@@ -182,16 +188,20 @@ def listenForJobRequests(jobRequestHandler: JobRequestHandler,
 
             # Add new job request to job request handler object
             # for task dispatch
+            # print("Acquiring jobRequestHandler LOCK")
             jobRequestHandler.LOCK.acquire()
             jobRequestHandler.addJobRequest(parsedJSON_Msg)
             jobRequestHandler.LOCK.release()
+            # print("Releasing jobRequestHandler LOCK")
 
             # Add new job request to job request handler object
             # for tracking dispatched tasks' completion by the
             # workers
+            # print("Acquiring jobUpdateTracker LOCK")
             jobUpdateTracker.LOCK.acquire()
             jobUpdateTracker.addJobRequest(parsedJSON_Msg)
             jobUpdateTracker.LOCK.release()
+            # print("Releasing jobUpdateTracker LOCK")
 
             master.PRINT_LOCK.acquire()
             print(f"{jobRequestHandler.jobRequests=}")
@@ -215,7 +225,7 @@ def listenForJobRequests(jobRequestHandler: JobRequestHandler,
             print(threading.enumerate())
             master.PRINT_LOCK.release()
 
-            _job_poller_thread.join()
+            # _job_poller_thread.join()
 
 
 def workerUpdates(workerSocket: socket.socket,
