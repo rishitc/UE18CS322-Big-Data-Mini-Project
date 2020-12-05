@@ -1,0 +1,126 @@
+Total number of job requests sent by the client are: 10
+------
+Have the 3 workers been started, yet? [y/n] y
+JobUpdateTracker Initialized
+Job Tracker Initialized
+INFO: Inside listenForJobRequests
+INFO: Selected scheduling algorithm: Round-Robin
+INFO: Listening for incoming job requests
+INFO: Listening to updates from the workers on port: 5001
+INFO: Connected to worker ID: 1 at address:
+IP Address: 127.0.0.1
+Socket: 50778
+Private Key: b'MwMnpy4h7D1rVpdg1cIfyPxrt3abGyrFf7Yk6Rhiiw8='
+INFO: Connected to worker ID: 2 at address:
+IP Address: 127.0.0.1
+Socket: 50780
+Private Key: b'Br4UOPPTciRMgiB1n2CQVlufon_0RzL2VBQ4GRk5VuI='
+INFO: Connected to worker ID: 3 at address:
+IP Address: 127.0.0.1
+Socket: 50782
+Private Key: b'GNrSHSlQQqr9141ICpBjRFQsM5BcvXlPiRXwh0Oabt8='
+workerUpdateThreads=[<Thread(Worker-1 Update Listener, started daemon 139989909165824)>, <Thread(Worker-2 Update Listener, started daemon 139989694281472)>, <Thread(Worker-3 Update Listener, started daemon 139989685888768)>]
+You have reached the bottom of the '__main__'
+[<_MainThread(MainThread, started 139989956925248)>, <Thread(Listen for Incoming JobRequests, started daemon 139989939394304)>, <Thread(Job Dispatcher -Round-Robin Scheduling, started daemon 139989930739456)>, <Thread(Worker-1 Update Listener, started daemon 139989909165824)>, <Thread(Worker-2 Update Listener, started daemon 139989694281472)>, <Thread(Worker-3 Update Listener, started daemon 139989685888768)>]
+INFO: Connected to client at address:
+IP Address: 127.0.0.1
+Socket: 41966
+jobRequestHandler.jobRequests={'0': {'map': [{'task_id': '0_M0', 'duration': 200}], 'reduce': [{'task_id': '0_R0', 'duration': 200}]}}
+Selected tuple: ('0', 'map', {'task_id': '0_M0', 'duration': 200})
+INFO: Created the job poller thread!
+You have reached the bottom of the '__main__'
+[<_MainThread(MainThread, started 139989956925248)>, <Thread(Listen for Incoming JobRequests, started daemon 139989939394304)>, <Thread(Job Dispatcher -Round-Robin Scheduling, started daemon 139989930739456)>, <Thread(Worker-1 Update Listener, started daemon 139989909165824)>, <Thread(Worker-2 Update Listener, started daemon 139989694281472)>, <Thread(Worker-3 Update Listener, started daemon 139989685888768)>, <Thread(Job Poller Thread, started daemon 139989677496064)>]
+INFO: Listening for incoming job requests
+Sending task to worker: {"worker_id": 1, "job_id": "0", "task_family": "map", "task": {"task_id": "0_M0", "duration": 200}}
+self.workerState={1: {'slots': 5, 'port': 4000, 'free slots': 4, 'socket': <socket.socket fd=3, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 36778), raddr=('127.0.1.1', 4000)>, 'pri_key': b'MwMnpy4h7D1rVpdg1cIfyPxrt3abGyrFf7Yk6Rhiiw8='}, 2: {'slots': 7, 'port': 4001, 'free slots': 7, 'socket': <socket.socket fd=4, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 34774), raddr=('127.0.1.1', 4001)>, 'pri_key': b'Br4UOPPTciRMgiB1n2CQVlufon_0RzL2VBQ4GRk5VuI='}, 3: {'slots': 3, 'port': 4002, 'free slots': 3, 'socket': <socket.socket fd=5, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 35914), raddr=('127.0.1.1', 4002)>, 'pri_key': b'GNrSHSlQQqr9141ICpBjRFQsM5BcvXlPiRXwh0Oabt8='}}
+requestHandler.jobRequests={'0': {'map': [], 'reduce': [{'task_id': '0_R0', 'duration': 200}]}}
+INFO: Connected to client at address:
+IP Address: 127.0.0.1
+Socket: 41968
+jobRequestHandler.jobRequests={'0': {'map': [], 'reduce': [{'task_id': '0_R0', 'duration': 200}]}, '1': {'map': [{'task_id': '1_M0', 'duration': 200}], 'reduce': [{'task_id': '1_R0', 'duration': 200}]}}
+Selected tuple: ('1', 'map', {'task_id': '1_M0', 'duration': 200})
+INFO: Created the job poller thread!
+You have reached the bottom of the '__main__'
+[<_MainThread(MainThread, started 139989956925248)>, <Thread(Listen for Incoming JobRequests, started daemon 139989939394304)>, <Thread(Job Dispatcher -Round-Robin Scheduling, started daemon 139989930739456)>, <Thread(Worker-1 Update Listener, started daemon 139989909165824)>, <Thread(Worker-2 Update Listener, started daemon 139989694281472)>, <Thread(Worker-3 Update Listener, started daemon 139989685888768)>, <Thread(Job Poller Thread, started daemon 139989677496064)>, <Thread(Job Poller Thread, started daemon 139989669103360)>]
+INFO: Listening for incoming job requests
+Sending task to worker: {"worker_id": 2, "job_id": "1", "task_family": "map", "task": {"task_id": "1_M0", "duration": 200}}
+self.workerState={1: {'slots': 5, 'port': 4000, 'free slots': 4, 'socket': <socket.socket fd=3, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 36778), raddr=('127.0.1.1', 4000)>, 'pri_key': b'MwMnpy4h7D1rVpdg1cIfyPxrt3abGyrFf7Yk6Rhiiw8='}, 2: {'slots': 7, 'port': 4001, 'free slots': 6, 'socket': <socket.socket fd=4, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 34774), raddr=('127.0.1.1', 4001)>, 'pri_key': b'Br4UOPPTciRMgiB1n2CQVlufon_0RzL2VBQ4GRk5VuI='}, 3: {'slots': 3, 'port': 4002, 'free slots': 3, 'socket': <socket.socket fd=5, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 35914), raddr=('127.0.1.1', 4002)>, 'pri_key': b'GNrSHSlQQqr9141ICpBjRFQsM5BcvXlPiRXwh0Oabt8='}}
+requestHandler.jobRequests={'0': {'map': [], 'reduce': [{'task_id': '0_R0', 'duration': 200}]}, '1': {'map': [], 'reduce': [{'task_id': '1_R0', 'duration': 200}]}}
+INFO: Connected to client at address:
+IP Address: 127.0.0.1
+Socket: 41970
+jobRequestHandler.jobRequests={'0': {'map': [], 'reduce': [{'task_id': '0_R0', 'duration': 200}]}, '1': {'map': [], 'reduce': [{'task_id': '1_R0', 'duration': 200}]}, '2': {'map': [{'task_id': '2_M0', 'duration': 200}], 'reduce': [{'task_id': '2_R0', 'duration': 200}]}}
+Selected tuple: ('2', 'map', {'task_id': '2_M0', 'duration': 200})
+INFO: Created the job poller thread!
+You have reached the bottom of the '__main__'
+[<_MainThread(MainThread, started 139989956925248)>, <Thread(Listen for Incoming JobRequests, started daemon 139989939394304)>, <Thread(Job Dispatcher -Round-Robin Scheduling, started daemon 139989930739456)>, <Thread(Worker-1 Update Listener, started daemon 139989909165824)>, <Thread(Worker-2 Update Listener, started daemon 139989694281472)>, <Thread(Worker-3 Update Listener, started daemon 139989685888768)>, <Thread(Job Poller Thread, started daemon 139989677496064)>, <Thread(Job Poller Thread, started daemon 139989669103360)>, <Thread(Job Poller Thread, started daemon 139989660710656)>]
+INFO: Listening for incoming job requests
+Sending task to worker: {"worker_id": 3, "job_id": "2", "task_family": "map", "task": {"task_id": "2_M0", "duration": 200}}
+self.workerState={1: {'slots': 5, 'port': 4000, 'free slots': 4, 'socket': <socket.socket fd=3, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 36778), raddr=('127.0.1.1', 4000)>, 'pri_key': b'MwMnpy4h7D1rVpdg1cIfyPxrt3abGyrFf7Yk6Rhiiw8='}, 2: {'slots': 7, 'port': 4001, 'free slots': 6, 'socket': <socket.socket fd=4, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 34774), raddr=('127.0.1.1', 4001)>, 'pri_key': b'Br4UOPPTciRMgiB1n2CQVlufon_0RzL2VBQ4GRk5VuI='}, 3: {'slots': 3, 'port': 4002, 'free slots': 2, 'socket': <socket.socket fd=5, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 35914), raddr=('127.0.1.1', 4002)>, 'pri_key': b'GNrSHSlQQqr9141ICpBjRFQsM5BcvXlPiRXwh0Oabt8='}}
+requestHandler.jobRequests={'0': {'map': [], 'reduce': [{'task_id': '0_R0', 'duration': 200}]}, '1': {'map': [], 'reduce': [{'task_id': '1_R0', 'duration': 200}]}, '2': {'map': [], 'reduce': [{'task_id': '2_R0', 'duration': 200}]}}
+INFO: Connected to client at address:
+IP Address: 127.0.0.1
+Socket: 41972
+jobRequestHandler.jobRequests={'0': {'map': [], 'reduce': [{'task_id': '0_R0', 'duration': 200}]}, '1': {'map': [], 'reduce': [{'task_id': '1_R0', 'duration': 200}]}, '2': {'map': [], 'reduce': [{'task_id': '2_R0', 'duration': 200}]}, '3': {'map': [{'task_id': '3_M0', 'duration': 200}], 'reduce': [{'task_id': '3_R0', 'duration': 200}]}}
+Selected tuple: ('3', 'map', {'task_id': '3_M0', 'duration': 200})
+INFO: Created the job poller thread!
+You have reached the bottom of the '__main__'
+[<_MainThread(MainThread, started 139989956925248)>, <Thread(Listen for Incoming JobRequests, started daemon 139989939394304)>, <Thread(Job Dispatcher -Round-Robin Scheduling, started daemon 139989930739456)>, <Thread(Worker-1 Update Listener, started daemon 139989909165824)>, <Thread(Worker-2 Update Listener, started daemon 139989694281472)>, <Thread(Worker-3 Update Listener, started daemon 139989685888768)>, <Thread(Job Poller Thread, started daemon 139989677496064)>, <Thread(Job Poller Thread, started daemon 139989669103360)>, <Thread(Job Poller Thread, started daemon 139989660710656)>, <Thread(Job Poller Thread, started daemon 139989652317952)>]
+INFO: Listening for incoming job requests
+Sending task to worker: {"worker_id": 1, "job_id": "3", "task_family": "map", "task": {"task_id": "3_M0", "duration": 200}}
+self.workerState={1: {'slots': 5, 'port': 4000, 'free slots': 3, 'socket': <socket.socket fd=3, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 36778), raddr=('127.0.1.1', 4000)>, 'pri_key': b'MwMnpy4h7D1rVpdg1cIfyPxrt3abGyrFf7Yk6Rhiiw8='}, 2: {'slots': 7, 'port': 4001, 'free slots': 6, 'socket': <socket.socket fd=4, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 34774), raddr=('127.0.1.1', 4001)>, 'pri_key': b'Br4UOPPTciRMgiB1n2CQVlufon_0RzL2VBQ4GRk5VuI='}, 3: {'slots': 3, 'port': 4002, 'free slots': 2, 'socket': <socket.socket fd=5, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 35914), raddr=('127.0.1.1', 4002)>, 'pri_key': b'GNrSHSlQQqr9141ICpBjRFQsM5BcvXlPiRXwh0Oabt8='}}
+requestHandler.jobRequests={'0': {'map': [], 'reduce': [{'task_id': '0_R0', 'duration': 200}]}, '1': {'map': [], 'reduce': [{'task_id': '1_R0', 'duration': 200}]}, '2': {'map': [], 'reduce': [{'task_id': '2_R0', 'duration': 200}]}, '3': {'map': [], 'reduce': [{'task_id': '3_R0', 'duration': 200}]}}
+INFO: Connected to client at address:
+IP Address: 127.0.0.1
+Socket: 41974
+jobRequestHandler.jobRequests={'0': {'map': [], 'reduce': [{'task_id': '0_R0', 'duration': 200}]}, '1': {'map': [], 'reduce': [{'task_id': '1_R0', 'duration': 200}]}, '2': {'map': [], 'reduce': [{'task_id': '2_R0', 'duration': 200}]}, '3': {'map': [], 'reduce': [{'task_id': '3_R0', 'duration': 200}]}, '4': {'map': [{'task_id': '4_M0', 'duration': 200}], 'reduce': [{'task_id': '4_R0', 'duration': 200}]}}
+Selected tuple: ('4', 'map', {'task_id': '4_M0', 'duration': 200})
+INFO: Created the job poller thread!
+You have reached the bottom of the '__main__'
+[<_MainThread(MainThread, started 139989956925248)>, <Thread(Listen for Incoming JobRequests, started daemon 139989939394304)>, <Thread(Job Dispatcher -Round-Robin Scheduling, started daemon 139989930739456)>, <Thread(Worker-1 Update Listener, started daemon 139989909165824)>, <Thread(Worker-2 Update Listener, started daemon 139989694281472)>, <Thread(Worker-3 Update Listener, started daemon 139989685888768)>, <Thread(Job Poller Thread, started daemon 139989677496064)>, <Thread(Job Poller Thread, started daemon 139989669103360)>, <Thread(Job Poller Thread, started daemon 139989660710656)>, <Thread(Job Poller Thread, started daemon 139989652317952)>, <Thread(Job Poller Thread, started daemon 139989643925248)>]
+INFO: Listening for incoming job requests
+Sending task to worker: {"worker_id": 2, "job_id": "4", "task_family": "map", "task": {"task_id": "4_M0", "duration": 200}}
+self.workerState={1: {'slots': 5, 'port': 4000, 'free slots': 3, 'socket': <socket.socket fd=3, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 36778), raddr=('127.0.1.1', 4000)>, 'pri_key': b'MwMnpy4h7D1rVpdg1cIfyPxrt3abGyrFf7Yk6Rhiiw8='}, 2: {'slots': 7, 'port': 4001, 'free slots': 5, 'socket': <socket.socket fd=4, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 34774), raddr=('127.0.1.1', 4001)>, 'pri_key': b'Br4UOPPTciRMgiB1n2CQVlufon_0RzL2VBQ4GRk5VuI='}, 3: {'slots': 3, 'port': 4002, 'free slots': 2, 'socket': <socket.socket fd=5, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 35914), raddr=('127.0.1.1', 4002)>, 'pri_key': b'GNrSHSlQQqr9141ICpBjRFQsM5BcvXlPiRXwh0Oabt8='}}
+requestHandler.jobRequests={'0': {'map': [], 'reduce': [{'task_id': '0_R0', 'duration': 200}]}, '1': {'map': [], 'reduce': [{'task_id': '1_R0', 'duration': 200}]}, '2': {'map': [], 'reduce': [{'task_id': '2_R0', 'duration': 200}]}, '3': {'map': [], 'reduce': [{'task_id': '3_R0', 'duration': 200}]}, '4': {'map': [], 'reduce': [{'task_id': '4_R0', 'duration': 200}]}}
+Received worker update at master: [{"worker_id": 1, "job_id": "0", "task_family": "map", "task": {"task_id": "0_M0", "start_time": 1607176086.0788414, "end_time": 1607176286.0911312}}]
+Selected tuple: ('0', 'reduce', {'task_id': '0_R0', 'duration': 200})
+Sending task to worker: {"worker_id": 3, "job_id": "0", "task_family": "reduce", "task": {"task_id": "0_R0", "duration": 200}}
+self.workerState={1: {'slots': 5, 'port': 4000, 'free slots': 4, 'socket': <socket.socket fd=3, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 36778), raddr=('127.0.1.1', 4000)>, 'pri_key': b'MwMnpy4h7D1rVpdg1cIfyPxrt3abGyrFf7Yk6Rhiiw8='}, 2: {'slots': 7, 'port': 4001, 'free slots': 5, 'socket': <socket.socket fd=4, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 34774), raddr=('127.0.1.1', 4001)>, 'pri_key': b'Br4UOPPTciRMgiB1n2CQVlufon_0RzL2VBQ4GRk5VuI='}, 3: {'slots': 3, 'port': 4002, 'free slots': 1, 'socket': <socket.socket fd=5, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 35914), raddr=('127.0.1.1', 4002)>, 'pri_key': b'GNrSHSlQQqr9141ICpBjRFQsM5BcvXlPiRXwh0Oabt8='}}
+requestHandler.jobRequests={'1': {'map': [], 'reduce': [{'task_id': '1_R0', 'duration': 200}]}, '2': {'map': [], 'reduce': [{'task_id': '2_R0', 'duration': 200}]}, '3': {'map': [], 'reduce': [{'task_id': '3_R0', 'duration': 200}]}, '4': {'map': [], 'reduce': [{'task_id': '4_R0', 'duration': 200}]}}
+Received worker update at master: [{"worker_id": 2, "job_id": "1", "task_family": "map", "task": {"task_id": "1_M0", "start_time": 1607176091.0452347, "end_time": 1607176291.0536468}}]
+Selected tuple: ('1', 'reduce', {'task_id': '1_R0', 'duration': 200})
+Sending task to worker: {"worker_id": 1, "job_id": "1", "task_family": "reduce", "task": {"task_id": "1_R0", "duration": 200}}
+self.workerState={1: {'slots': 5, 'port': 4000, 'free slots': 3, 'socket': <socket.socket fd=3, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 36778), raddr=('127.0.1.1', 4000)>, 'pri_key': b'MwMnpy4h7D1rVpdg1cIfyPxrt3abGyrFf7Yk6Rhiiw8='}, 2: {'slots': 7, 'port': 4001, 'free slots': 6, 'socket': <socket.socket fd=4, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 34774), raddr=('127.0.1.1', 4001)>, 'pri_key': b'Br4UOPPTciRMgiB1n2CQVlufon_0RzL2VBQ4GRk5VuI='}, 3: {'slots': 3, 'port': 4002, 'free slots': 1, 'socket': <socket.socket fd=5, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 35914), raddr=('127.0.1.1', 4002)>, 'pri_key': b'GNrSHSlQQqr9141ICpBjRFQsM5BcvXlPiRXwh0Oabt8='}}
+requestHandler.jobRequests={'2': {'map': [], 'reduce': [{'task_id': '2_R0', 'duration': 200}]}, '3': {'map': [], 'reduce': [{'task_id': '3_R0', 'duration': 200}]}, '4': {'map': [], 'reduce': [{'task_id': '4_R0', 'duration': 200}]}}
+Received worker update at master: [{"worker_id": 3, "job_id": "2", "task_family": "map", "task": {"task_id": "2_M0", "start_time": 1607176096.0814157, "end_time": 1607176296.087276}}]
+Selected tuple: ('2', 'reduce', {'task_id': '2_R0', 'duration': 200})
+Sending task to worker: {"worker_id": 2, "job_id": "2", "task_family": "reduce", "task": {"task_id": "2_R0", "duration": 200}}
+self.workerState={1: {'slots': 5, 'port': 4000, 'free slots': 3, 'socket': <socket.socket fd=3, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 36778), raddr=('127.0.1.1', 4000)>, 'pri_key': b'MwMnpy4h7D1rVpdg1cIfyPxrt3abGyrFf7Yk6Rhiiw8='}, 2: {'slots': 7, 'port': 4001, 'free slots': 5, 'socket': <socket.socket fd=4, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 34774), raddr=('127.0.1.1', 4001)>, 'pri_key': b'Br4UOPPTciRMgiB1n2CQVlufon_0RzL2VBQ4GRk5VuI='}, 3: {'slots': 3, 'port': 4002, 'free slots': 2, 'socket': <socket.socket fd=5, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 35914), raddr=('127.0.1.1', 4002)>, 'pri_key': b'GNrSHSlQQqr9141ICpBjRFQsM5BcvXlPiRXwh0Oabt8='}}
+requestHandler.jobRequests={'3': {'map': [], 'reduce': [{'task_id': '3_R0', 'duration': 200}]}, '4': {'map': [], 'reduce': [{'task_id': '4_R0', 'duration': 200}]}}
+Received worker update at master: [{"worker_id": 1, "job_id": "3", "task_family": "map", "task": {"task_id": "3_M0", "start_time": 1607176101.0631187, "end_time": 1607176301.067838}}]
+Selected tuple: ('3', 'reduce', {'task_id': '3_R0', 'duration': 200})
+Sending task to worker: {"worker_id": 3, "job_id": "3", "task_family": "reduce", "task": {"task_id": "3_R0", "duration": 200}}
+self.workerState={1: {'slots': 5, 'port': 4000, 'free slots': 4, 'socket': <socket.socket fd=3, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 36778), raddr=('127.0.1.1', 4000)>, 'pri_key': b'MwMnpy4h7D1rVpdg1cIfyPxrt3abGyrFf7Yk6Rhiiw8='}, 2: {'slots': 7, 'port': 4001, 'free slots': 5, 'socket': <socket.socket fd=4, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 34774), raddr=('127.0.1.1', 4001)>, 'pri_key': b'Br4UOPPTciRMgiB1n2CQVlufon_0RzL2VBQ4GRk5VuI='}, 3: {'slots': 3, 'port': 4002, 'free slots': 1, 'socket': <socket.socket fd=5, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 35914), raddr=('127.0.1.1', 4002)>, 'pri_key': b'GNrSHSlQQqr9141ICpBjRFQsM5BcvXlPiRXwh0Oabt8='}}
+requestHandler.jobRequests={'4': {'map': [], 'reduce': [{'task_id': '4_R0', 'duration': 200}]}}
+Received worker update at master: [{"worker_id": 2, "job_id": "4", "task_family": "map", "task": {"task_id": "4_M0", "start_time": 1607176106.0898037, "end_time": 1607176306.097887}}]
+Selected tuple: ('4', 'reduce', {'task_id': '4_R0', 'duration': 200})
+Sending task to worker: {"worker_id": 1, "job_id": "4", "task_family": "reduce", "task": {"task_id": "4_R0", "duration": 200}}
+self.workerState={1: {'slots': 5, 'port': 4000, 'free slots': 3, 'socket': <socket.socket fd=3, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 36778), raddr=('127.0.1.1', 4000)>, 'pri_key': b'MwMnpy4h7D1rVpdg1cIfyPxrt3abGyrFf7Yk6Rhiiw8='}, 2: {'slots': 7, 'port': 4001, 'free slots': 6, 'socket': <socket.socket fd=4, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 34774), raddr=('127.0.1.1', 4001)>, 'pri_key': b'Br4UOPPTciRMgiB1n2CQVlufon_0RzL2VBQ4GRk5VuI='}, 3: {'slots': 3, 'port': 4002, 'free slots': 1, 'socket': <socket.socket fd=5, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 35914), raddr=('127.0.1.1', 4002)>, 'pri_key': b'GNrSHSlQQqr9141ICpBjRFQsM5BcvXlPiRXwh0Oabt8='}}
+requestHandler.jobRequests={}
+SUCCESS: All jobs have been dispatched to the workers!
+SUCCESS: All jobs have been dispatched to the workers!
+SUCCESS: All jobs have been dispatched to the workers!
+SUCCESS: All jobs have been dispatched to the workers!
+SUCCESS: All jobs have been dispatched to the workers!
+Received worker update at master: [{"worker_id": 3, "job_id": "0", "task_family": "reduce", "task": {"task_id": "0_R0", "start_time": 1607176286.1591642, "end_time": 1607176486.1668868}}]
+Received worker update at master: [{"worker_id": 1, "job_id": "1", "task_family": "reduce", "task": {"task_id": "1_R0", "start_time": 1607176291.1415684, "end_time": 1607176491.1487546}}]
+Received worker update at master: [{"worker_id": 2, "job_id": "2", "task_family": "reduce", "task": {"task_id": "2_R0", "start_time": 1607176296.2146513, "end_time": 1607176496.2236495}}]
+Received worker update at master: [{"worker_id": 3, "job_id": "3", "task_family": "reduce", "task": {"task_id": "3_R0", "start_time": 1607176301.1388695, "end_time": 1607176501.14776}}]
+Received worker update at master: [{"worker_id": 1, "job_id": "4", "task_family": "reduce", "task": {"task_id": "4_R0", "start_time": 1607176306.1800904, "end_time": 1607176506.1874135}}]
+SUCCESS: All job updates have been received!
+SUCCESS: All job updates have been received!
+SUCCESS: All job updates have been received!
+SUCCESS: All job updates have been received!
+SUCCESS: All job updates have been received!
+
+
