@@ -87,12 +87,13 @@ def success_text(text):
 
 
 def checkJobPoller(jobRequestHandler: JobRequestHandler,
-                   jobUpdateTracker: JobUpdateTracker):
+                   jobUpdateTracker: JobUpdateTracker,
+                   job_id: str):
     """```checkJobPoller``` continuously checks if all the tasks, for
-    every pending job, have been dispatched to one or the other worker,
-    by the master. It also checks whether the updates from the workers,
-    for every dispatched task, of every running job have been received by
-    the master.
+    the pending job given by ```job_id```, have been dispatched to one
+    or the other worker, by the master. It also checks whether the
+    updates from the workers, for every dispatched task, of the running
+    job given by ```job_id```, have been received by the master.
 
     It prints a ```success message``` once all tasks of all the pending jobs
     have been dispatched as well as once all the tasks' updates for all jobs
@@ -108,34 +109,37 @@ def checkJobPoller(jobRequestHandler: JobRequestHandler,
 
     **type** ```jobUpdateTracker```: JobUpdateTracker
     """
-    isJobDispatchComplete: bool = False
+    isJobDispatchComplete = {}
     _isPrint_1: bool = False
-    isJobUpdatesComplete: bool = False
+    isJobUpdatesComplete = {}
     _isPrint_2: bool = False
 
-    while (isJobDispatchComplete and isJobUpdatesComplete) is False:
+    while (isJobDispatchComplete is not None) or \
+          (isJobUpdatesComplete is not None):
         jobRequestHandler.LOCK.acquire()
-        isJobDispatchComplete = not jobRequestHandler.jobRequests
+        isJobDispatchComplete = jobRequestHandler.jobRequests.get(job_id)
         jobRequestHandler.LOCK.release()
 
-        if isJobDispatchComplete and not _isPrint_1:
+        if (isJobDispatchComplete is None) and (not _isPrint_1):
             master.PRINT_LOCK.acquire()
-            print(success_text("All jobs have been dispatched to the workers!")
+            print(success_text((f"All tasks of job-{job_id} have been "
+                                "dispatched to the workers!"))
                   )
             master.PRINT_LOCK.release()
             _isPrint_1 = True
 
         jobUpdateTracker.LOCK.acquire()
-        isJobUpdatesComplete = not jobUpdateTracker.jobs_time
+        isJobUpdatesComplete = jobUpdateTracker.jobs_time.get(job_id)
         jobUpdateTracker.LOCK.release()
 
-        if isJobUpdatesComplete and not _isPrint_2:
+        if (isJobUpdatesComplete is None) and (not _isPrint_2):
             master.PRINT_LOCK.acquire()
-            print(success_text("All job updates have been received!"))
+            print(success_text((f"All task updates of job-{job_id} have been"
+                                " received!")))
             master.PRINT_LOCK.release()
             _isPrint_2 = True
 
-        time.sleep(1)
+        time.sleep(0.01)
 
 
 def listenForJobRequests(jobRequestHandler: JobRequestHandler,
@@ -185,6 +189,7 @@ def listenForJobRequests(jobRequestHandler: JobRequestHandler,
 
             # Decode and parse the JSON string
             parsedJSON_Msg = json.loads(jobRequest.decode())
+            _recv_job_id: str = parsedJSON_Msg["job_id"]
 
             # Add new job request to job request handler object
             # for task dispatch
@@ -217,7 +222,8 @@ def listenForJobRequests(jobRequestHandler: JobRequestHandler,
             _job_poller_thread = threading.Thread(name="Job Poller Thread",
                                                   target=checkJobPoller,
                                                   args=(jobRequestHandler,
-                                                        jobUpdateTracker)
+                                                        jobUpdateTracker,
+                                                        _recv_job_id)
                                                   )
             _job_poller_thread.daemon = True
             _job_poller_thread.start()
