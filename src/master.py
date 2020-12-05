@@ -287,10 +287,6 @@ def workerUpdates(workerSocket: socket.socket,
             workerStateTracker.freeSlot(msg["worker_id"])
             workerStateTracker.LOCK.release()
 
-        # master.PRINT_LOCK.acquire()
-        # workerStateTracker.showWorkerStates()
-        # master.PRINT_LOCK.release()
-
 
 if __name__ == "__main__":
     # Make sure the required command line arguments are passed in

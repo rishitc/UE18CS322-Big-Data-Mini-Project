@@ -96,8 +96,11 @@ class RandomScheduler:
                         workerStateTracker.showWorkerStates()
                         master.PRINT_LOCK.release()
 
+                        requestHandler.LOCK.acquire()
+                        _state = requestHandler.jobRequests
+                        requestHandler.LOCK.release()
                         master.PRINT_LOCK.acquire()
-                        print(f"{requestHandler.jobRequests=}")
+                        print(f"requestHandler.jobRequests={_state}")
                         master.PRINT_LOCK.release()
 
                         # We have found a worker and hence set this to True
