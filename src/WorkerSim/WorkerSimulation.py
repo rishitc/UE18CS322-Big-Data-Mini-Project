@@ -128,25 +128,35 @@ class Worker:
             if tasksInExecutionPool_Count != 0:
                 self.LOCK.acquire()  # Lock as shared object is accessed
                 _temp_1 = list(self.tasks)  # Need to store as list for
+                # Sleeps for 1 second until next check on the values
+                # time.sleep(1)
                 for job_id in _temp_1:      # correct iterating
                     """Durations (i.e. the value in the dictionary) will be
                     positive(non-zero) integers."""
                     _temp_2 = list(self.tasks[job_id])
                     for task_id in _temp_2:
                         # Reduce the duration of the task by 1
-                        worker.PRINT_LOCK.acquire()
-                        print(type(self.tasks[job_id][task_id]["task"]
-                                   ["duration"]))
-                        print(self.tasks[job_id][task_id]["task"]["duration"])
-                        worker.PRINT_LOCK.release()
-                        self.tasks[job_id][task_id]["task"]["duration"] -= 1
+                        # worker.PRINT_LOCK.acquire()
+                        # print(type(self.tasks[job_id][task_id]["task"]
+                        #            ["duration"]))
+                        # _d = self.tasks[job_id][task_id]["task"]["duration"]
+                        # print((f'Remaining duration for Job-{job_id} '
+                        #        f'task-{task_id}: '
+                        #        f'{_d}'))
+                        # worker.PRINT_LOCK.release()
+
+                        # self.tasks[job_id][task_id]["task"]["duration"] -= 1
 
                         # Check if the duration has become 0, i.e. the task has
                         # finished execution
-                        if (self.tasks[job_id][task_id]["task"]["duration"]
-                                == 0):
+                        pot_end_time = time.time()
+                        if pot_end_time - \
+                           self.tasks[job_id][task_id]["task"]["start_time"] \
+                           >= self.tasks[job_id][task_id]["task"]["duration"]:
+                            # (self.tasks[job_id][task_id]["task"]["duration"]
+                            # == 0):
                             self.tasks[job_id][task_id]["task"]["end_time"] = \
-                                time.time()
+                                pot_end_time
                             # Store the end-time of the task
                             response_message_to_master = YACS_Protocol\
                                 .createMessageToMaster((self.tasks[job_id]
@@ -177,9 +187,9 @@ class Worker:
                                 del self.tasks[job_id]
                             # Remove the job entry if there are no tasks of
                             # that particular job
-                # Sleeps for 1 second until next check on the values
+
                 self.LOCK.release()  # Release lock as CS code is complete
-                time.sleep(1)
+
         # NOTE: Need to add the portion wherein the worker needs to listen
         # for messages if dict is empty
         # UPDATE: Taken care of by the forever loop
