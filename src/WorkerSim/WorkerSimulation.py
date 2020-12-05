@@ -212,8 +212,9 @@ class Worker:
 
     @staticmethod
     def info_text(text):
-        """```info_text``` returns a modified version of the input ```text``` such
-        that it looks like an *information message* when printed on the CLI.
+        """```info_text``` returns a modified version of the input ```text```
+        such that it looks like an *information message* when printed on the
+        CLI.
 
         **param** ```text```: The input string that will be modified to look
         like an *information message* when printed on the CLI

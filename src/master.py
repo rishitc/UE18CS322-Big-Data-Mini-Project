@@ -69,8 +69,8 @@ def error_text(text):
 
 
 def success_text(text):
-    """```success_text``` returns a modified version of the input ```text``` such
-    that it looks like a *success message* when printed on the CLI.
+    """```success_text``` returns a modified version of the input ```text```
+    such that it looks like a *success message* when printed on the CLI.
 
     **param** ```text```: The input string that will be modified to look like
     a *success message* when printed on the CLI
