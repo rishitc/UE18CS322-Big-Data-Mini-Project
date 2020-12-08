@@ -114,7 +114,7 @@ class Worker:
             print(self.tasks)  # Print the task exec pool
             worker.PRINT_LOCK.release()
 
-        _exec_pool_poller_thread.join()
+        # _exec_pool_poller_thread.join()
 
     def simulateWorker(self):
         # While there is a task to execute in the task exec pool
