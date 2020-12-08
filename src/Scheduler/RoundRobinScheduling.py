@@ -122,7 +122,9 @@ class RoundRobinScheduler:
                     _temp %= WORKER_COUNT
 
                     # In the case where none of the workers have a free slot
-                    if list(workerIDsVisited) == workerStateTracker.workerIDs:
+                    if (workerFound is False) and \
+                        (list(workerIDsVisited) ==
+                            workerStateTracker.workerIDs):
                         # Sleep for a second to allow for the
                         # workerStateTracker to be updated by the
                         # thread: workerUpdates
