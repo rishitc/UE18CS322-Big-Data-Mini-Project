@@ -198,6 +198,19 @@ def listenForJobRequests(jobRequestHandler: JobRequestHandler,
             parsedJSON_Msg = json.loads(jobRequest.decode())
             _recv_job_id: str = parsedJSON_Msg["job_id"]
 
+            if not parsedJSON_Msg["map_tasks"] and \
+                    not parsedJSON_Msg["reduce_tasks"]:
+                master.PRINT_LOCK.acquire()
+                print(info_text((f"Job request received with {TC.attr(1)}no "
+                                f"map nor reduce tasks!{TC.attr(0)}")))
+                master.PRINT_LOCK.release()
+
+                # Close the client connection as we have finished receiving
+                # the job request from the client
+                clientConn.close()
+
+                continue
+
             # Add new job request to job request handler object
             # for task dispatch
             # print("Acquiring jobRequestHandler LOCK")
